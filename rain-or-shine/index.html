@@ -33,7 +33,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 /* Layout: one phone-width column; header with view tabs, the chosen view below. Theme: Beige (warm paper, bronze accent, handwritten day line) */
 :root{
   --bg:#EEE6DA; --surface:#FAF6EF; --ink:#2A2420; --muted:#75695D; --line:#E2D7C7; --line-strong:#C9B9A2;
-  --accent:#8C6A3C; --accent-soft:#EFE3CF; --warn:#8F5A12; --warn-soft:#F6E7CC; --danger:#A3322A;
+  --accent:#8C6A3C; --accent-soft:#EFE3CF; --warn:#8F5A12; --warn-soft:#F6E7CC; --danger:#A3322A; --danger-soft:#F5DCD8;
   --w-paike:#C29A45; --w-vahelduv:#7F9A92; --w-pilves:#A1958A; --w-vihm:#5F7A9C; --w-lumi:#9DB0C2; --w-aike:#86708F; --w-udu:#A9A18A;
   --f-display:"Cormorant Garamond","Didot",Georgia,serif;
   --f-body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -43,13 +43,13 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#1A1714; --surface:#24201C; --ink:#EFE7DA; --muted:#A99C8B; --line:#36302A; --line-strong:#50473D;
-  --accent:#D5B47E; --accent-soft:#3A2F22; --warn:#E8B565; --warn-soft:#3A2C17; --danger:#F08A80;
+  --accent:#D5B47E; --accent-soft:#3A2F22; --warn:#E8B565; --warn-soft:#3A2C17; --danger:#F08A80; --danger-soft:#3D1F1C;
   --w-paike:#DDB65F; --w-vahelduv:#9DB8AF; --w-pilves:#9A8F82; --w-vihm:#8FA6C4; --w-lumi:#D6DFE8; --w-aike:#A88FB3; --w-udu:#C2BAA4;
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
   --bg:#1A1714; --surface:#24201C; --ink:#EFE7DA; --muted:#A99C8B; --line:#36302A; --line-strong:#50473D;
-  --accent:#D5B47E; --accent-soft:#3A2F22; --warn:#E8B565; --warn-soft:#3A2C17; --danger:#F08A80;
+  --accent:#D5B47E; --accent-soft:#3A2F22; --warn:#E8B565; --warn-soft:#3A2C17; --danger:#F08A80; --danger-soft:#3D1F1C;
   --w-paike:#DDB65F; --w-vahelduv:#9DB8AF; --w-pilves:#9A8F82; --w-vihm:#8FA6C4; --w-lumi:#D6DFE8; --w-aike:#A88FB3; --w-udu:#C2BAA4;
   color-scheme:dark;
 }
@@ -232,6 +232,16 @@ input[type=text]{width:100%;border:1px solid var(--line-strong);border-radius:10
 
 .tools{margin-top:22px;border:1px dashed var(--line-strong);border-radius:16px;padding:12px 14px;display:grid;gap:8px}
 
+.a2hs{border:2px solid var(--danger);background:var(--danger-soft);border-radius:16px;padding:12px 14px;display:grid;gap:8px;margin-bottom:14px}
+.a2hs .rtag{color:var(--danger);font-weight:700;font-size:0.7353rem;letter-spacing:.06em;text-transform:uppercase}
+.a2hs h2{margin:0;color:var(--ink)}
+.a2hs b.t{color:var(--danger);font-size:0.8824rem}
+.a2hs p{margin:0;font-size:0.8529rem;line-height:1.45}
+.a2hs ol{margin:0;padding-left:22px;display:grid;gap:6px;font-size:0.8529rem;line-height:1.4}
+.a2hs details summary{cursor:pointer;font-weight:600;color:var(--danger);font-size:0.8529rem;padding:4px 0}
+.a2hs details[open] summary{margin-bottom:6px}
+.a2hs.gate{padding:16px 16px 14px;gap:10px}
+.a2hs.gate p,.a2hs.gate ol{font-size:0.9412rem}
 .notice{border:1px solid var(--warn);background:var(--warn-soft);border-radius:16px;padding:12px 14px;display:grid;gap:6px}
 .notice b{font-size:0.8529rem}
 .notice p{margin:0;font-size:0.7941rem;line-height:1.45}
@@ -275,7 +285,7 @@ label.btn{display:inline-block}
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
   </header>
   <main id="view"></main>
-  <p class="foot">Rain or Shine Almanac 1.0.5 · made by Silent Tools · your entries stay on this device</p>
+  <p class="foot">Rain or Shine Almanac 1.0.6 · made by Silent Tools · your entries stay on this device</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -999,10 +1009,31 @@ function a2hsSteps(){
   if(isAndroid)return `In Chrome, tap the <b>⋮</b> menu, then <b>Add to Home screen</b>. Open the diary from that icon from now on.`;
   return `On your phone, open this page in the browser and choose <b>Add to Home Screen</b> from the browser menu.`;
 }
+const needsA2HS=()=>(isIOS||isAndroid)&&!isStandalone&&!DB.settings.noA2HSWarn;
+const hasCode=()=>typeof ACCESS_HASH!=='undefined';
+function a2hsList(){
+  if(isIOS)return `<ol><li>Tap <b>⋯</b> at the bottom right, then <b>Share</b>. On older iPhones, tap the Share icon <b>⬆︎</b> at the bottom instead.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol>`;
+  return `<ol><li>Tap <b>⋮</b> at the top right.</li><li>Tap <b>Add to Home screen</b> or <b>Install app</b>.</li><li>Tap <b>Add</b> or <b>Install</b>.</li></ol>`;
+}
+function a2hsGate(){
+  return `<section class="a2hs gate" role="alert">
+    <div class="rtag">! Before you start</div>
+    <h2>Add the diary to your Home Screen</h2>
+    <p>The diary is open in a browser tab right now. Phones can erase what a website stores${isIOS?', and Safari does it after 7 days without a visit':' when it isn’t visited for a while'}. An icon on your Home Screen keeps your diary safe.</p>
+    ${a2hsList()}
+    <p>${isIOS?`Then close this tab and open the diary from the new icon.${hasCode()?' Enter your access code there once more.':''} Write your entries there, because the icon keeps its own diary, separate from this tab.`:'Then open the diary from the new icon.'}</p>
+    <div class="btns"><button class="btn small" data-act="a2hs-later">I’ll do it later</button></div>
+  </section>`;
+}
+function a2hsBar(){
+  if(!needsA2HS())return '';
+  const n=entryCount(),how=`<details><summary>How to add it</summary>${a2hsList()}</details>`;
+  if(!n)return `<div class="a2hs" role="alert"><b class="t">Not on your Home Screen yet</b><p>Diaries kept in a browser tab can be erased by the phone${isIOS?'. Safari does it after 7 days without a visit':''}. Add it to your Home Screen${isIOS?' and write your entries there':''}.</p>${how}</div>`;
+  if(isIOS)return `<div class="a2hs" role="alert"><b class="t">Your ${n} ${n===1?'entry is':'entries are'} only in this Safari tab</b><p>Safari can erase ${n===1?'it':'them'} after 7 days without a visit. To keep ${n===1?'it':'them'} safe:</p><ol><li>Make a backup file.</li><li>Add the diary to your Home Screen.</li><li>Open the new icon${hasCode()?', enter your code':''} and tap <b>Restore your backup</b>.</li></ol><div class="btns"><button class="btn primary small" data-act="open-backup">Make a backup file</button></div>${how}</div>`;
+  return `<div class="a2hs" role="alert"><b class="t">Your diary is in a browser tab</b><p>Phones can erase what a website stores when it isn’t visited for a while. Add the diary to your Home Screen to keep your ${n} ${n===1?'entry':'entries'} safe, and open it from the icon from now on.</p>${how}</div>`;
+}
 function noticesHtml(){
   let h='';
-  if((isIOS||isAndroid)&&!isStandalone&&!DB.settings.hideA2HS)
-    h+=`<div class="notice"><b>Keep your diary on this phone</b><p>Phones can clear website data that isn’t used for a while. Adding the diary to your Home Screen keeps it safe. ${a2hsSteps()}</p><div class="btns"><button class="btn small" data-act="a2hs-hide">Done, hide this</button></div></div>`;
   if(needsBackupNudge()){
     const d=daysSinceBackup();
     h+=`<div class="notice"><b>${d===null?'You haven’t made a backup yet':`Your last backup was ${d} days ago`}</b><p>A backup file is the only way to get your diary back if this phone is lost or replaced.</p><div class="btns"><button class="btn primary small" data-act="open-backup">Back up now</button></div></div>`;
@@ -1180,7 +1211,7 @@ function settingsView(){
     <p class="hint" style="font-size:0.8235rem">The diary lives on this device only, with no account and no server. ${a2hsSteps()}</p>
     <div class="btns"><button class="btn small" data-act="open-backup">Backup &amp; restore</button></div></section>
   <section class="card"><div class="lbl">About</div>
-    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.5, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
+    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.6, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
 }
 
 /* ---------- poster as an image ---------- */
@@ -1238,7 +1269,7 @@ function render(){
   renderHome();
   if(!visibleTabs().some(t=>t[0]===S.tab))S.tab='day';
   const V={day:dayView,year:yearView,month:monthView,chart:chartView,firsts:firstsView,stats:statsView,poster:posterView};
-  document.getElementById('view').innerHTML=S.screen==='backup'?backupView():S.screen==='views'?viewsView():S.screen==='settings'?settingsView():S.setup?setupView():V[S.tab]();
+  document.getElementById('view').innerHTML=S.screen==='backup'?backupView():S.screen==='views'?viewsView():S.screen==='settings'?settingsView():S.setup?((!DB.settings.home&&needsA2HS()&&!S.a2hsLater)?a2hsGate():setupView()):a2hsBar()+V[S.tab]();
   if(S.screen==='day'&&!S.setup&&S.tab==='chart')wireChart();
   const sel=document.querySelector('.chips .chip[aria-pressed="true"]');
   if(sel){const c=sel.parentElement,r=sel.offsetLeft+sel.offsetWidth-c.clientWidth;if(r>c.scrollLeft)c.scrollLeft=r+8;}
@@ -1305,6 +1336,7 @@ view.addEventListener('click',ev=>{
   else if(a==='samples-add'){addSamples();render();}
   else if(a==='samples-remove'){removeSamples();render();}
   else if(a==='a2hs-hide'){DB.settings.hideA2HS=true;save();render();}
+  else if(a==='a2hs-later'){S.a2hsLater=true;render();window.scrollTo(0,0);}
 });
 document.getElementById('tabs').addEventListener('click',ev=>{const b=ev.target.closest('[data-tab]');if(!b)return;S.tab=b.dataset.tab;S.mode='view';render();window.scrollTo(0,0);});
 document.getElementById('home').addEventListener('click',ev=>{
