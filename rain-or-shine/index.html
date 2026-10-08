@@ -263,7 +263,7 @@ label.btn{display:inline-block}
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
   </header>
   <main id="view"></main>
-  <p class="foot">Rain or Shine Almanac 1.0.0 · made by Silent Tools · your entries stay on this device</p>
+  <p class="foot">Rain or Shine Almanac 1.0.1 · made by Silent Tools · your entries stay on this device</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -983,7 +983,7 @@ const entryCount=()=>realEntries().length;
 function daysSinceBackup(){const b=DB.settings.lastBackupAt;return b?Math.floor((Date.now()-new Date(b).getTime())/864e5):null;}
 function needsBackupNudge(){const n=entryCount();if(!n)return false;const d=daysSinceBackup();return d===null?n>=5:d>30;}
 function a2hsSteps(){
-  if(isIOS)return `In Safari, tap the <b>Share</b> button, then <b>Add to Home Screen</b>, then <b>Add</b>. Open the diary from that icon from now on.`;
+  if(isIOS)return `In Safari, tap <b>⋯</b> at the bottom right, then <b>Share</b>. On older iPhones, tap the Share icon <b>⬆︎</b> instead. Scroll down, tap <b>Add to Home Screen</b>, then <b>Add</b>. From now on, open the diary from that icon.`;
   if(isAndroid)return `In Chrome, tap the <b>⋮</b> menu, then <b>Add to Home screen</b>. Open the diary from that icon from now on.`;
   return `On your phone, open this page in the browser and choose <b>Add to Home Screen</b> from the browser menu.`;
 }
@@ -1160,7 +1160,7 @@ function settingsView(){
     <p class="hint" style="font-size:14px">The diary lives on this device only, with no account and no server. ${a2hsSteps()}</p>
     <div class="btns"><button class="btn small" data-act="open-backup">Backup &amp; restore</button></div></section>
   <section class="card"><div class="lbl">About</div>
-    <p class="hint" style="font-size:13.5px">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:13.5px">Rain or Shine Almanac 1.0.0, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
+    <p class="hint" style="font-size:13.5px">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:13.5px">Rain or Shine Almanac 1.0.1, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
 }
 
 /* ---------- poster as an image ---------- */
