@@ -34,7 +34,7 @@ body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area
   --f-body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-note:"Caveat","Segoe Print","Bradley Hand",cursive;
   --f-data:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
-  --note-size:24px; --note-size-s:20px; --hand-scale:1.3; --d-weight:700;
+  --note-size:1.4118rem; --note-size-s:1.1765rem; --hand-scale:1.3; --d-weight:700;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#1A1714; --surface:#24201C; --ink:#EFE7DA; --muted:#A99C8B; --line:#36302A; --line-strong:#50473D;
@@ -270,7 +270,7 @@ label.btn{display:inline-block}
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
   </header>
   <main id="view"></main>
-  <p class="foot">Demo of Rain or Shine Almanac 1.0.4 · made by Silent Tools</p>
+  <p class="foot">Demo of Rain or Shine Almanac 1.0.5 · made by Silent Tools</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1143,7 +1143,7 @@ function applyTheme(){applyTextSize();
   all.forEach(k=>st.removeProperty(k));st.removeProperty('color-scheme');
   if(th.light){const dk=hostDark(),t=dk?th.dark:th.light;TOKENS.forEach(k=>st.setProperty('--'+k,t[k]));WKEYS.forEach((k,i)=>st.setProperty('--w-'+k,t.w[i]));st.colorScheme=dk?'dark':'light';}
   if(th.font)for(const k in th.font)st.setProperty(k,th.font[k]);
-  if(DB.settings.handwriting===false){st.setProperty('--f-note','var(--f-body)');st.setProperty('--note-size','17.5px');st.setProperty('--note-size-s','15.5px');st.setProperty('--hand-scale','1');}
+  if(DB.settings.handwriting===false){st.setProperty('--f-note','var(--f-body)');st.setProperty('--note-size','1.0294rem');st.setProperty('--note-size-s','0.9118rem');st.setProperty('--hand-scale','1');}
 }
 if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
 new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
@@ -1177,7 +1177,7 @@ function settingsView(){
     <p class="hint" style="font-size:0.8235rem">The diary lives on this device only, with no account and no server. ${a2hsSteps()}</p>
     <div class="btns"><button class="btn small" data-act="open-backup">Backup &amp; restore</button></div></section>
   <section class="card"><div class="lbl">About</div>
-    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.4, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
+    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.5, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
 }
 
 /* ---------- poster as an image ---------- */
