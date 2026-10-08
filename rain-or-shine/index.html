@@ -15,8 +15,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
 <style>
-html{font-size:17px}
-@supports (font:-apple-system-body){html{font:-apple-system-body;font-family:inherit}}
+html{font-size:17px;font:-apple-system-body;font-family:inherit}
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;-webkit-text-size-adjust:100%}
 img{max-width:100%}
@@ -152,7 +151,11 @@ svg .grid{stroke:var(--line)}svg .zero{stroke:var(--line-strong);stroke-width:1.
 
 .hand{font-family:var(--f-note);font-size:calc(var(--hand-scale) * 1em);line-height:1.1}
 .row{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap}
-.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;min-width:0;max-width:100%;flex:1 1 auto}
+.chip{flex:none}
+.app,main{min-width:0;max-width:100%}
+main{grid-template-columns:minmax(0,1fr)}
+main>*{min-width:0}
 .chip{border:1px solid var(--line-strong);background:transparent;border-radius:999px;padding:6px 13px;font-size:0.7941rem;font-family:var(--f-data);cursor:pointer;white-space:nowrap}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .seg2{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;padding:2px;gap:2px}
@@ -207,6 +210,9 @@ svg .grid{stroke:var(--line)}svg .zero{stroke:var(--line-strong);stroke-width:1.
 .sw2.on{background:var(--accent)}.sw2.on::after{left:19px}
 
 
+.tsizes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tsizes button{border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:10px 6px;cursor:pointer}
+.tsizes button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent);font-weight:600}
 .srow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .srow>span{font-size:0.8824rem}
 .themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
@@ -269,7 +275,7 @@ label.btn{display:inline-block}
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
   </header>
   <main id="view"></main>
-  <p class="foot">Rain or Shine Almanac 1.0.3 · made by Silent Tools · your entries stay on this device</p>
+  <p class="foot">Rain or Shine Almanac 1.0.4 · made by Silent Tools · your entries stay on this device</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -807,7 +813,7 @@ function chartView(){
     p+=`<rect x="${cx-bw/2}" y="${PY(cur[m])}" width="${bw}" height="${pb-PY(cur[m])}" rx="3" class="fill-vihm"/>`;
     if(avg)p+=`<line x1="${cx-bw/2-3}" x2="${cx+bw/2+3}" y1="${PY(avg[m])}" y2="${PY(avg[m])}" stroke="var(--ink)" stroke-width="2"/>`;
     p+=`<text x="${cx}" y="${pb+16}" text-anchor="middle">${MSHORT[m][0]}</text>`;}
-  h+=`<h2>Days with rain or snow</h2><p class="hint" style="margin:6px 0 10px">Bars are ${y}${avg?', the black line is the average of your other full years':''}.</p><div class="chartbox"><svg viewBox="0 0 ${W} ${PH}" role="img" aria-label="Wet days per month">${p}</svg></div>`;
+  h+=`<h2>Days with rain or snow</h2><p class="hint" style="margin:6px 0 10px">Bars are ${y}${avg?', the line across each bar is the average of your other full years':''}.</p><div class="chartbox"><svg viewBox="0 0 ${W} ${PH}" role="img" aria-label="Wet days per month">${p}</svg></div>`;
   return h;
 }
 function wireChart(){
@@ -1129,7 +1135,12 @@ const THEMES={
 const TOKENS=['bg','surface','ink','muted','line','line-strong','accent','accent-soft','warn','warn-soft','danger'];
 const WKEYS=['paike','vahelduv','pilves','vihm','lumi','aike','udu'];
 function hostDark(){const t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);}
-function applyTheme(){
+const TEXT_SIZES=[['auto','Automatic',null],['m','Normal',17],['l','Large',20],['xl','Extra large',23]];
+function applyTextSize(){
+  const t=TEXT_SIZES.find(x=>x[0]===(DB.settings.textSize||'auto'))||TEXT_SIZES[0];
+  document.documentElement.style.fontSize=t[2]?t[2]+'px':'';
+}
+function applyTheme(){applyTextSize();
   const st=document.documentElement.style,th=THEMES[DB.settings.theme]||THEMES.beige;
   const all=[...TOKENS.map(k=>'--'+k),...WKEYS.map(k=>'--w-'+k),'--f-display','--f-body','--d-weight','--f-note','--note-size','--note-size-s','--hand-scale'];
   all.forEach(k=>st.removeProperty(k));st.removeProperty('color-scheme');
@@ -1153,6 +1164,9 @@ function settingsView(){
     ${segRow('Rain and snow','precip',[['mm','mm'],['in','inches']])}
     ${segRow('Dates','date',[['dmy','3 October'],['mdy','October 3']])}
     <p class="hint">Your entries are stored the same way whatever you choose, so you can switch any time.</p></section>
+  <section class="card"><div class="lbl">Text size</div>
+    <div class="tsizes" role="group" aria-label="Text size">${TEXT_SIZES.map(([k,l])=>`<button data-tsize="${k}" aria-pressed="${(DB.settings.textSize||'auto')===k}">${l}</button>`).join('')}</div>
+    <p class="hint">Automatic follows your phone’s text size where the browser allows it.</p></section>
   <section class="card"><div class="lbl">Look</div>
     <div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button data-theme-pick="${k}" aria-pressed="${th===k}"><span class="sw">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</span>${t.label}</button>`).join('')}</div>
     <button class="vrow" data-act="toggle-hand" aria-pressed="${hw}"><span>Handwritten diary lines<small>Turn off for plain, easier-to-read text</small></span><span class="sw2 ${hw?'on':''}" aria-hidden="true"></span></button></section>
@@ -1166,7 +1180,7 @@ function settingsView(){
     <p class="hint" style="font-size:0.8235rem">The diary lives on this device only, with no account and no server. ${a2hsSteps()}</p>
     <div class="btns"><button class="btn small" data-act="open-backup">Backup &amp; restore</button></div></section>
   <section class="card"><div class="lbl">About</div>
-    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.3, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
+    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.4, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
 }
 
 /* ---------- poster as an image ---------- */
@@ -1226,6 +1240,8 @@ function render(){
   const V={day:dayView,year:yearView,month:monthView,chart:chartView,firsts:firstsView,stats:statsView,poster:posterView};
   document.getElementById('view').innerHTML=S.screen==='backup'?backupView():S.screen==='views'?viewsView():S.screen==='settings'?settingsView():S.setup?setupView():V[S.tab]();
   if(S.screen==='day'&&!S.setup&&S.tab==='chart')wireChart();
+  const sel=document.querySelector('.chips .chip[aria-pressed="true"]');
+  if(sel){const c=sel.parentElement,r=sel.offsetLeft+sel.offsetWidth-c.clientWidth;if(r>c.scrollLeft)c.scrollLeft=r+8;}
 }
 const view=document.getElementById('view');
 view.addEventListener('submit',async ev=>{
@@ -1251,6 +1267,7 @@ view.addEventListener('click',ev=>{
   if(b.dataset.px){S.pxMode=b.dataset.px;render();return;}
   if(b.dataset.first!==undefined){readDraft();const k=b.dataset.first,f=S.draft.firsts;const i=f.indexOf(k);i>=0?f.splice(i,1):f.push(k);render();return;}
   if(b.dataset.unit){const[k,v]=b.dataset.unit.split(':');DB.settings.units={...U(),[k]:v};save();render();return;}
+  if(b.dataset.tsize){DB.settings.textSize=b.dataset.tsize;save();render();return;}
   if(b.dataset.themePick){DB.settings.theme=b.dataset.themePick;DB.settings.handwriting=b.dataset.themePick!=='minimal';save();render();return;}
   if(b.dataset.toggleview){const k=b.dataset.toggleview,hid=new Set(DB.settings.hiddenTabs||[]);hid.has(k)?hid.delete(k):hid.add(k);DB.settings.hiddenTabs=[...hid];save();render();return;}
   if(b.dataset.open){S.tab='day';goDate(b.dataset.open);return;}
