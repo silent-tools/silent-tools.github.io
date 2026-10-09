@@ -153,7 +153,9 @@ svg .grid{stroke:var(--line)}svg .zero{stroke:var(--line-strong);stroke-width:1.
 .row{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;min-width:0;max-width:100%;flex:1 1 auto}
 .chip{flex:none}
-.app,main{min-width:0;max-width:100%}
+.app{min-width:0}
+main{min-width:0;max-width:100%}
+@media (min-width:900px){.app{max-width:720px}}
 main{grid-template-columns:minmax(0,1fr)}
 main>*{min-width:0}
 .chip{border:1px solid var(--line-strong);background:transparent;border-radius:999px;padding:6px 13px;font-size:0.7941rem;font-family:var(--f-data);cursor:pointer;white-space:nowrap}
@@ -285,7 +287,7 @@ label.btn{display:inline-block}
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
   </header>
   <main id="view"></main>
-  <p class="foot">Rain or Shine Almanac 1.0.6 · made by Silent Tools · your entries stay on this device</p>
+  <p class="foot">Rain or Shine Almanac 1.0.7 · made by Silent Tools · your entries stay on this device</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -1211,7 +1213,7 @@ function settingsView(){
     <p class="hint" style="font-size:0.8235rem">The diary lives on this device only, with no account and no server. ${a2hsSteps()}</p>
     <div class="btns"><button class="btn small" data-act="open-backup">Backup &amp; restore</button></div></section>
   <section class="card"><div class="lbl">About</div>
-    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.6, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
+    <p class="hint" style="font-size:0.7941rem">Today’s weather: data from <a href="https://api.met.no/" target="_blank" rel="noopener">MET Norway</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, summarised into one line per day. Past days: estimated from <a href="https://power.larc.nasa.gov/" target="_blank" rel="noopener">NASA POWER</a> (Langley Research Center), on a grid of about 50 km. Place search: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Statistics and charts are made only from the entries in this diary.</p><p class="hint" style="font-size:0.7941rem">Rain or Shine Almanac 1.0.7, made by Silent Tools. No account, no tracking, no ads. Your diary is stored only in this browser on this device.</p></section>`;
 }
 
 /* ---------- poster as an image ---------- */
