@@ -1,0 +1,1675 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Happily Seated</title>
+<meta name="description" content="A wedding seating planner for your phone and computer. Import your guest list, seat everyone, print and share. No account, your plan stays on your device.">
+<meta name="theme-color" content="#EEE6DA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1714" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Happily Seated">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+html{font-size:17px;font:-apple-system-body;font-family:inherit}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+.lock{margin-top:24px}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60;pointer-events:none}
+.foot a{color:var(--accent)}
+
+</style>
+<link rel="stylesheet" href="../fonts.css">
+<style>
+/* Theme: Beige (warm paper, bronze accent). Same tokens as Rain or Shine. */
+:root{
+  --bg:#EEE6DA; --surface:#FAF6EF; --ink:#2A2420; --muted:#75695D; --line:#E2D7C7; --line-strong:#C9B9A2;
+  --accent:#8C6A3C; --accent-soft:#EFE3CF; --warn:#8F5A12; --warn-soft:#F6E7CC; --danger:#A3322A; --danger-soft:#F5DCD8; --ok:#4E7A4A;
+  --f-display:"Cormorant Garamond","Didot",Georgia,serif;
+  --f-body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --d-weight:700;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1A1714; --surface:#24201C; --ink:#EFE7DA; --muted:#A99C8B; --line:#36302A; --line-strong:#50473D;
+  --accent:#D5B47E; --accent-soft:#3A2F22; --warn:#E8B565; --warn-soft:#3A2C17; --danger:#F08A80; --danger-soft:#3D1F1C; --ok:#8FC28A;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#1A1714; --surface:#24201C; --ink:#EFE7DA; --muted:#A99C8B; --line:#36302A; --line-strong:#50473D;
+  --accent:#D5B47E; --accent-soft:#3A2F22; --warn:#E8B565; --warn-soft:#3A2C17; --danger:#F08A80; --danger-soft:#3D1F1C; --ok:#8FC28A;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:0.8824rem;line-height:1.45;margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:0 120px;min-width:0}
+@media (min-width:900px){.app{max-width:1180px}}
+header.top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding-block:14px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:var(--d-weight);font-size:1.7647rem;margin:0;line-height:1}
+.brand em{font-style:italic;font-weight:600;color:var(--accent)}
+.hdr-sub{font-size:0.7647rem;color:var(--muted)}
+nav.tabs{flex:1 0 100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:3px}
+nav.tabs button{border:0;background:transparent;border-radius:11px;padding:9px 0;font-size:0.8235rem;color:var(--muted);cursor:pointer;min-width:0}
+nav.tabs button[aria-current="page"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+main{padding-block:14px 0;display:grid;gap:14px;grid-template-columns:minmax(0,1fr);min-width:0}
+main>*{min-width:0}
+h2{font-family:var(--f-display);font-weight:var(--d-weight);font-size:1.4706rem;margin:6px 0 0;line-height:1.1}
+h3{font-size:0.8824rem;margin:0;font-weight:600}
+.muted{color:var(--muted)}
+.hint{font-size:0.7647rem;color:var(--muted);margin:0}
+.lbl{font-size:0.7059rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:12px;min-width:0}
+textarea{width:100%;min-height:150px;border:1px solid var(--line-strong);border-radius:12px;padding:11px 12px;font-size:0.9412rem;background:var(--bg);resize:vertical}
+input[type=text],input[type=number],input[type=search],select{width:100%;border:1px solid var(--line-strong);border-radius:10px;padding:9px 10px;font-size:0.9412rem;background:var(--bg);min-width:0}
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line-strong);border-radius:12px;padding:3px;gap:3px}
+.seg.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.seg button{border:0;background:transparent;border-radius:9px;padding:10px 4px;font-size:0.8824rem;cursor:pointer;line-height:1.2;min-height:44px}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:600}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--line-strong);background:transparent;border-radius:11px;padding:9px 15px;cursor:pointer;font-size:0.8529rem;min-height:42px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:600}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.small{padding:6px 11px;font-size:0.7647rem;min-height:34px}
+.btn:disabled{opacity:.5;cursor:default}
+label.btn{display:inline-flex;align-items:center}
+.msg{font-size:0.8235rem;color:var(--danger);margin:0}
+.toast{font-size:0.8235rem;color:var(--accent);font-weight:600;margin:0}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.empty{border:1px dashed var(--line-strong);border-radius:18px;padding:22px 16px;text-align:center;color:var(--muted);display:grid;gap:12px;justify-items:center}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap}
+.num{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:0.7059rem;padding:1px 8px;border-radius:999px;border:1px solid var(--line-strong);color:var(--muted);white-space:nowrap}
+.pill.warn{border-color:var(--warn);color:var(--warn);background:var(--warn-soft)}
+.pill.grp{border-color:var(--accent);color:var(--accent)}
+
+/* import preview */
+.pv{display:grid;gap:6px}
+.pv-item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:start;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:9px 11px}
+.pv-item.off{opacity:.55}
+.pv-item input[type=checkbox]{width:20px;height:20px;margin:2px 0 0;accent-color:var(--accent)}
+.pv-names{min-width:0;overflow-wrap:anywhere}
+.pv-meta{grid-column:2;display:flex;gap:6px;flex-wrap:wrap}
+.map{display:grid;gap:8px}
+.map label{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;font-size:0.8235rem}
+.map label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* guest list */
+.glist{display:grid;gap:6px}
+.gi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.gi .nm{overflow-wrap:anywhere}
+.gi .sub{grid-column:1;font-size:0.7353rem;color:var(--muted)}
+.gi .act{grid-row:span 2;display:flex;gap:6px}
+.ggroup{border:1px solid var(--line);border-radius:16px;padding:8px;display:grid;gap:6px;background:var(--accent-soft)}
+.ggroup>.gh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:2px 4px;font-size:0.7647rem;color:var(--muted);flex-wrap:wrap}
+.ggroup>.gh b{color:var(--ink);font-weight:600}
+.edit{display:grid;gap:8px;background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:12px}
+
+/* seating */
+.seat-layout{display:grid;gap:14px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:900px){.seat-layout{grid-template-columns:300px minmax(0,1fr);align-items:start}.pool{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto}}
+.pool{display:grid;gap:8px;align-content:start}
+.pool-list{display:grid;gap:6px}
+.pc{display:grid;gap:2px;text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;touch-action:manipulation}
+.pc .pl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc small{font-size:0.7353rem;color:var(--muted)}
+.pc[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);background:var(--accent-soft)}
+.pool.drop-hot{outline:2px dashed var(--accent);outline-offset:4px;border-radius:16px}
+.tables{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1100px){.tables{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1500px){.tables{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.tcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;display:grid;gap:10px;min-width:0}
+.tcard.drop-hot,.tcard.can-drop{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.thead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tname{font-family:var(--f-display);font-weight:var(--d-weight);font-size:1.2941rem;line-height:1.1}
+.tcount{font-size:0.7647rem;color:var(--muted)}
+.tcount.full{color:var(--ok);font-weight:600}
+.tdiag{display:block;width:120px;height:auto;margin:0 auto}
+.tdiag .tb{fill:var(--accent-soft);stroke:var(--line-strong)}
+.tdiag .s0{fill:var(--surface);stroke:var(--line-strong)}
+.tdiag .s1{fill:var(--accent);stroke:var(--accent)}
+.tdiag text{font-family:var(--f-data);font-size:0.6471rem;fill:var(--muted)}
+.seats{display:grid;gap:4px}
+.seats.long{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:6px}
+.side-l{font-size:0.6765rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:2px 4px}
+.seat{display:grid;grid-template-columns:2.2em minmax(0,1fr);align-items:center;gap:6px;text-align:left;width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 8px;cursor:pointer;min-height:38px;touch-action:manipulation}
+.seat .sn{font-family:var(--f-data);font-size:0.7059rem;color:var(--muted)}
+.seat .who{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.8529rem}
+.seat.free .who{color:var(--muted);font-style:italic}
+.seat.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);background:var(--accent-soft)}
+.seat.drop-hot{background:var(--accent-soft);border-color:var(--accent)}
+.seat.grp .who::after{content:" ⚭";color:var(--accent)}
+.ghost{position:fixed;z-index:100;pointer-events:none;background:var(--accent);color:var(--surface);border-radius:12px;padding:8px 12px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);transform:translate(10px,10px);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+
+/* bottom action bar (phone-friendly) */
+.selbar{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);display:flex;justify-content:center}
+.selbar>div{max-width:720px;width:100%;display:grid;gap:8px}
+.selbar p{margin:0;font-size:0.8824rem;line-height:1.35}
+.selbar .btn{border-color:var(--bg);color:var(--bg);min-height:40px}
+.selbar .btn.primary{background:var(--bg);color:var(--ink)}
+.addt{display:grid;gap:10px}
+.addt .f3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.addt label{display:grid;gap:4px;font-size:0.7647rem;color:var(--muted)}
+.foot{font-size:0.7059rem;color:var(--muted);margin-top:18px}
+.foot a{color:var(--accent)}
+
+/* part 2: compact tables, quick fill, seating wishes */
+.tcard{padding:0;gap:0;overflow:hidden}
+.trow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline;text-align:left;width:100%;border:0;background:transparent;padding:12px 14px;cursor:pointer;color:inherit;touch-action:manipulation}
+.trow .tname{font-size:1.2353rem}
+.tcount{font-size:0.7941rem;color:var(--muted)}
+.tnames{grid-column:1/-1;font-size:0.7941rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.twarn{grid-column:1/-1;font-size:0.7647rem;color:var(--warn);font-weight:600}
+.twarn.hard{color:var(--danger)}
+.tcard.no-drop{opacity:.5}
+.tbody{display:grid;gap:10px;padding:0 12px 12px}
+.trow2{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.trow2 .tdiag{margin:0}
+.issues{margin:0;padding:8px 10px 8px 26px;border-radius:10px;background:var(--warn-soft);display:grid;gap:4px;font-size:0.7941rem}
+.issues li.hard{color:var(--danger);font-weight:600}
+.stools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fillbox{display:grid;gap:4px}
+.seats.long .fillbox{grid-column:1/-1}
+.fill{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;gap:6px;align-items:center;border:2px solid var(--accent);border-radius:10px;padding:4px 6px;background:var(--surface)}
+.fill .sn{font-family:var(--f-data);font-size:0.7059rem;color:var(--muted)}
+.fill input{border:0;background:transparent;padding:6px 2px}
+.sugg{display:grid;gap:4px}
+.sg{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;display:grid;gap:2px;cursor:pointer;color:inherit;min-height:44px}
+.sg small{color:var(--muted);font-size:0.7353rem}
+.sg.bad small{color:var(--danger)}
+.sg:disabled{opacity:.5;cursor:default}
+.seat.free .who{font-size:0.7647rem}
+.modes{display:grid;gap:6px}
+.modes button{text-align:left;border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:10px 12px;display:grid;gap:2px;cursor:pointer;color:inherit}
+.modes button span{font-size:0.7647rem;color:var(--muted)}
+.modes button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);background:var(--accent-soft)}
+.chipset{display:flex;flex-wrap:wrap;gap:6px}
+.chipt{border:1px solid var(--line-strong);background:transparent;border-radius:999px;padding:6px 12px;font-size:0.8235rem;cursor:pointer;color:inherit;min-height:36px}
+.chipt[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.chips-row{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.pill.bad{border-color:var(--danger);color:var(--danger);background:var(--danger-soft);display:inline-flex;align-items:center;gap:4px;white-space:normal}
+.pill .x{border:0;background:none;color:inherit;font-size:0.9412rem;line-height:1;padding:0 2px;cursor:pointer}
+.seg.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.seg.four button{font-size:0.8235rem}
+.seg2{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;padding:2px;gap:2px;background:var(--surface)}
+.seg2 button{border:0;background:transparent;border-radius:999px;padding:5px 10px;font-size:0.7353rem;cursor:pointer;color:inherit;white-space:nowrap}
+.seg2 button[aria-pressed="true"]{background:var(--accent);color:var(--surface);font-weight:600}
+.ggroup.loose{background:transparent;border-style:dashed}
+.ws{display:grid;grid-template-columns:minmax(0,7.5em) minmax(0,1fr);gap:8px;align-items:center;font-size:0.8235rem}
+.searchrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.linkbtn{border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0;font-size:inherit}
+.tables-col{display:grid;gap:12px;min-width:0}
+.tables{align-items:start}
+.pl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* part 3: print and export. Paper is always white, so these colours are fixed on purpose. */
+:root{--paper:#FFFFFF;--pink:#2A2420;--pmuted:#6F6458;--paccent:#8C6A3C;--pline:#D6C8B4}
+#measure{position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none}
+#print{display:none}
+.outs{display:grid;gap:8px}
+@media (min-width:900px){.outs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.outb{text-align:left;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:2px;cursor:pointer;color:inherit}
+.outb b{font-family:var(--f-display);font-size:1.1765rem}
+.outb span{font-size:0.7941rem;color:var(--muted)}
+.labvis{display:grid;gap:6px}
+.lvd summary{cursor:pointer;font-weight:600;padding:4px 0;min-height:32px}
+.lvd[open] summary{margin-bottom:8px}
+.lv{display:flex;justify-content:space-between;align-items:center;gap:6px 10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:4px 0 8px}
+.pvw{display:grid;gap:6px;justify-items:center}
+.pvp{position:relative;box-shadow:0 2px 12px rgba(40,25,10,.22);background:#fff;overflow:hidden}
+.pvs{transform-origin:0 0;position:absolute;left:0;top:0}
+.pvn{font-size:0.7059rem;color:var(--muted);margin-bottom:8px}
+.sheet{font-variant-numeric:lining-nums;font-feature-settings:'lnum' 1;background:var(--paper);color:var(--pink);box-sizing:border-box;padding:14mm 13mm;overflow:hidden;display:flex;flex-direction:column;font-family:var(--f-body);font-size:10pt;line-height:1.35;position:relative;color-scheme:light;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.ph{text-align:center;margin-bottom:7mm}
+.ph-k{font-size:8.5pt;letter-spacing:.22em;text-transform:uppercase;color:var(--paccent);font-weight:600}
+.ph-t{font-family:var(--f-display);font-weight:700;font-size:30pt;line-height:1.05;margin-top:2mm}
+.ph-d{font-size:10.5pt;color:var(--pmuted);margin-top:1.5mm}
+.ph.small{margin-bottom:4mm}
+.flow{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));grid-template-rows:minmax(0,1fr);column-gap:7mm}
+.fcol{min-height:0;overflow:hidden}
+.pt-table{padding:0 0 calc(5mm * var(--z,1))}
+.pt-tname{font-family:var(--f-display);font-weight:700;font-size:calc(15pt * var(--z,1));line-height:1.15;border-bottom:.3mm solid var(--pline);padding-bottom:1mm;margin-bottom:1.5mm}
+.pt-tname span{font-family:var(--f-body);font-size:8pt;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--pmuted)}
+.pt-names{list-style:none;margin:0;padding:0;font-size:calc(10pt * var(--z,1))}
+.pt-names li{padding:.35mm 0}
+.pt-empty{color:var(--pmuted);font-style:italic;font-size:9.5pt}
+.fs-key{text-align:center;font-size:9pt;color:var(--pmuted);margin:-4mm 0 5mm}
+.fs-letter{font-family:var(--f-display);font-weight:700;font-size:calc(17pt * var(--z,1));color:var(--paccent);line-height:1;margin:2.5mm 0 1mm}
+.fs-row{display:flex;align-items:baseline;gap:1.5mm;padding:.45mm 0;font-size:calc(10pt * var(--z,1))}
+.fs-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.fs-dots{flex:1 1 3mm;border-bottom:.3mm dotted var(--pline);min-width:3mm;align-self:center;transform:translateY(1mm)}
+.fs-t.word{font-family:var(--f-body);font-size:calc(8.5pt * var(--z,1));white-space:nowrap}
+.fs-row .fs-n{flex:0 1 auto;white-space:normal;overflow:visible;line-height:1.2}
+.fs-t{font-family:var(--f-data);font-size:calc(9.5pt * var(--z,1));white-space:nowrap;font-weight:500}
+.s-two{padding:0}
+.tc{height:50%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12mm 18mm;gap:5mm;overflow:hidden}
+.tc+.tc{border-top:.3mm dashed var(--pline)}
+.tc-k{font-size:9pt;letter-spacing:.22em;text-transform:uppercase;color:var(--paccent);font-weight:600}
+.tc-n{font-family:var(--f-display);font-weight:700;line-height:.85}
+.tc-n small{display:block;font-size:22pt;font-weight:600;font-style:italic;color:var(--paccent);line-height:1.2}
+.tc-n b{font-size:120pt;font-weight:700}
+.tc-n.word{font-size:52pt;line-height:1}
+.tc-n.word.long{font-size:36pt}
+.tc-names{font-size:11.5pt;color:var(--pmuted);max-width:160mm;line-height:1.6;text-wrap:balance}
+.tc-names.many{font-size:9pt}
+.s-cards{padding:0;align-items:center;justify-content:center}
+.cards{display:grid;grid-template-columns:repeat(2,88.9mm)}
+.pc-card{width:88.9mm;height:50.8mm;box-sizing:border-box;outline:.25mm dashed var(--pline);outline-offset:-.125mm;position:relative}
+.pc-card.fold{height:101.6mm}
+.pc-card.fold::after{content:"";position:absolute;left:0;right:0;top:50%;border-top:.25mm dotted var(--pline)}
+.pc-half{height:50.8mm;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2mm;padding:4mm 6mm;box-sizing:border-box;text-align:center;position:relative}
+.pc-half.top{transform:rotate(180deg)}
+.pc-name{font-family:var(--f-display);font-weight:700;font-size:22pt;line-height:1.05}
+.pc-name.long{font-size:17pt}.pc-name.xlong{font-size:13.5pt}
+.pc-t{font-size:8.5pt;letter-spacing:.2em;text-transform:uppercase;color:var(--paccent);font-weight:600}
+.pc-m{position:absolute;right:4mm;bottom:3mm;font-size:7.5pt;color:var(--pmuted)}
+.s-party{padding:16mm 14mm}
+.pty{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.pty-title{font-family:var(--f-display);font-style:italic;font-weight:700;font-size:calc(46pt * var(--k));text-align:center;line-height:1;margin:calc(3mm * var(--k)) 0 calc(9mm * var(--k))}
+.pty-grid{display:grid;grid-template-columns:repeat(var(--pc),minmax(0,1fr));gap:calc(5mm * var(--k)) 6mm;align-content:start}
+.pi{text-align:center;padding-top:calc(3mm * var(--k));border-top:.3mm solid var(--pline)}
+.pi-n{font-family:var(--f-display);font-weight:700;font-size:calc(40pt * var(--k));line-height:1;color:var(--paccent)}
+.pi-l{font-size:calc(10.5pt * var(--k));font-weight:600;text-transform:uppercase;letter-spacing:.12em;margin-top:1.2mm;line-height:1.25}
+.pi-names{font-size:calc(8.5pt * var(--k));color:var(--pmuted);margin-top:1.2mm;font-style:italic;line-height:1.3}
+.pty-foot{text-align:center;font-size:10pt;color:var(--pmuted);margin-top:auto;padding-top:5mm;border-top:.3mm solid var(--pline)}
+.mt{width:100%;border-collapse:collapse;font-size:10pt}
+.mt th,.mt td{border-bottom:.3mm solid var(--pline);padding:1.8mm 2mm;text-align:right;font-variant-numeric:tabular-nums}
+.mt th:first-child,.mt td:first-child{text-align:left}
+.mt thead th{font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:var(--paccent);font-weight:600}
+.mt tfoot td{font-weight:700;border-top:.5mm solid var(--pink);border-bottom:0}
+@media print{
+  html,body{background:#fff!important}
+  :root{padding:0!important}
+  body>*:not(#print){display:none!important}
+  #print{display:block!important}
+  #print .sheet{break-after:page;page-break-after:always}
+  #print .sheet:last-of-type{break-after:auto;page-break-after:auto}
+}
+
+.dtable{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.dtable table{border-collapse:collapse;font-size:0.7647rem;min-width:100%}
+.dtable th,.dtable td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.dtable th{font-size:0.6765rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.copyarea{min-height:280px;font-family:var(--f-data);font-size:0.8235rem;line-height:1.5}
+.howto{margin:0;padding-left:22px;display:grid;gap:6px;font-size:0.8529rem}
+
+/* part 5: share */
+.viewing nav.tabs,.viewing #hdr,.viewing .foot,.viewing header.top{display:none}
+.viewer{display:grid;gap:14px}
+.vh-head{text-align:center;padding:10px 0 4px}
+.vh-head .ph-k{font-size:0.7059rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.vh-t{font-family:var(--f-display);font-weight:700;font-size:2.3529rem;line-height:1.05;margin:6px 0 4px;text-wrap:balance}
+.vh-d{color:var(--muted)}
+.vhits{display:grid;gap:6px}
+.vhit{display:flex;justify-content:space-between;gap:12px;align-items:baseline;background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:1.0rem}
+.vhit b{font-family:var(--f-display);font-size:1.1765rem;white-space:nowrap}
+.vtables{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));align-items:start}
+.vt{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.vt-h{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:4px;margin-bottom:6px}
+.vt-h b{font-family:var(--f-display);font-size:1.2353rem}
+.vt-h span{color:var(--muted);font-size:0.7647rem}
+.vt ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.vmade{text-align:center;font-size:0.7647rem;color:var(--muted);margin:4px 0 0}
+.vmade a{color:var(--accent)}
+.linkarea{min-height:90px;font-family:var(--f-data);font-size:0.7059rem;word-break:break-all}
+.opt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center}
+.opt span{font-size:0.7941rem;color:var(--muted)}
+@media (max-width:380px){.opt{grid-template-columns:1fr}}
+.notice{border:1px solid var(--warn);background:var(--warn-soft);border-radius:14px;padding:12px 14px;display:grid;gap:6px}
+.notice p{margin:0;font-size:0.8235rem}
+nav.tabs button{padding-inline:2px}
+
+/* part 6: events */
+.evbar{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.evbar select{width:auto;flex:1 1 180px;max-width:100%}
+.evbar .hint{flex:1 1 200px}
+.evlist{display:grid;gap:8px}
+.evrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px}
+.evrow .btns{grid-column:1/-1}
+.pklist{display:grid;gap:4px;max-height:60vh;overflow:auto}
+.pk{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.pk input,.evck input{width:20px;height:20px;accent-color:var(--accent);margin:0}
+.evck{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;font-size:0.8235rem}
+
+/* part 7: settings, a2hs */
+.hdr-sub .linkbtn{font-size:0.7647rem}
+.tsizes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tsizes button,.themes button{border:1px solid var(--line-strong);background:var(--surface);border-radius:12px;padding:10px 6px;cursor:pointer;color:inherit}
+.tsizes button[aria-pressed="true"],.themes button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent);font-weight:600}
+.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.themes button{display:grid;gap:5px;justify-items:center;font-size:0.8235rem}
+.sw{display:flex;gap:2px}.sw i{width:12px;height:12px;border-radius:3px;display:block;outline:1px solid rgba(127,127,127,.25)}
+.a2hs{border:2px solid var(--danger);background:var(--danger-soft);border-radius:16px;padding:12px 14px;display:grid;gap:8px}
+.a2hs .rtag{color:var(--danger);font-weight:700;font-size:0.7353rem;letter-spacing:.06em;text-transform:uppercase}
+.a2hs h2{margin:0}
+.a2hs b.t{color:var(--danger);font-size:0.8824rem}
+.a2hs p{margin:0;font-size:0.8529rem;line-height:1.45}
+.a2hs ol{margin:0;padding-left:22px;display:grid;gap:6px;font-size:0.8529rem}
+.a2hs details summary,.card details summary{cursor:pointer;font-weight:600;color:var(--danger);font-size:0.8529rem;padding:4px 0}
+.card details summary{color:var(--accent)}
+.a2hs.gate p,.a2hs.gate ol{font-size:0.9412rem}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1 class="brand">Happily <em>Seated</em></h1>
+    <div class="hdr-sub" id="hdr"></div>
+    <nav class="tabs" id="tabs" aria-label="Views"></nav>
+  </header>
+  <main id="view"></main>
+  <p class="foot">Happily Seated 1.0.0 · made by Silent Tools · your plan stays on this device · <a href="../terms.html">Terms and privacy</a></p>
+</div>
+<div id="bar"></div>
+<div id="print"></div>
+
+<script src="../xlsx.full.min.js"></script>
+<script>
+(function(){
+/* ---------- storage ---------- */
+const KEY='seating.v1';
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const now=()=>new Date().toISOString();
+function fresh(){const ev=uid();return {schema:1,settings:{},events:[{id:ev,name:'Reception'}],cur:ev,guests:{},groups:{},tables:{[ev]:[]},seats:{[ev]:{}},rules:[]};}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schema===1&&d.guests)return d;}}catch(e){}return fresh();}
+let DB=load(),storageOk=true;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));storageOk=true;}catch(e){storageOk=false;}}
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ev=()=>DB.cur;
+const T=()=>DB.tables[ev()]||(DB.tables[ev()]=[]);
+const SM=()=>DB.seats[ev()]||(DB.seats[ev()]={});
+
+/* ---------- name parsing ---------- */
+const normName=s=>String(s||'').toLowerCase().replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+const tidy=s=>String(s||'').replace(/\s+/g,' ').trim();
+const words=s=>tidy(s).split(' ').filter(Boolean);
+const TITLE=/^(dr|mr|mrs|ms|miss|mx|prof|rev|aunt|uncle|grandma|grandpa)\.?$/i;
+const GENERIC=/^(?:guest|plus[ -]?one|\+ ?1|guest\s*\(plus[ -]?one\)|\(plus one\))$/i;
+const nWords=s=>words(s).filter(w=>!TITLE.test(w)).length;
+function surnameOf(base){
+  let s=tidy(base).replace(/^the\s+/i,'').replace(/\s+(family|household|party)$/i,'');
+  if(/^the\s+/i.test(tidy(base))&&/[^s]s$/i.test(s)&&!/ss$/i.test(s))s=s.replace(/s$/i,'');
+  return s;
+}
+/* One line of a guest list -> {members:[...], group:'name'|null} */
+function parseLine(raw){
+  let line=tidy(String(raw).replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu,'').replace(/^\s*(?:[-*•·–]|\d{1,3}[.)])\s+/,''));
+  if(!line||/:\s*$/.test(line)||/^(bride|groom)'?s?\s+(side|family|friends)$/i.test(line))return null;
+  line=line.replace(/[;,.]+$/,'');
+  let extra=0,m;
+  if((m=line.match(/^(.*?)\s*(?:\+\s*(\d{1,2})|\bplus\s+(one|two|1|2))$/i))&&m[1]){
+    extra=m[2]?+m[2]:({one:1,two:2}[String(m[3]).toLowerCase()]||+m[3]);line=tidy(m[1]);
+  }
+  let count=0;
+  if((m=line.match(/^(.*?)\s*[(\[]\s*(\d{1,2})\s*[)\]]$/))&&m[1]){count=+m[2];line=tidy(m[1]);}
+  else if((m=line.match(/^(.*?)\s*[x×]\s*(\d{1,2})$/i))&&m[1]){count=+m[2];line=tidy(m[1]);}
+  let parts=line.split(/\s+(?:&|and|\+|und|ja)\s+|\s*&\s*/i).map(tidy).filter(Boolean);
+  if(parts.length>1)parts=parts.flatMap(x=>x.split(',')).map(tidy).filter(Boolean);
+  if(parts.length===1&&line.includes(',')){
+    const c=line.split(',').map(tidy).filter(Boolean);
+    if(c.length===2&&words(c[0]).length===1&&words(c[1]).length===1)parts=[c[1]+' '+c[0]];
+    else if(c.length>=2)parts=c;
+  }
+  let members=parts.slice(),group=null;
+  if(members.length>1){
+    const multi=members.filter(p=>nWords(p)>=2&&!GENERIC.test(p)),src=nWords(members[members.length-1])>=2?members[members.length-1]:multi[0];
+    if(src){const sur=words(src).filter(w=>!TITLE.test(w)).slice(1).join(' ');members=members.map(p=>nWords(p)===1&&!GENERIC.test(p)?p+' '+sur:p);}
+    members=members.map(p=>GENERIC.test(p)?`Guest of ${members.find(x=>!GENERIC.test(x))||'party'}`:p);
+    group=members.length===2?members.join(' & '):members.join(', ');
+  }
+  const isFamily=members.length===1&&(count>1||/^the\s|\s(family|household)$/i.test(members[0]));
+  if(isFamily){
+    const base=members[0],sur=surnameOf(base),n=Math.max(count,2);
+    group=/^the\s/i.test(base)?base:(/family$/i.test(base)?'The '+base:'The '+sur+' family');
+    members=[];for(let i=1;i<=n;i++)members.push(`${sur} guest ${i}`);
+    count=0;
+  } else if(count>members.length){
+    const sur=words(members[members.length-1]).slice(1).join(' ')||members[0];
+    for(let i=members.length;i<count;i++)members.push(`${sur} guest ${i+1}`);
+    group=group||members[0]+"'s party";
+  }
+  if(extra){
+    const host=members[0];
+    for(let i=1;i<=extra;i++)members.push(extra===1?`Guest of ${host}`:`Guest ${i} of ${host}`);
+    group=group||`${host} +${extra}`;
+  }
+  if(members.length<2)group=null;
+  return {members,group};
+}
+function normSide(v){const s=String(v||'').toLowerCase();if(/both|mutual|couple|shared/.test(s))return 'both';if(/bride|\bher\b|hers/.test(s))return 'bride';if(/groom|\bhis\b/.test(s))return 'groom';return '';}
+/* a heading line like "Bride's side:" sets the side for the lines below it */
+function sideHeading(line){const l=tidy(String(line).replace(/[\p{Extended_Pictographic}\u{FE0F}\u{200D}]/gu,''));if(!l||l.length>40)return null;if(!(/:\s*$/.test(l)||/^(bride|groom)'?s?\s+(side|family|friends|guests)$/i.test(l)))return null;const s=normSide(l);return s||null;}
+/* columns for pasted Excel rows and imported files */
+const FIELDS=[['skip','— ignore —'],['name','Full name'],['first','First name'],['last','Last name'],['group','Party / household'],['meal','Meal choice'],['tags','Labels'],['note','Note'],['more','Also coming (names)'],['rsvp','RSVP answer'],['side','Side (bride or groom)']];
+function guessField(h){
+  const s=String(h||'').toLowerCase().trim();
+  if(!s)return 'skip';
+  if(/^side$|whose side|bride or groom|guest of/.test(s))return 'side';
+  if(/number|count|how many|#|timestamp|e-?mail|phone|address|type|table/.test(s))return 'skip';
+  if(/with you|companion|plus.?one|additional|other guest|who.*com|guest names/.test(s))return 'more';
+  if(/rsvp|attend|joining|status|will you|response/.test(s))return 'rsvp';
+  if(/know|message|allerg|dietary|note|comment|remark/.test(s))return 'note';
+  if(/first|given/.test(s))return 'first';
+  if(/last|surname|family name/.test(s))return 'last';
+  if(/party|household|group|invit|family|couple/.test(s))return 'group';
+  if(/meal|entr[eé]e|menu|dinner|food|course/.test(s))return 'meal';
+  if(/tag|label|role|job|hobby/.test(s))return 'tags';
+  if(/note|comment|remark/.test(s))return 'note';
+  if(/name|guest/.test(s))return 'name';
+  return 'skip';
+}
+function looksHeader(row){return row.some(c=>guessField(c)!=='skip')&&!row.some(c=>/\s&\s/.test(String(c||'')));}
+function parseRows(rows,mapping){
+  rows=rows.map(r=>r.map(c=>tidy(c==null?'':String(c)))).filter(r=>r.some(Boolean));
+  if(!rows.length)return {items:[],header:null,mapping:[]};
+  let header=null;
+  if(looksHeader(rows[0])){header=rows.shift();}
+  const width=Math.max(...rows.map(r=>r.length),header?header.length:0);
+  if(!mapping)mapping=[...Array(width)].map((_,i)=>header?guessField(header[i]):(i===0?'name':'skip'));
+  const col=f=>mapping.indexOf(f);
+  const iN=col('name'),iF=col('first'),iL=col('last'),iG=col('group'),iM=col('meal'),iT=col('tags'),iNo=col('note'),iMo=col('more'),iR=col('rsvp'),iS=col('side');
+  const items=[],byGroup={};let declined=0;
+  for(const r of rows){
+    const g=k=>k>=0?(r[k]||''):'';
+    let nm=iF>=0||iL>=0?tidy(g(iF)+' '+g(iL)):g(iN);
+    if(!nm)continue;
+    const ans=g(iR);
+    if(ans&&!/no response|pending|awaiting|maybe|not yet/i.test(ans)&&/^\s*(no\b|not\b|declin|regret|sorry|can.?t|cannot|won.?t|unable)/i.test(ans)){declined++;continue;}
+    const more=g(iMo).replace(/^(none|no|n\/a|-|just me)$/i,'');
+    const p=parseLine(more?nm+' & '+more.replace(/\s+and\s+/gi,', '):nm);if(!p)continue;
+    if(more&&p.members.length>1&&!p.group)p.group=p.members.join(' & ');
+    const extra={side:normSide(g(iS)),meal:g(iM),tags:g(iT)?g(iT).split(/[,;]/).map(tidy).filter(Boolean):[],note:g(iNo)};
+    const people=p.members.map(n=>({name:n,...extra}));
+    const gk=g(iG);
+    if(gk){
+      if(byGroup[gk]){byGroup[gk].people.push(...people);continue;}
+      byGroup[gk]={people,group:gk};items.push(byGroup[gk]);
+    } else items.push({people,group:p.group});
+  }
+  items.forEach(it=>{
+    const host=(it.people.find(x=>!GENERIC.test(x.name)&&!/^guest\b|plus one/i.test(x.name))||{}).name;
+    it.people.forEach(x=>{if(GENERIC.test(x.name)||/^guest\s*\(?plus|\(plus one\)$/i.test(x.name))x.name=host?`Guest of ${host}`:'Guest';});
+    if(it.people.length<2)it.group=null;else if(!it.group||/ party$/i.test(it.group)&&false)it.group=it.people.map(x=>x.name).join(' & ');});
+  return {items,header,mapping,declined};
+}
+function parseText(text){
+  const lines=String(text||'').split(/\r?\n/);
+  const tabbed=lines.filter(l=>l.includes('\t')).length;
+  if(tabbed>=Math.max(1,lines.filter(l=>l.trim()).length*0.5))return {kind:'rows',rows:lines.filter(l=>l.trim()).map(l=>l.split('\t'))};
+  let ls=lines;
+  if(lines.filter(l=>l.trim()).length===1&&/;/.test(lines.join('')))ls=lines.join('').split(';');
+  const items=[];let side='';
+  for(const l of ls){const h=sideHeading(l);if(h){side=h;continue;}const p=parseLine(l);if(p)items.push({people:p.members.map(n=>({name:n,side,meal:'',tags:[],note:''})),group:p.group});}
+  return {kind:'lines',items};
+}
+/* mark duplicates against the list and within the batch */
+function markDupes(items){
+  const have=new Set(Object.values(DB.guests).map(g=>normName(g.name))),seen=new Set();
+  for(const it of items)for(const p of it.people){const k=normName(p.name);p.dupe=have.has(k)?'already on your list':seen.has(k)?'twice in this list':'';seen.add(k);}
+  for(const it of items)it.on=!it.people.every(p=>p.dupe);
+  return items;
+}
+
+/* ---------- guests, groups and seating wishes ---------- */
+function addItems(items){
+  let n=0;const t=now();
+  for(const it of items){
+    if(!it.on)continue;
+    const people=it.people.filter(p=>!p.dupe||it.keepDupes);
+    if(!people.length)continue;
+    let gid=null;
+    if(it.group&&people.length>1){gid=uid();DB.groups[gid]={id:gid,name:it.group,kind:'must'};}
+    for(const p of people){const id=uid();DB.seq=(DB.seq||0)+1;DB.guests[id]={id,ord:DB.seq,name:p.name,groupId:gid,side:p.side||'',meal:p.meal||'',tags:p.tags||[],note:p.note||'',events:[ev()],createdAt:t,updatedAt:t};n++;}
+  }
+  save();return n;
+}
+const byOrd=(a,b)=>(a.ord||0)-(b.ord||0)||a.createdAt.localeCompare(b.createdAt);
+const inEv=(g,eid)=>!Array.isArray(g.events)||g.events.includes(eid||DB.cur);
+const EG=()=>Object.values(DB.guests).filter(g=>inEv(g));
+const multiEv=()=>DB.events.length>1;
+const evName=()=>(DB.events.find(e=>e.id===DB.cur)||{}).name||'';
+const members=gid=>Object.values(DB.guests).filter(g=>g.groupId===gid).sort((a,b)=>byOrd(a,b));
+const grp=id=>{const g=DB.guests[id];return g&&g.groupId&&DB.groups[g.groupId]||null;};
+const isMust=gr=>!!gr&&gr.kind!=='prefer';
+const firstName=n=>String(n).split(' ')[0];
+function cleanGroups(){
+  for(const gid of Object.keys(DB.groups)){const m=members(gid);if(m.length<2){m.forEach(g=>g.groupId=null);delete DB.groups[gid];}}
+  DB.rules=(DB.rules||[]).filter(r=>DB.guests[r.a]&&DB.guests[r.b]);
+}
+function removeGuest(id){unseat([id]);delete DB.guests[id];cleanGroups();save();}
+const apartOf=id=>(DB.rules||[]).filter(r=>r.kind==='apart'&&(r.a===id||r.b===id)).map(r=>r.a===id?r.b:r.a).filter(x=>DB.guests[x]);
+function addApart(a,b){if(!a||!b||a===b)return;DB.rules=DB.rules||[];if(!apartOf(a).includes(b))DB.rules.push({id:uid(),kind:'apart',a,b});save();}
+function removeApart(a,b){DB.rules=(DB.rules||[]).filter(r=>!(r.kind==='apart'&&((r.a===a&&r.b===b)||(r.a===b&&r.b===a))));save();}
+/* "Sit with": join the other guest's group, or start a together-if-possible pair */
+function joinWith(id,other){
+  const g=DB.guests[id],o=DB.guests[other];if(!g||!o||id===other)return;
+  if(o.groupId&&DB.groups[o.groupId])g.groupId=o.groupId;
+  else if(g.groupId&&DB.groups[g.groupId])o.groupId=g.groupId;
+  else{const gid=uid();DB.groups[gid]={id:gid,name:`${o.name} & ${g.name}`,kind:'prefer'};g.groupId=o.groupId=gid;}
+  removeApart(id,other);g.updatedAt=o.updatedAt=now();cleanGroups();save();
+}
+function allTags(){const m=new Map();for(const g of Object.values(DB.guests))for(const t of g.tags||[]){const k=t.toLowerCase();if(!m.has(k))m.set(k,t);}return [...m.values()].sort((a,b)=>a.localeCompare(b));}
+const tagSet=ids=>new Set(ids.flatMap(id=>(DB.guests[id].tags||[]).map(x=>x.toLowerCase())));
+function sideOfUnit(u){const c={};u.ids.forEach(id=>{const s=DB.guests[id].side;if(s)c[s]=(c[s]||0)+1;});return Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||'';}
+const SIDE_LABEL={bride:'Bride’s side',groom:'Groom’s side',both:'Both sides'};
+
+/* ---------- seating ---------- */
+function seatOf(id){const sm=SM();for(const tid in sm){const i=sm[tid].indexOf(id);if(i>=0)return {tid,i};}return null;}
+function unseat(ids){const sm=SM();for(const tid in sm)sm[tid]=sm[tid].map(x=>ids.includes(x)?null:x);}
+const tableById=tid=>T().find(t=>t.id===tid);
+const arr=tid=>{const t=tableById(tid),sm=SM();if(!sm[tid])sm[tid]=[];while(sm[tid].length<t.seats)sm[tid].push(null);sm[tid].length=t.seats;return sm[tid];};
+const free=tid=>arr(tid).filter(x=>!x||!DB.guests[x]).length;
+const seated=()=>{const s=new Set();for(const a of Object.values(SM()))a.forEach(x=>x&&s.add(x));return s;};
+/* order to walk the seats from a start seat, so a group sits side by side */
+function walk(t,start){
+  const n=t.seats,o=[];
+  if(t.shape==='long'){const k=Math.ceil(n/2),side=start<k?0:1,a=side?[...Array(n-k)].map((_,i)=>k+i):[...Array(k)].map((_,i)=>i),b=side?[...Array(k)].map((_,i)=>i):[...Array(n-k)].map((_,i)=>k+i);
+    const pos=a.indexOf(start);return [...a.slice(pos),...a.slice(0,pos).reverse(),...b];}
+  for(let i=0;i<n;i++)o.push((start+i)%n);return o;
+}
+let HIST=[];
+function snapshot(){HIST.push(JSON.stringify(SM()));if(HIST.length>50)HIST.shift();}
+function undo(){const s=HIST.pop();if(s==null)return false;DB.seats[ev()]=JSON.parse(s);save();return true;}
+/* place ids at table tid, starting at seat (or first free). Returns '' or an error message. */
+function place(ids,tid,seat){
+  const t=tableById(tid);if(!t||!ids.length)return 'Nothing to place.';
+  const before=JSON.stringify(SM());
+  const from=ids.length===1?seatOf(ids[0]):null;
+  unseat(ids);
+  const a=arr(tid);
+  if(ids.length===1&&seat!=null){
+    const occ=a[seat];
+    a[seat]=ids[0];
+    if(occ&&occ!==ids[0]){if(from&&!(from.tid===tid&&from.i===seat))arr(from.tid)[from.i]=occ;}
+    return '';
+  }
+  const order=walk(t,seat==null?Math.max(0,a.findIndex(x=>!x)):seat).filter(i=>!a[i]);
+  if(order.length<ids.length){DB.seats[ev()]=JSON.parse(before);return `${t.name} has ${order.length} free ${order.length===1?'seat':'seats'}, and ${ids.length} people need one.`;}
+  ids.forEach((id,k)=>a[order[k]]=id);
+  return '';
+}
+function addTables(shape,seats,count){
+  const list=T();let next=list.reduce((m,t)=>{const k=+(String(t.name).match(/^Table (\d+)$/)||[])[1];return k>m?k:m;},0);
+  for(let i=0;i<count;i++){const id=uid();list.push({id,name:`Table ${++next}`,shape,seats});SM()[id]=Array(seats).fill(null);}
+  save();
+}
+function resizeTable(tid,seats){const t=tableById(tid);const a=arr(tid);const bumped=a.slice(seats).filter(Boolean);t.seats=seats;const n=arr(tid);bumped.forEach(id=>{const k=n.indexOf(null);if(k>=0)n[k]=id;});const lost=bumped.filter(id=>!n.includes(id)).length;save();return lost;}
+function deleteTable(tid){DB.tables[ev()]=T().filter(t=>t.id!==tid);delete SM()[tid];save();}
+/* who a seat touches: next to (and across, at a long table) */
+function neighbours(t,i){
+  const n=t.seats;
+  if(t.shape==='long'){const k=Math.ceil(n/2),side=i<k?0:1,j=side?i-k:i,len=side?n-k:k,base=side?k:0,o={next:[],across:[]};
+    if(j>0)o.next.push(base+j-1);if(j<len-1)o.next.push(base+j+1);const acr=side?j:k+j;if(acr<n&&(side?acr<k:true))o.across.push(acr);return o;}
+  return {next:n>1?[...new Set([(i+n-1)%n,(i+1)%n])].filter(x=>x!==i):[],across:[]};
+}
+
+/* ---------- what each table needs to know ---------- */
+const seatedAt=tid=>arr(tid).filter(x=>x&&DB.guests[x]);
+function tableIssues(tid){
+  const ids=seatedAt(tid),set=new Set(ids),out=[],seen=new Set();
+  for(const id of ids)for(const o of apartOf(id))if(set.has(o)){const k=[id,o].sort().join();if(!seen.has(k)){seen.add(k);out.push({hard:true,text:`${DB.guests[id].name} and ${DB.guests[o].name} are meant to be kept apart.`});}}
+  for(const id of ids){const gr=grp(id);if(!gr)continue;
+    for(const m of members(gr.id)){if(m.id===id||set.has(m.id))continue;const at=seatOf(m.id);const k='w'+[id,m.id].sort().join();
+      if(at&&!seen.has(k)){seen.add(k);out.push({hard:false,text:`${DB.guests[id].name} ${isMust(gr)?'came with':'would like to sit with'} ${m.name}, who is at ${tableById(at.tid).name}.`});}}}
+  return out;
+}
+/* how well a unit of guests fits a table; -1e9 means it must not go there */
+function unitScore(u,tid,mode){
+  const ids=seatedAt(tid).filter(x=>!u.ids.includes(x)),set=new Set(ids);let s=0;
+  for(const id of u.ids){
+    if(apartOf(id).some(o=>set.has(o)))return -1e9;
+    const gr=grp(id);if(gr)for(const m of members(gr.id))if(set.has(m.id))s+=isMust(gr)?80:50;
+  }
+  const ut=tagSet(u.ids),tt=ids.flatMap(id=>(DB.guests[id].tags||[]).map(x=>x.toLowerCase()));
+  const overlap=tt.filter(x=>ut.has(x)).length,tagged=ids.filter(id=>(DB.guests[id].tags||[]).length).length;
+  const us=sideOfUnit(u),sides=ids.map(id=>DB.guests[id].side).filter(x=>x&&x!=='both');
+  const same=us&&us!=='both'?sides.filter(x=>x===us).length:0,other=us&&us!=='both'?sides.filter(x=>x!==us).length:0;
+  if(mode==='side'){s+=same*6-other*8+overlap;if(!ids.length&&us&&us!=='both')s+=2;s+=ids.length*.1;}
+  else if(mode==='mix'){s-=overlap*5;s+=(ut.size?tagged:0)*.5;s-=ids.length*.6;}
+  else{s+=overlap*6+same-other;if(ut.size&&!overlap)s+=ids.length?-tagged*.5:3;s+=ids.length*.1;}
+  return s;
+}
+function why(u,tid){
+  const ids=seatedAt(tid).filter(x=>!u.ids.includes(x)),set=new Set(ids),r=[];
+  for(const id of u.ids){const c=apartOf(id).find(o=>set.has(o));if(c)return {bad:true,text:`Keep apart from ${DB.guests[c].name}`};}
+  for(const id of u.ids){const gr=grp(id);if(!gr)continue;const m=members(gr.id).find(x=>x.id!==id&&set.has(x.id));if(m){r.push(`Sits with ${m.name}`);break;}}
+  const tt=tagSet(ids),sh=[...new Set(u.ids.flatMap(id=>DB.guests[id].tags||[]))].filter(x=>tt.has(x.toLowerCase()));
+  if(sh.length)r.push('Also '+sh.slice(0,2).join(', '));
+  const us=sideOfUnit(u);if(us&&us!=='both'&&ids.some(id=>DB.guests[id].side===us))r.push(SIDE_LABEL[us]);
+  return {bad:false,text:r.join(' · ')};
+}
+function seatForMe(mode){
+  snapshot();
+  const freq={};Object.values(DB.guests).forEach(g=>(g.tags||[]).forEach(t=>{t=t.toLowerCase();freq[t]=(freq[t]||0)+1;}));
+  const uf=u=>Math.max(0,...u.ids.flatMap(id=>(DB.guests[id].tags||[]).map(t=>freq[t.toLowerCase()]||0)));
+  const units=poolUnits().sort((a,b)=>b.ids.length-a.ids.length||(mode==='side'?sideOfUnit(a).localeCompare(sideOfUnit(b)):uf(b)-uf(a)));
+  let placed=0,left=0;
+  for(const u of units){
+    let best=null,bs=-Infinity;
+    for(const t of T()){if(free(t.id)<u.ids.length)continue;const sc=unitScore(u,t.id,mode);if(sc>bs){bs=sc;best=t;}}
+    if(!best||bs<=-1e8||place(u.ids,best.id,null)){left+=u.ids.length;continue;}
+    placed+=u.ids.length;
+  }
+  if(!placed)HIST.pop();
+  save();return {placed,left};
+}
+
+/* ---------- state ---------- */
+const S={tab:'guests',inMode:'paste',paste:'',preview:null,msg:'',toast:'',editId:null,ed:null,q:'',sel:null,only:false,tmsg:'',amsg:'',addT:{shape:'round',seats:8,count:0},addOpen:false,editT:null,openT:null,showPool:false,fill:null,fillQ:'',auto:false,mode:'labels',out:null,oo:{sort:'last',names:true,pstyle:'flat',meal:true,crow:'guest',tline:'lines'},pvw:358,pages:null,omsg:'',oerr:false};
+const MAXSEATS=120;
+const isWide=()=>!!(window.matchMedia&&matchMedia('(min-width:900px)').matches);
+
+/* ---------- header and tabs ---------- */
+function renderTop(){
+  const g=EG().map(g=>g.id).length,s=seated().size,t=T().length;
+  document.getElementById('hdr').innerHTML=(g?`<span class="num">${s}</span> of <span class="num">${g}</span> seated · <span class="num">${t}</span> ${t===1?'table':'tables'} · `:'')+`<button class="linkbtn" data-act="open-settings">Settings</button>`;
+  document.getElementById('tabs').innerHTML=[['guests','Guests'],['seating','Seating'],['print','Print'],['share','Share']].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}>${l}</button>`).join('');
+}
+
+/* ---------- Guests view ---------- */
+function inputCard(){
+  const m=S.inMode;
+  let h=`<section class="card"><h2 style="margin:0">Add guests</h2>
+  <div class="seg" role="group" aria-label="How to add"><button data-in="paste" aria-pressed="${m==='paste'}">Paste a list</button><button data-in="file" aria-pressed="${m==='file'}">From a file</button><button data-in="type" aria-pressed="${m==='type'}">One by one</button></div>`;
+  if(S.preview)return h+previewHtml()+`</section>`;
+  if(m==='paste')h+=`<p class="hint">Paste names from an email, WhatsApp, Notes, or copy the columns straight from Excel or Google Sheets. One guest or one couple per line.</p>
+    <textarea id="paste" placeholder="Bride’s side:&#10;Anna & Mark Smith&#10;Jessica Lee +1&#10;The Johnsons (4)&#10;Groom’s side:&#10;Uncle Bob">${esc(S.paste)}</textarea>
+    <p class="hint">“Anna &amp; Mark Smith” becomes a couple that sits together. “+1” adds a plus-one. “(4)” makes a family of four. A line like “Bride’s side:” marks the side for the names below it.</p>
+    <div class="btns"><button class="btn primary" data-act="parse">Check the list</button></div>`;
+  else if(m==='file')h+=`<p class="hint">An Excel or CSV file: your own guest list, Google Forms answers, or an export from your RSVP website (The Knot, Zola and others). Next you choose which column is which.</p>
+    <div class="btns"><label class="btn primary" for="gfile">Choose a file</label><input id="gfile" class="vh" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt,.ods"></div>`;
+  else h+=`<form id="one" class="btns" autocomplete="off" style="flex-wrap:nowrap"><input id="one-name" type="text" placeholder="Guest name" aria-label="Guest name" style="flex:1"><button class="btn primary" type="submit">Add</button></form>
+    <p class="hint">Typing “Anna &amp; Mark Smith” adds a couple. Press Enter to add the next guest.</p>`;
+  if(S.msg)h+=`<p class="msg" role="alert">${esc(S.msg)}</p>`;
+  if(S.toast)h+=`<p class="toast" role="status">${esc(S.toast)}</p>`;
+  return h+`</section>`;
+}
+function previewHtml(){
+  const p=S.preview,its=p.items,on=its.filter(i=>i.on),n=on.reduce((s,i)=>s+i.people.filter(x=>!x.dupe||i.keepDupes).length,0),d=its.reduce((s,i)=>s+i.people.filter(x=>x.dupe).length,0),grp=on.filter(i=>i.group).length;
+  let h='';
+  if(p.mapping&&p.mapping.length>1||p.header){
+    h+=`<div class="lbl">Which column is which?</div><div class="map">${p.mapping.map((f,i)=>`<label><span>${esc(p.header?p.header[i]||`Column ${i+1}`:`Column ${i+1}`)}${p.sample&&p.sample[i]?` <span class="muted">· ${esc(p.sample[i])}</span>`:''}</span><select data-map="${i}">${FIELDS.map(([k,l])=>`<option value="${k}" ${f===k?'selected':''}>${l}</option>`).join('')}</select></label>`).join('')}</div>`;
+  }
+  h+=`<div class="row"><div class="lbl">Found ${its.reduce((s,i)=>s+i.people.length,0)} guests</div>${grp?`<span class="pill grp">${grp} couples and families</span>`:''}${d?`<span class="pill warn">${d} possible ${d===1?'duplicate':'duplicates'}</span>`:''}</div>${p.declined?`<p class="hint">${p.declined} ${p.declined===1?'guest':'guests'} said they can’t come and ${p.declined===1?'is':'are'} left out.</p>`:''}`;
+  if(!its.length)h+=`<p class="msg">No names found. Check the columns above, or go back and paste again.</p>`;
+  h+=`<div class="pv">${its.map((it,i)=>{const x0=it.people[0],sides=[...new Set(it.people.map(x=>x.side).filter(Boolean))];
+    return `<label class="pv-item ${it.on?'':'off'}"><input type="checkbox" data-pv="${i}" ${it.on?'checked':''}><span class="pv-names">${it.people.map(x=>`${esc(x.name)}${x.dupe?` <span class="pill warn">${x.dupe}</span>`:''}`).join(it.group?' &amp; ':'')}</span>
+    ${it.group||x0.meal||x0.tags.length||sides.length?`<span class="pv-meta">${it.group?`<span class="pill grp">${it.group===it.people.map(x=>x.name).join(' & ')?'':esc(it.group)+' · '}${it.people.length===2?'couple, sits together':it.people.length+' sit together'}</span>`:''}${sides.map(s=>`<span class="pill">${SIDE_LABEL[s]}</span>`).join('')}${x0.meal?`<span class="pill">${esc(x0.meal)}</span>`:''}${x0.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</span>`:''}</label>`;}).join('')}</div>
+  <p class="hint">Untick anything you don’t want. You can rename guests and change who sits together later.</p>
+  <div class="btns"><button class="btn primary" data-act="add-preview" ${n?'':'disabled'}>Add ${n} ${n===1?'guest':'guests'}</button><button class="btn" data-act="cancel-preview">Back</button></div>`;
+  return h;
+}
+function editPanel(g){
+  const e=S.ed,gr=grp(g.id),ap=apartOf(g.id);
+  const others=Object.values(DB.guests).filter(x=>x.id!==g.id).sort((a,b)=>a.name.localeCompare(b.name));
+  const tags=[...new Map([...allTags(),...e.tags].map(t=>[t.toLowerCase(),t])).values()];
+  return `<div class="edit">
+    <label class="lbl" for="e-name">Name</label><input id="e-name" type="text" value="${esc(e.name)}">
+    <div class="lbl">Side</div>
+    <div class="seg four" role="group" aria-label="Side">${[['bride','Bride'],['groom','Groom'],['both','Both'],['','Not set']].map(([k,l])=>`<button type="button" data-eside="${k}" aria-pressed="${e.side===k}">${l}</button>`).join('')}</div>
+    <div class="lbl">Labels</div>
+    ${tags.length?`<div class="chipset">${tags.map(t=>`<button type="button" class="chipt" data-etag="${esc(t)}" aria-pressed="${e.tags.some(x=>x.toLowerCase()===t.toLowerCase())}">${esc(t)}</button>`).join('')}</div>`:''}
+    <div class="searchrow"><input id="e-tag" type="text" maxlength="30" placeholder="New label, e.g. golfer" aria-label="New label"><button type="button" class="btn small" data-act="e-addtag">Add</button></div>
+    ${multiEv()?`<div class="lbl">Coming to</div><div class="chipset">${DB.events.map(e=>`<label class="evck"><input type="checkbox" data-eev="${e.id}" ${S.ed.events.includes(e.id)?'checked':''}> ${esc(e.name)}</label>`).join('')}</div>`:''}
+    <label class="lbl" for="e-meal">Meal</label><input id="e-meal" type="text" value="${esc(e.meal)}" placeholder="e.g. Chicken">
+    <div class="lbl">Seating wishes</div>
+    ${gr?`<p class="hint">In <b>${esc(gr.name)}</b>, ${isMust(gr)?'always together':'together if possible'}. <button type="button" class="linkbtn" data-act="e-split" data-id="${g.id}">Take ${esc(firstName(g.name))} out of this group</button></p>`:''}
+    <label class="ws" for="e-with"><span>Sit with</span><select id="e-with"><option value="">Choose a guest…</option>${others.filter(o=>!gr||o.groupId!==gr.id).map(o=>`<option value="${o.id}">${esc(o.name)}</option>`).join('')}</select></label>
+    ${ap.length?`<div class="chipset">${ap.map(o=>`<span class="pill bad">Apart from ${esc(DB.guests[o].name)} <button type="button" class="x" data-unapart="${o}" aria-label="Stop keeping apart from ${esc(DB.guests[o].name)}">×</button></span>`).join('')}</div>`:''}
+    <label class="ws" for="e-apart"><span>Keep apart from</span><select id="e-apart"><option value="">Choose a guest…</option>${others.filter(o=>!ap.includes(o.id)&&!(gr&&o.groupId===gr.id)).map(o=>`<option value="${o.id}">${esc(o.name)}</option>`).join('')}</select></label>
+    <div class="btns"><button class="btn primary small" data-act="e-save" data-id="${g.id}">Save</button><button class="btn small" data-act="e-cancel">Cancel</button><button class="btn danger small" data-act="e-del" data-id="${g.id}">Remove guest</button></div></div>`;
+}
+function guestRow(g){
+  if(S.editId===g.id&&S.ed)return editPanel(g);
+  const at=seatOf(g.id),t=at&&tableById(at.tid),ap=apartOf(g.id);
+  const evs=multiEv()?DB.events.filter(e=>inEv(g,e.id)):[];
+  const sub=[multiEv()?(evs.length===DB.events.length?'All events':evs.length?evs.map(e=>esc(e.name)).join(', '):'No event'):'',t?`${esc(t.name)} · seat ${at.i+1}`:'Not seated yet',g.side?SIDE_LABEL[g.side]:'',g.meal?esc(g.meal):''].filter(Boolean).join(' · ');
+  const chips=[...(g.tags||[]).map(x=>`<span class="pill">${esc(x)}</span>`),...ap.map(o=>`<span class="pill bad">Apart from ${esc(DB.guests[o].name)}</span>`)].join('');
+  return `<div class="gi"><span class="nm">${esc(g.name)}</span><span class="act"><button class="btn small" data-act="e-open" data-id="${g.id}">Edit</button></span><span class="sub">${sub}</span>${chips?`<span class="chips-row">${chips}</span>`:''}</div>`;
+}
+function guestsView(){
+  let h=inputCard();
+  const all=Object.values(DB.guests);
+  if(!all.length)return h+`<div class="empty"><div>Your guest list is empty. Paste it above and the planner sorts out couples and families for you.</div></div>`;
+  const q=normName(S.q),match=g=>!q||normName(g.name+' '+(g.tags||[]).join(' ')).includes(q);
+  h+=`<div class="row"><h2>Guest list <span class="muted num" style="font-size:1.0588rem">${all.length}</span></h2></div>
+    <input id="gq" type="search" placeholder="Find a guest or a label" aria-label="Find a guest or a label" value="${esc(S.q)}">`;
+  const done=new Set(),blocks=[];
+  for(const g of all.sort((a,b)=>byOrd(a,b))){
+    if(done.has(g.id))continue;
+    const gr=grp(g.id);
+    if(gr){const m=members(gr.id);m.forEach(x=>done.add(x.id));if(!m.some(match))continue;
+      blocks.push(`<div class="ggroup ${isMust(gr)?'':'loose'}"><div class="gh"><span><b>${esc(gr.name)}</b> · ${m.length}</span>
+        <span class="seg2" role="group" aria-label="How they sit"><button data-gkind="${gr.id}:must" aria-pressed="${isMust(gr)}">Always together</button><button data-gkind="${gr.id}:prefer" aria-pressed="${!isMust(gr)}">If possible</button></span></div>${m.map(guestRow).join('')}</div>`);}
+    else{done.add(g.id);if(match(g))blocks.push(guestRow(g));}
+  }
+  h+=`<p class="hint"><b>Always together</b> moves as one, like a couple. <b>If possible</b> means each person moves on their own, and the planner suggests the same table, like a father and his grown-up daughter.</p>`;
+  h+=`<div class="glist">${blocks.join('')||'<p class="hint">No guest matches.</p>'}</div>`;
+  h+=S.confirmReset?`<div class="card"><p style="margin:0"><b>Delete all ${all.length} guests and ${T().length} tables?</b> This can’t be undone.</p><div class="btns"><button class="btn danger" data-act="reset-yes">Delete everything</button><button class="btn" data-act="reset-no">Keep my plan</button></div></div>`:`<div class="btns"><button class="btn small" data-act="reset">Start over</button></div>`;
+  return h;
+}
+
+/* ---------- Seating view ---------- */
+/* units: an unseated always-together group, or one unseated person */
+function poolUnits(){
+  const s=seated(),out=[],done=new Set();
+  for(const g of EG().sort((a,b)=>byOrd(a,b))){
+    if(done.has(g.id)||s.has(g.id))continue;
+    const gr=grp(g.id);
+    if(isMust(gr)){const all=members(gr.id).filter(x=>inEv(x)),m=all.filter(x=>!s.has(x.id));m.forEach(x=>done.add(x.id));
+      out.push({key:'g:'+gr.id,ids:m.map(x=>x.id),label:m.length===all.length?gr.name:m.map(x=>x.name).join(' & '),sub:m.length>1?m.map(x=>x.name).join(', '):'The rest of '+gr.name+' is seated'});}
+    else{done.add(g.id);const mates=gr?members(gr.id).filter(x=>x.id!==g.id&&inEv(x)).map(x=>x.name):[];
+      out.push({key:'p:'+g.id,ids:[g.id],label:g.name,sub:mates.length?'Would like to sit with '+mates.join(', '):''});}
+  }
+  return out;
+}
+const unitTags=u=>[...new Set(u.ids.flatMap(id=>DB.guests[id].tags||[]))];
+function selIds(){return S.sel?S.sel.ids:[];}
+function selFromGuest(id){
+  const g=DB.guests[id];if(!g)return null;const gr=grp(id);
+  if(isMust(gr)&&!S.only){const m=members(gr.id).filter(x=>inEv(x));return {key:'g:'+gr.id,ids:m.map(x=>x.id),label:gr.name,from:id};}
+  return {key:'p:'+id,ids:[id],label:g.name,from:id};
+}
+function diag(t){
+  const a=arr(t.id),n=t.seats;
+  if(t.shape==='long'){const k=Math.ceil(n/2),w=Math.max(4,k)*16+20;let g=`<rect class="tb" x="10" y="18" width="${w-20}" height="24" rx="4"/>`;
+    for(let i=0;i<n;i++){const side=i<k?0:1,j=side?i-k:i,x=18+j*16+(w-20-Math.max(k,1)*16)/2;g+=`<circle class="${a[i]?'s1':'s0'}" cx="${x}" cy="${side?50:10}" r="5.5"/>`;}
+    return `<svg class="tdiag" viewBox="0 0 ${w} 60" aria-hidden="true">${g}</svg>`;}
+  let g=`<circle class="tb" cx="50" cy="50" r="30"/><text x="50" y="54" text-anchor="middle">${n}</text>`;
+  for(let i=0;i<n;i++){const ang=-Math.PI/2+i*2*Math.PI/n;g+=`<circle class="${a[i]?'s1':'s0'}" cx="${(50+42*Math.cos(ang)).toFixed(1)}" cy="${(50+42*Math.sin(ang)).toFixed(1)}" r="6"/>`;}
+  return `<svg class="tdiag" viewBox="0 0 100 100" style="width:96px" aria-hidden="true">${g}</svg>`;
+}
+function suggHtml(){
+  const f=S.fill;if(!f)return '';
+  const t=tableById(f.tid);if(!t)return '';
+  const q=normName(S.fillQ),fr=free(f.tid),units=poolUnits();
+  let list,head;
+  if(q){const ws=q.split(' ');list=units.filter(u=>{const h=normName([u.label,...u.ids.map(id=>DB.guests[id].name),...unitTags(u)].join(' ')).split(' ');return ws.every(w=>h.some(x=>x.startsWith(w)));}).slice(0,8);head='';}
+  else{list=units.map(u=>({u,s:unitScore(u,f.tid,'labels')})).filter(x=>x.s>-1e8).sort((a,b)=>b.s-a.s).slice(0,5).map(x=>x.u);head=list.length?'<div class="lbl">Suggested for this table</div>':'';}
+  if(!units.length)return `<p class="hint">Everyone already has a seat.</p>`;
+  if(!list.length)return `<p class="hint">No one who isn’t seated matches “${esc(S.fillQ)}”.</p>`;
+  return head+list.map(u=>{const w=why(u,f.tid),big=u.ids.length>fr;
+    const note=w.bad?w.text:big?`Needs ${u.ids.length} seats, ${fr} free here`:[u.ids.length>1?u.ids.map(id=>firstName(DB.guests[id].name)).join(', '):'',w.text].filter(Boolean).join(' · ');
+    return `<button type="button" class="sg ${w.bad?'bad':''}" data-fill="${u.key}" ${big?'disabled':''}><span class="pl"><span>${esc(u.label)}</span>${u.ids.length>1?`<span class="pill grp">${u.ids.length}</span>`:''}</span>${note?`<small>${esc(note)}</small>`:''}</button>`;}).join('')
+    +(S.fmsg?`<p class="msg">${esc(S.fmsg)}</p>`:'');
+}
+function seatBtn(t,i,label){
+  if(S.fill&&S.fill.tid===t.id&&S.fill.i===i)
+    return `<div class="fillbox"><div class="fill"><span class="sn">${label}</span><input id="fill-q" type="search" placeholder="Type a name" aria-label="Type a guest’s name for seat ${label}" autocomplete="off" autocapitalize="words" value="${esc(S.fillQ)}"><button type="button" class="btn small" data-act="fill-x">Close</button></div><div id="sugg" class="sugg">${suggHtml()}</div></div>`;
+  const id=arr(t.id)[i],g=id&&DB.guests[id],sel=g&&selIds().includes(id);
+  return `<button class="seat ${g?'':'free'} ${sel?'sel':''} ${g&&grp(id)?'grp':''}" data-seat="${t.id}:${i}" data-drop="seat" ${g?`data-drag="p:${id}"`:''}><span class="sn">${label}</span><span class="who">${g?esc(g.name):(S.sel?'empty':'+ add guest')}</span></button>`;
+}
+function tableCard(t,wide){
+  const ids=seatedAt(t.id),used=ids.length,full=used===t.seats,iss=tableIssues(t.id),open=wide||S.openT===t.id;
+  const need=S.sel?S.sel.ids.filter(x=>!ids.includes(x)).length:0,fits=S.sel&&free(t.id)>=need;
+  const names=ids.map(id=>DB.guests[id].name).join(', ');
+  let h=`<section class="tcard ${open?'open':''} ${S.sel?(fits?'can-drop':'no-drop'):''}" data-drop="table" data-tid="${t.id}">
+    <button class="trow" data-topen="${t.id}" aria-expanded="${open}"><span class="tname">${esc(t.name)}</span><span class="tcount ${full?'full':''}"><span class="num">${used}/${t.seats}</span> · ${t.shape==='long'?'long':'round'}${full?' · full':''}</span>
+      <span class="tnames">${names?esc(names):'No one yet'}</span>
+      ${iss.length?`<span class="twarn ${iss.some(i=>i.hard)?'hard':''}">${iss.some(i=>i.hard)?'Needs a look':'A seating wish'}: ${iss.length} ${iss.length===1?'note':'notes'}</span>`:''}</button>`;
+  if(open){
+    h+=`<div class="tbody">`;
+    if(iss.length)h+=`<ul class="issues">${iss.map(i=>`<li class="${i.hard?'hard':''}">${esc(i.text)}</li>`).join('')}</ul>`;
+    if(S.editT===t.id&&S.et)h+=`<div class="edit"><div class="addt"><div class="seg two" role="group" aria-label="Table shape"><button type="button" data-etshape="round" aria-pressed="${S.et.shape==='round'}">Round</button><button type="button" data-etshape="long" aria-pressed="${S.et.shape==='long'}">Long</button></div><div class="f3"><label>Name<input id="et-name" type="text" value="${esc(S.et.name)}"></label><label>Seats<input id="et-seats" type="number" min="1" max="120" inputmode="numeric" value="${S.et.seats}"></label></div>
+      <div class="btns"><button class="btn primary small" data-act="t-save" data-tid="${t.id}">Save</button><button class="btn small" data-act="t-clear" data-tid="${t.id}">Empty this table</button><button class="btn danger small" data-act="t-del" data-tid="${t.id}">Delete table</button><button class="btn small" data-act="t-cancel">Cancel</button></div></div></div>`;
+    h+=`<div class="trow2">${diag(t)}<button class="btn small" data-act="t-edit" data-tid="${t.id}">Edit table</button></div>`;
+    if(t.shape==='long'){const k=Math.ceil(t.seats/2);h+=`<div class="seats long"><div class="side-l">Side A</div><div class="side-l">Side B</div>`;
+      for(let j=0;j<k;j++){h+=seatBtn(t,j,'A'+(j+1));h+=k+j<t.seats?seatBtn(t,k+j,'B'+(j+1)):'<span></span>';}h+=`</div>`;}
+    else h+=`<div class="seats">${[...Array(t.seats)].map((_,i)=>seatBtn(t,i,i+1)).join('')}</div>`;
+    h+=`</div>`;
+  }
+  return h+`</section>`;
+}
+function tableFields(){
+  const a=S.addT;
+  return `<div class="seg two" role="group" aria-label="Table shape"><button data-shape="round" aria-pressed="${a.shape==='round'}">Round</button><button data-shape="long" aria-pressed="${a.shape==='long'}">Long</button></div>
+    <div class="f3"><label>How many tables<input id="at-count" type="number" min="1" max="60" inputmode="numeric" value="${a.count||1}"></label><label>Seats at each<input id="at-seats" type="number" min="1" max="120" inputmode="numeric" value="${a.seats}"></label></div>`;
+}
+function setupTables(guests){
+  if(!S.addT.touched)S.addT.count=Math.max(1,Math.ceil(guests/S.addT.seats));
+  return `<section class="card addt"><h2 style="margin:0">Set up your tables</h2>
+    <p class="hint">You have ${guests} ${guests===1?'guest':'guests'}. ${Math.ceil(guests/8)} round tables of 8 seat everyone. Mix in long tables later if you need them.</p>
+    ${tableFields()}<div class="btns"><button class="btn primary" data-act="t-add">Create tables</button></div></section>`;
+}
+function autoCard(left){
+  const hasTags=allTags().length>0,hasSide=Object.values(DB.guests).some(g=>g.side);
+  const M=[['labels','By labels','Guests who share a label sit together: golfers, teachers, dentists.'],['side','By side','The bride’s side and the groom’s side get their own tables.'],['mix','Mix it up','Different labels at each table, so people meet someone new.']];
+  const warn=S.mode==='side'&&!hasSide?'No guest has a side yet. Set it under Guests → Edit, or start a pasted list with “Bride’s side:”.':S.mode!=='side'&&!hasTags?'No guest has a label yet. Add labels under Guests → Edit, or import a file with a Labels column.':'';
+  return `<section class="card"><h3>Seat the rest for me</h3>
+    <p class="hint">Fills empty seats with the ${left} ${left===1?'guest':'guests'} who don’t have one. Guests you already seated stay put. Couples stay together, and people you keep apart get different tables.</p>
+    <div class="modes" role="group" aria-label="How to group">${M.map(([k,l,d])=>`<button type="button" data-mode="${k}" aria-pressed="${S.mode===k}"><b>${l}</b><span>${d}</span></button>`).join('')}</div>
+    ${warn?`<p class="hint" style="color:var(--warn)">${warn}</p>`:''}
+    <div class="btns"><button class="btn primary" data-act="auto-go">Seat ${left} ${left===1?'guest':'guests'}</button><button class="btn" data-act="auto-x">Cancel</button></div></section>`;
+}
+function poolList(units){
+  return units.length?`<div class="pool-list">${units.map(u=>{const tg=unitTags(u),sd=sideOfUnit(u);
+    return `<button class="pc" data-unit="${u.key}" data-drag="${u.key}" aria-pressed="${!!(S.sel&&S.sel.key===u.key&&!S.sel.from)}"><span class="pl"><span>${esc(u.label)}</span>${u.ids.length>1?`<span class="pill grp">${u.ids.length}</span>`:''}</span>${u.sub?`<small>${esc(u.sub)}</small>`:''}${tg.length||sd?`<small>${[sd?SIDE_LABEL[sd]:'',...tg].filter(Boolean).map(esc).join(' · ')}</small>`:''}</button>`;}).join('')}</div>`:`<p class="toast">Everyone has a seat.</p>`;
+}
+function seatingView(){
+  const guests=EG().map(g=>g.id).length,units=poolUnits(),tables=T(),wide=isWide();
+  if(!guests&&!tables.length)return `<div class="empty"><div>Add your guests first. Then come back here to set up the tables.</div><button class="btn primary" data-tab="guests">Add guests</button></div>`;
+  if(!tables.length)return setupTables(guests);
+  const left=units.reduce((s,u)=>s+u.ids.length,0),cap=tables.reduce((s,t)=>s+t.seats,0);
+  let tools=`<div class="stools">${left?`<button class="btn ${wide?'':'primary'}" data-act="pool" aria-expanded="${S.showPool}" ${wide?'hidden':''}>${S.showPool?'Hide the list':`Not seated: ${left}`}</button><button class="btn" data-act="auto">Seat the rest for me</button>`:(wide?'':'<span class="toast">Everyone has a seat.</span>')}<button class="btn" data-act="add-open" aria-expanded="${S.addOpen}">Add tables</button>${HIST.length?'<button class="btn" data-act="undo">Undo</button>':''}</div>`;
+  if(S.addOpen)tools+=`<section class="card addt"><h3>Add tables</h3>${tableFields()}<div class="btns"><button class="btn primary" data-act="t-add">Add</button><button class="btn" data-act="add-x">Cancel</button></div></section>`;
+  if(S.amsg)tools+=`<p class="toast" role="status">${esc(S.amsg)}</p>`;
+  if(cap<guests)tools+=`<p class="hint" style="color:var(--warn)">${guests} guests and ${cap} seats. Add ${guests-cap} more ${guests-cap===1?'seat':'seats'}.</p>`;
+  if(S.auto&&left)tools+=autoCard(left);
+  const how=`<p class="hint">${wide?'Drag a name onto a table or a seat, or click it and then click the table.':'Tap a table, then an empty seat, and type a name. Or pick someone from the list first and then tap a table.'}</p>`;
+  const tablesHtml=`<div class="tables">${tables.map(t=>tableCard(t,wide)).join('')}</div>`;
+  if(wide)return `${tools}<div class="seat-layout"><div class="pool" data-drop="pool"><h2 style="margin:0">Not seated <span class="muted num" style="font-size:1.0588rem">${left}</span></h2>${how}${poolList(units)}</div><div class="tables-col">${tablesHtml}</div></div>`;
+  return `${tools}${S.showPool?`<div class="pool" data-drop="pool">${poolList(units)}</div>`:''}${how}${tablesHtml}`;
+}
+function renderBar(){
+  const el=document.getElementById('bar');
+  if(S.tab!=='seating'||(!S.sel&&!S.tmsg)){el.innerHTML='';return;}
+  if(!S.sel){el.innerHTML=`<div class="selbar"><div><p>${esc(S.tmsg)}</p><div class="btns"><button class="btn small" data-act="bar-ok">OK</button></div></div></div>`;return;}
+  const g=S.sel.from&&DB.guests[S.sel.from],gr=g&&grp(g.id),inGrp=isMust(gr),at=S.sel.ids.some(id=>seatOf(id));
+  el.innerHTML=`<div class="selbar"><div><p><b>${esc(S.sel.label)}</b>${S.sel.ids.length>1?` (${S.sel.ids.length})`:''}: tap a table or an empty seat.${S.tmsg?`<br>${esc(S.tmsg)}`:''}</p>
+    <div class="btns">${inGrp?`<button class="btn small" data-act="only">${S.only?'Move the whole '+(members(gr.id).length===2?'couple':'group'):'Move only '+esc(firstName(g.name))}</button>`:''}${at?'<button class="btn small" data-act="to-pool">Unseat</button>':''}<button class="btn small primary" data-act="sel-cancel">Done</button></div></div></div>`;
+}
+
+/* ---------- print & export ---------- */
+const PAPER={letter:{w:215.9,h:279.4,label:'Letter'},a4:{w:210,h:297,label:'A4'}};
+const MMPX=96/25.4;
+const paperKey=()=>DB.settings.paper||(/^en-(US|CA)$/i.test(navigator.language||'')?'letter':'a4');
+const paper=()=>PAPER[paperKey()]||PAPER.letter;
+const couple=()=>tidy(DB.settings.couple||'');
+const wdate=()=>tidy(DB.settings.date||'');
+const labelVis=t=>((DB.labels||{})[String(t).toLowerCase()]||{}).vis||'anon';
+const ADJ=/(ed|ing|ish|ive|ful|less|ous|ic|al)$/i;
+function plural(word,n){
+  if(n===1)return word;
+  const of=word.split(/\s+of\s+/i);if(of.length>1)return plural(of[0],2)+' of '+of.slice(1).join(' of ');
+  const w=word.split(' '),last=w.pop(),L=last.toLowerCase();
+  const irr={person:'people',man:'men',woman:'women',child:'children',wife:'wives',grandma:'grandmas',vegan:'vegans',local:'locals'};
+  if(!irr[L]&&(ADJ.test(L)&&L.length>4))return word;
+  const p=irr[L]?irr[L]:(/man$/i.test(last)&&!/^(hu|ger|ro|shaman|tal|cay|ot)/i.test(L))?last.slice(0,-3)+'men':/[^aeiou]y$/i.test(last)?last.slice(0,-1)+'ies':/(s|sh|ch|x|z)$/i.test(last)?last+'es':/[^f]fe$/i.test(last)?last.slice(0,-2)+'ves':last+'s';
+  return [...w,p].join(' ');
+}
+const isGuestOf=n=>/^guest( \d+)? of /i.test(n);
+function lastFirst(n){if(isGuestOf(n))return n;const w=n.split(' ').filter(Boolean),t=w.filter(x=>!TITLE.test(x));if(t.length<2)return n;return t[t.length-1]+', '+t.slice(0,-1).join(' ');}
+function sortKeyOf(n,by){
+  if(isGuestOf(n)){const host=n.replace(/^guest( \d+)? of /i,'');return sortKeyOf(host,by)+' ~';}
+  if(by==='first')return normName(n);
+  const t=n.split(' ').filter(x=>x&&!TITLE.test(x));return normName(t.length>1?t[t.length-1]+' '+t.slice(0,-1).join(' '):n);
+}
+const shortTable=n=>String(n).replace(/^table\s+/i,'');
+const tableOrder=()=>{const o={};T().forEach((t,i)=>o[t.id]=i);return o;};
+/* --- page building: blocks flow into columns, page after page, measured in the real fonts --- */
+function sheetOpen(cls,z){const p=paper();return `<div class="sheet ${cls||''}" style="width:${p.w}mm;height:${p.h}mm${z?';--z:'+z:''}">`;}
+function mkHost(){let h=document.getElementById('measure');if(!h){h=document.createElement('div');h.id='measure';h.setAttribute('aria-hidden','true');document.body.appendChild(h);}h.innerHTML='';return h;}
+function toEl(html){const t=document.createElement('template');t.innerHTML=html.trim();return t.content.firstElementChild;}
+function flow(blocks,opts){
+  const pages=flowOnce(blocks,opts,0);
+  if(opts.zoom&&pages.length===1)for(const z of [1.6,1.45,1.3,1.15]){const p2=flowOnce(blocks,{...opts,z},0);if(p2.length===1)return balanced(blocks,{...opts,z},p2);}
+  return balanced(blocks,opts,pages);
+}
+function balanced(blocks,opts,pages){
+  if(pages.length!==1||opts.cols<2)return pages;
+  const host=mkHost(),pg=toEl(pages[0]);host.appendChild(pg);
+  const cs=[...pg.querySelectorAll('.fcol')],full=cs[0].clientHeight;
+  const used=cs.reduce((s,c)=>s+[...c.children].reduce((a,e)=>a+e.offsetHeight,0),0);host.innerHTML='';
+  for(let lim=Math.ceil(used/opts.cols);lim<full;lim=Math.ceil(lim*1.04)+4){
+    const b=flowOnce(blocks,opts,lim);if(b.length===1)return b;
+  }
+  return pages;
+}
+function flowOnce(blocks,{cols,head,firstHead,cls,foot,z},lim){
+  const host=mkHost(),pages=[];let pg,cs,ci;
+  const start=()=>{pg=toEl(`${sheetOpen(cls,z)}${pages.length?(head||''):(firstHead||head||'')}<div class="flow" style="--cols:${cols}">${'<div class="fcol"></div>'.repeat(cols)}</div>${foot||''}</div>`);host.appendChild(pg);cs=[...pg.querySelectorAll('.fcol')];ci=0;};
+  const over=c=>{if(c.scrollHeight>c.clientHeight+1)return true;if(!lim)return false;const l=c.lastElementChild;return !!l&&(l.getBoundingClientRect().bottom-c.getBoundingClientRect().top)>lim+1;};
+  start();
+  for(const b of blocks){
+    const node=toEl(b);
+    for(;;){const c=cs[ci];c.appendChild(node);
+      if(!over(c)||c.children.length===1)break;
+      c.removeChild(node);ci++;
+      if(ci>=cs.length){pages.push(pg.outerHTML);start();}}
+  }
+  pages.push(pg.outerHTML);host.innerHTML='';
+  return pages;
+}
+function headHtml(title,small){const c=couple(),d=wdate();return `<header class="ph ${small?'small':''}"><div class="ph-k">${esc(title)}${multiEv()?' · '+esc(evName()):''}</div>${c&&!small?`<div class="ph-t">${esc(c)}</div>`:''}${d&&!small?`<div class="ph-d">${esc(d)}</div>`:''}</header>`;}
+function unseatedCount(){const s=seated();return EG().map(g=>g.id).filter(id=>!s.has(id)).length;}
+
+function chartPages(){
+  const blocks=[];
+  for(const t of T()){
+    const names=seatedAt(t.id).map(id=>DB.guests[id].name);
+    for(let i=0;i<Math.max(1,names.length);i+=28){const ch=names.slice(i,i+28);
+      blocks.push(`<div class="pt-table"><div class="pt-tname">${esc(t.name)}${i?' <span>continued</span>':''}</div>${ch.length?`<ul class="pt-names">${ch.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:'<div class="pt-empty">No guests yet</div>'}</div>`);}
+  }
+  return flow(blocks,{cols:3,firstHead:headHtml('Seating chart'),head:headHtml('Seating chart',true),cls:'s-chart',zoom:true});
+}
+function seatRows(by){
+  return EG().map(g=>{const at=seatOf(g.id);if(!at)return null;return {g,disp:by==='last'?lastFirst(g.name):g.name,key:sortKeyOf(g.name,by),tname:tableById(at.tid).name};}).filter(Boolean).sort((a,b)=>a.key.localeCompare(b.key));
+}
+function findSeatPages(){
+  const by=S.oo.sort,rows=seatRows(by),blocks=[];let cur='';
+  const row=r=>`<div class="fs-row"><span class="fs-n">${esc(r.disp)}</span><span class="fs-dots"></span><span class="fs-t ${/^\S{1,4}$/.test(shortTable(r.tname))?'':'word'}">${esc(shortTable(r.tname))}</span></div>`;
+  for(const r of rows){const L=(r.key[0]||'#').toUpperCase();
+    if(L!==cur){cur=L;blocks.push(`<div class="fs-grp"><div class="fs-letter">${esc(L)}</div>${row(r)}</div>`);}else blocks.push(row(r));}
+  if(!blocks.length)return [];
+  const numeric=T().some(t=>/^table\s+\d+$/i.test(t.name));
+  return flow(blocks,{cols:3,firstHead:headHtml('Find your seat')+(numeric?'<p class="fs-key">Table numbers are on the right.</p>':''),head:headHtml('Find your seat',true),cls:'s-seat',zoom:true});
+}
+function bigTableName(n){const m=String(n).match(/^table\s+(\S{1,4})$/i);return m?`<div class="tc-n"><small>Table</small><b>${esc(m[1])}</b></div>`:`<div class="tc-n word ${n.length>14?'long':''}">${esc(n)}</div>`;}
+function tableCardPages(){
+  const cards=T().map(t=>{const names=seatedAt(t.id).map(id=>DB.guests[id].name);
+    return `<div class="tc">${couple()?`<div class="tc-k">${esc(couple())}</div>`:''}${bigTableName(t.name)}${S.oo.names&&names.length?`<div class="tc-names ${names.length>14?'many':''}">${names.map(esc).join(' · ')}</div>`:''}</div>`;});
+  const pages=[];for(let i=0;i<cards.length;i+=2)pages.push(`${sheetOpen('s-two')}${cards.slice(i,i+2).join('')}</div>`);
+  return pages;
+}
+function placeCardPages(){
+  const ord=tableOrder(),fold=S.oo.pstyle==='fold';
+  const list=Object.values(DB.guests).map(g=>({g,at:seatOf(g.id)})).filter(x=>x.at).sort((a,b)=>ord[a.at.tid]-ord[b.at.tid]||a.at.i-b.at.i);
+  const face=x=>{const n=x.g.name,cls=n.length>24?'xlong':n.length>17?'long':'';
+    return `<div class="pc-name ${cls}">${esc(n)}</div><div class="pc-t">${esc(tableById(x.at.tid).name)}</div>${S.oo.meal&&x.g.meal?`<div class="pc-m">${esc(x.g.meal)}</div>`:''}`;};
+  const card=x=>fold?`<div class="pc-card fold"><div class="pc-half top">${face(x)}</div><div class="pc-half">${face(x)}</div></div>`:`<div class="pc-card"><div class="pc-half">${face(x)}</div></div>`;
+  const per=fold?4:10,pages=[];
+  for(let i=0;i<list.length;i+=per)pages.push(`${sheetOpen('s-cards')}<div class="cards">${list.slice(i,i+per).map(card).join('')}</div></div>`);
+  return pages;
+}
+function partyItems(){
+  return allTags().map(t=>{const gs=EG().filter(g=>(g.tags||[]).some(x=>x.toLowerCase()===t.toLowerCase()));return {t,n:gs.length,vis:labelVis(t),names:gs.map(g=>g.name)};})
+    .filter(x=>x.n&&x.vis!=='private').sort((a,b)=>b.n-a.n||a.t.localeCompare(b.t));
+}
+function partyPages(){
+  const items=partyItems();if(!items.length)return [];
+  const gs=EG().map(g=>g.id).length,fam=Object.values(DB.groups).filter(g=>isMust(g)).length;
+  const foot=`<div class="pty-foot">${gs} guests · ${T().length} ${T().length===1?'table':'tables'}${fam?` · ${fam} couples and families`:''}</div>`;
+  const page=(list,k,cols)=>`${sheetOpen('s-party')}<div class="pty" style="--k:${k}"><div class="ph-k" style="text-align:center">${couple()?esc(couple()):'Our wedding'}${wdate()?' · '+esc(wdate()):''}</div><div class="pty-title">Who’s at the party</div>
+    <div class="pty-grid" style="--pc:${cols}">${list.map(x=>`<div class="pi"><div class="pi-n">${x.n}</div><div class="pi-l">${esc(plural(x.t,x.n))}</div>${x.vis==='named'?`<div class="pi-names">${x.names.map(esc).join(', ')}</div>`:''}</div>`).join('')}</div>${foot}</div></div>`;
+  const host=mkHost();
+  for(const [k,cols] of [[1,3],[.85,3],[.72,4],[.6,4],[.5,5]]){
+    const el=toEl(page(items,k,cols));host.appendChild(el);const fits=el.scrollHeight<=el.clientHeight+1;host.innerHTML='';
+    if(fits)return [page(items,k,cols)];
+  }
+  const out=[];for(let i=0;i<items.length;i+=40)out.push(page(items.slice(i,i+40),.5,5));return out;
+}
+function mealData(){
+  const meals=[...new Set(EG().map(g=>tidy(g.meal)||'Not chosen'))].sort((a,b)=>(a==='Not chosen')-(b==='Not chosen')||a.localeCompare(b));
+  const rows=T().map(t=>{const c={};seatedAt(t.id).forEach(id=>{const m=tidy(DB.guests[id].meal)||'Not chosen';c[m]=(c[m]||0)+1;});return {name:t.name,c,tot:seatedAt(t.id).length};});
+  const un=EG().filter(g=>!seatOf(g.id));
+  if(un.length){const c={};un.forEach(g=>{const m=tidy(g.meal)||'Not chosen';c[m]=(c[m]||0)+1;});rows.push({name:'No seat yet',c,tot:un.length});}
+  return {meals,rows};
+}
+function mealPages(){
+  const {meals,rows}=mealData();if(!rows.length)return [];
+  const tot={};rows.forEach(r=>meals.forEach(m=>tot[m]=(tot[m]||0)+(r.c[m]||0)));
+  const pages=[];
+  for(let i=0;i<rows.length;i+=26){const ch=rows.slice(i,i+26),last=i+26>=rows.length;
+    pages.push(`${sheetOpen('s-meals')}${headHtml('Meals by table',i>0)}<table class="mt"><thead><tr><th>Table</th>${meals.map(m=>`<th>${esc(m)}</th>`).join('')}<th>Total</th></tr></thead><tbody>${ch.map(r=>`<tr><td>${esc(r.name)}</td>${meals.map(m=>`<td>${r.c[m]||''}</td>`).join('')}<td>${r.tot}</td></tr>`).join('')}</tbody>${last?`<tfoot><tr><td>All guests</td>${meals.map(m=>`<td>${tot[m]||0}</td>`).join('')}<td>${Object.keys(DB.guests).length}</td></tr></tfoot>`:''}</table></div>`);}
+  return pages;
+}
+/* --- Excel: guests, tables, meals --- */
+function buildXlsx(){
+  if(!window.XLSX)throw new Error('The spreadsheet maker didn’t load. Check your internet connection and reload the page.');
+  const ord=tableOrder(),list=EG().map(g=>({g,at:seatOf(g.id)})).sort((a,b)=>(a.at?ord[a.at.tid]:1e6)-(b.at?ord[b.at.tid]:1e6)||(a.at?a.at.i:0)-(b.at?b.at.i:0)||byOrd(a.g,b.g));
+  const seatLabel=at=>{const t=tableById(at.tid);if(t.shape!=='long')return at.i+1;const k=Math.ceil(t.seats/2);return at.i<k?'A'+(at.i+1):'B'+(at.i-k+1);};
+  const G=[['Name','Table','Seat','Side','Meal','Labels','Sits with','How','Keep apart from','Note']].concat(list.map(({g,at})=>{const gr=grp(g.id);
+    return [g.name,at?tableById(at.tid).name:'No seat yet',at?seatLabel(at):'',g.side?SIDE_LABEL[g.side]:'',g.meal||'',(g.tags||[]).join(', '),gr?members(gr.id).filter(x=>x.id!==g.id).map(x=>x.name).join(', '):'',gr?(isMust(gr)?'Always together':'If possible'):'',apartOf(g.id).map(o=>DB.guests[o].name).join(', '),g.note||''];}));
+  const TB=[['Table','Shape','Seats','Taken','Guests']].concat(T().map(t=>{const ids=seatedAt(t.id);return [t.name,t.shape==='long'?'Long':'Round',t.seats,ids.length,ids.map(id=>DB.guests[id].name).join(', ')];}));
+  const {meals,rows}=mealData(),tot={};rows.forEach(r=>meals.forEach(m=>tot[m]=(tot[m]||0)+(r.c[m]||0)));
+  const M=[['Table',...meals,'Total']].concat(rows.map(r=>[r.name,...meals.map(m=>r.c[m]||0),r.tot]),[['All guests',...meals.map(m=>tot[m]||0),EG().map(g=>g.id).length]]);
+  const wb=XLSX.utils.book_new();
+  const add=(rows,name,cols)=>{const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=cols.map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws,name);};
+  add(G,'Guests',[26,14,6,14,14,30,30,16,26,30]);add(TB,'Tables',[16,8,7,7,80]);add(M,'Meals by table',[16,...meals.map(()=>12),8]);
+  return XLSX.write(wb,{bookType:'xlsx',type:'array'});
+}
+async function saveFile(name,data,mime){
+  const file=new File([data],name,{type:mime});
+  if(navigator.canShare&&navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent||'')){
+    try{if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return 'saved';}}catch(e){if(e&&e.name==='AbortError')return 'declined';}
+  }
+  const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+  return 'saved';
+}
+const slug=x=>x.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const fileStem=()=>(couple()?slug(couple())+'-':'')+(multiEv()&&evName()?slug(evName())+'-':'')+'seating';
+
+/* --- Send to your designer: data for Canva, templates and stationers --- */
+const firstLast=n=>{if(isGuestOf(n))return {first:n,last:''};const t=n.split(' ').filter(x=>x&&!TITLE.test(x));return t.length<2?{first:n,last:''}:{first:t.slice(0,-1).join(' '),last:t[t.length-1]};};
+function seatedList(){
+  const ord=tableOrder();
+  return Object.values(DB.guests).map(g=>({g,at:seatOf(g.id)})).filter(x=>x.at).sort((a,b)=>ord[a.at.tid]-ord[b.at.tid]||a.at.i-b.at.i);
+}
+function seatName(at){const t=tableById(at.tid);if(t.shape!=='long')return String(at.i+1);const k=Math.ceil(t.seats/2);return at.i<k?'A'+(at.i+1):'B'+(at.i-k+1);}
+function canvaRows(){
+  if(S.oo.crow==='table'){
+    const max=Math.max(1,...T().map(t=>seatedAt(t.id).length));
+    return [['Table',...[...Array(max)].map((_,i)=>'Guest '+(i+1))]].concat(T().map(t=>{const n=seatedAt(t.id).map(id=>DB.guests[id].name);return [t.name,...n,...Array(max-n.length).fill('')];}));
+  }
+  return [['Full name','First name','Last name','Table','Seat','Meal']].concat(seatedList().map(({g,at})=>{const f=firstLast(g.name);return [g.name,f.first,f.last,tableById(at.tid).name,seatName(at),g.meal||''];}));
+}
+const csvCell=v=>{v=String(v??'');return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+const toCSV=rows=>rows.map(r=>r.map(csvCell).join(',')).join('\r\n')+'\r\n';
+function xlsxOf(sheets){
+  if(!window.XLSX)throw new Error('The spreadsheet maker didn’t load. Check your internet connection and reload the page.');
+  const wb=XLSX.utils.book_new();
+  for(const [name,rows,cols] of sheets){const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=(cols||rows[0].map(()=>18)).map(w=>({wch:w}));XLSX.utils.book_append_sheet(wb,ws,name);}
+  return XLSX.write(wb,{bookType:'xlsx',type:'array'});
+}
+function tablesText(){
+  const one=S.oo.tline==='one';
+  return T().map(t=>{const n=seatedAt(t.id).map(id=>DB.guests[id].name);return t.name.toUpperCase()+'\n'+(n.length?(one?n.join(', '):n.join('\n')):'(no guests yet)');}).join('\n\n');
+}
+function azText(){
+  const by=S.oo.sort;
+  return seatRows(by).map(r=>`${r.disp} – ${/^table\s+\S{1,4}$/i.test(r.tname)?'Table '+shortTable(r.tname):r.tname}`).join('\n');
+}
+function stationerSheets(){
+  const byTable=[['Table','Seat','Name']].concat(seatedList().map(({g,at})=>[tableById(at.tid).name,seatName(at),g.name]));
+  const az=[['Name','Sorted as','Table']].concat(seatRows('last').map(r=>[r.g.name,r.disp,r.tname]));
+  const cards=[['Full name','First name','Last name','Table','Meal']].concat(seatedList().map(({g,at})=>{const f=firstLast(g.name);return [g.name,f.first,f.last,tableById(at.tid).name,g.meal||''];}));
+  return [['By table',byTable,[16,6,30]],['A to Z',az,[30,30,16]],['Place cards',cards,[30,16,18,16,14]]];
+}
+function rowsTable(rows,max){
+  const body=rows.slice(1,1+max);
+  return `<div class="dtable"><table><thead><tr>${rows[0].map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${body.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${rows.length-1>max?`<p class="hint">…and ${rows.length-1-max} more rows.</p>`:''}`;
+}
+function designerView(k){
+  const un=unseatedCount(),unNote=un?`<p class="hint" style="color:var(--warn)">${un} ${un===1?'guest has':'guests have'} no seat yet and ${un===1?'is':'are'} left out.</p>`:'';
+  const msg=S.omsg?`<p class="${S.oerr?'msg':'toast'}" role="status">${esc(S.omsg)}</p>`:'';
+  const seg=(key,opts)=>`<div class="seg two" role="group">${opts.map(([v,l])=>`<button type="button" data-oo="${key}:${v}" aria-pressed="${String(S.oo[key])===String(v)}">${l}</button>`).join('')}</div>`;
+  if(k==='canva'){
+    const rows=canvaRows();
+    return `<section class="card">${seg('crow',[['guest','One row per guest'],['table','One row per table']])}
+      <p class="hint">${S.oo.crow==='table'?'For table cards or a seating chart with one box per table: each row is one table, and each guest has a column.':'For place cards and escort cards: each row becomes one card.'}</p>
+      <div class="btns"><button class="btn primary" data-act="canva-csv">Save CSV file</button><button class="btn" data-act="canva-xlsx">Save Excel file</button></div>${msg}</section>${unNote}
+      <section class="card"><h3>How to use it in Canva</h3><ol class="howto">
+        <li>Open your template in Canva on a computer. Add one text box for each thing that changes, for example the name and the table.</li>
+        <li>Open <b>Apps</b>, choose <b>Bulk create</b>, then <b>Upload data</b> and pick this file.</li>
+        <li>Connect each column to its text box, then choose <b>Generate</b>. Canva makes one card for every row.</li></ol>
+        <p class="hint">Bulk create needs a paid Canva plan. On the free plan, use <b>Copy table by table</b> or <b>Copy A to Z</b> and paste instead.</p></section>
+      <div class="lbl">What’s in the file</div>${rowsTable(rows,6)}`;
+  }
+  if(k==='copytables'||k==='copyaz'){
+    const text=k==='copytables'?tablesText():azText();
+    const opts=k==='copytables'?seg('tline',[['lines','One name per line'],['one','Names on one line']]):`<div class="lbl">Sort by</div>${seg('sort',[['last','Last name'],['first','First name']])}`;
+    return `<section class="card">${opts}<div class="btns"><button class="btn primary" data-act="copy-text">Copy</button></div>${msg}
+      <p class="hint">${k==='copytables'?'Paste each table into the matching text box of your seating chart template, or send it to whoever is making your chart.':'Paste it into an escort card or “Find your seat” template, or send it to your designer.'}</p></section>${unNote}
+      <label class="lbl" for="copy-area">The text</label><textarea id="copy-area" class="copyarea" readonly>${esc(text)}</textarea>`;
+  }
+  if(k==='stationer'){
+    const sh=stationerSheets();
+    return `<section class="card"><p style="margin:0">One Excel file with three sheets: <b>By table</b>, <b>A to Z</b> and <b>Place cards</b>. Only names, tables, seats and meals. Labels, sides and your notes stay with you.</p>
+      <div class="btns"><button class="btn primary" data-act="stationer-xlsx">Save the file</button></div>${msg}</section>${unNote}
+      <div class="lbl">By table</div>${rowsTable(sh[0][1],6)}`;
+  }
+  return '';
+}
+async function designerSave(kind){
+  try{
+    let r;const stem=fileStem();
+    if(kind==='canva-csv')r=await saveFile(`${stem}-canva.csv`,toCSV(canvaRows()),'text/csv');
+    else if(kind==='canva-xlsx')r=await saveFile(`${stem}-canva.xlsx`,xlsxOf([[S.oo.crow==='table'?'Tables':'Guests',canvaRows()]]),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    else r=await saveFile(`${stem}-for-stationer.xlsx`,xlsxOf(stationerSheets()),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    S.omsg=r==='declined'?'Nothing was saved.':'The file is ready.';S.oerr=false;
+  }catch(e){S.omsg=e.message||'The file could not be saved.';S.oerr=true;}
+  render();
+}
+function copyText(){
+  const ta=document.getElementById('copy-area');if(!ta)return;
+  const fallback=()=>{ta.focus();ta.select();try{ta.setSelectionRange(0,ta.value.length);}catch(e){}S.omsg='';const m=document.createElement('p');m.className='hint';m.textContent='The text is selected. Copy it with your device’s Copy command.';ta.insertAdjacentElement('beforebegin',m);};
+  try{navigator.clipboard.writeText(ta.value).then(()=>{S.omsg='Copied. Now paste it into your template.';S.oerr=false;render();},fallback);}catch(e){fallback();}
+}
+
+/* --- Print view --- */
+const DESIGN=[
+  ['canva','For Canva Bulk Create','A file Canva turns into one card per guest or one per table.'],
+  ['copytables','Copy table by table','Every table with its guests, ready to paste into a seating chart template.'],
+  ['copyaz','Copy A to Z','Every guest with their table, for escort cards or a “Find your seat” sign.'],
+  ['stationer','For your stationer or calligrapher','Names, tables, seats and meals in one Excel file. Labels and notes stay private.']];
+const OUTS=[
+  ['chart','Seating chart','Every table with its guests. Print it large for the entrance.',chartPages],
+  ['seat','Find your seat','Every guest from A to Z with their table.',findSeatPages],
+  ['tables','Table cards','A big table number or name for each table, two to a page.',tableCardPages],
+  ['place','Place cards','One card per guest with name, table and meal. Flat or folded.',placeCardPages],
+  ['party','Who’s at the party','Your labels as a poster: 3 dentists, 2 marathon runners…',partyPages],
+  ['meals','Meals by table','How many of each meal goes to each table, for the caterer.',mealPages],
+  ['excel','Excel spreadsheet','Guests, tables and meals in one file for Excel, Numbers or Google Sheets.',null]];
+function printView(){
+  if(!EG().map(g=>g.id).length)return `<div class="empty"><div>Add your guests and seat them first. Then print your seating chart, cards and lists here.</div><button class="btn primary" data-tab="guests">Add guests</button></div>`;
+  if(S.out)return outView();
+  const pk=paperKey(),un=unseatedCount();
+  return `<section class="card"><h2 style="margin:0">Your wedding</h2>
+    <p class="hint">Shown at the top of what you print. Both are optional.</p>
+    <label class="ws" for="c-couple"><span>Names</span><input id="c-couple" type="text" maxlength="60" placeholder="Emily & James" value="${esc(DB.settings.couple||'')}"></label>
+    <label class="ws" for="c-date"><span>Date</span><input id="c-date" type="text" maxlength="40" placeholder="October 17, 2026" value="${esc(DB.settings.date||'')}"></label>
+    <div class="ws"><span>Paper</span><div class="seg two" role="group" aria-label="Paper size">${Object.entries(PAPER).map(([k,p])=>`<button type="button" data-paper="${k}" aria-pressed="${pk===k}">${p.label}</button>`).join('')}</div></div></section>
+    ${un?`<p class="hint" style="color:var(--warn)">${un} ${un===1?'guest has':'guests have'} no seat yet and ${un===1?'is':'are'} left out of the chart and cards.</p>`:''}
+    <h2>Send to your designer</h2><p class="hint">Bought a seating chart template on Etsy, or working with a stationer? Hand them your plan as clean data. They make it look the way you want.</p>
+    <div class="outs">${DESIGN.map(([k,l,d])=>`<button class="outb" data-out="${k}"><b>${l}</b><span>${d}</span></button>`).join('')}</div>
+    <h2>Print it yourself</h2><p class="hint">Simple, elegant pages ready to print at home or at a print shop.</p>
+    <div class="outs">${OUTS.map(([k,l,d])=>`<button class="outb" data-out="${k}"><b>${l}</b><span>${d}</span></button>`).join('')}</div>`;
+}
+function outOptions(k){
+  const seg=(key,opts)=>`<div class="seg ${opts.length===2?'two':''}" role="group">${opts.map(([v,l])=>`<button type="button" data-oo="${key}:${v}" aria-pressed="${String(S.oo[key])===String(v)}">${l}</button>`).join('')}</div>`;
+  if(k==='seat')return `<div class="lbl">Sort by</div>${seg('sort',[['last','Last name'],['first','First name']])}`;
+  if(k==='tables')return seg('names',[[true,'With guest names'],[false,'Table name only']]);
+  if(k==='place')return `${seg('pstyle',[['flat','Flat, 10 a page'],['fold','Folded, 4 a page']])}${seg('meal',[[true,'Show meal'],[false,'No meal']])}<p class="hint">${S.oo.pstyle==='fold'?'Cut along the dashed lines, then fold in the middle. The name shows on both sides.':'Cut along the dashed lines. Each card is 3.5 × 2 inches.'}</p>`;
+  if(k==='party'){const tags=allTags();if(!tags.length)return '';
+    return `<details class="lvd" ${S.lvOpen?'open':''}><summary>Choose what each label shows <span class="muted">(${tags.length} labels)</span></summary><p class="hint"><b>Named</b> lists the people. <b>Anonymous</b> shows only how many. <b>Private</b> never appears on anything you print or share.</p>
+    <div class="labvis">${tags.map(t=>{const v=labelVis(t),n=Object.values(DB.guests).filter(g=>(g.tags||[]).some(x=>x.toLowerCase()===t.toLowerCase())).length;
+      return `<div class="lv"><span>${esc(t)} <span class="muted num">${n}</span></span><span class="seg2" role="group" aria-label="${esc(t)}">${[['named','Named'],['anon','Anonymous'],['private','Private']].map(([vv,l])=>`<button type="button" data-lv="${esc(t)}|${vv}" aria-pressed="${v===vv}">${l}</button>`).join('')}</span></div>`;}).join('')}</div></details>`;}
+  return '';
+}
+function previewHtml2(pages){
+  const p=paper(),pw=p.w*MMPX,ph=p.h*MMPX,avail=Math.min(S.pvw||358,760),s=Math.min(1,avail/pw);
+  return `<div class="pvw">${pages.map((pg,i)=>`<div class="pvp" style="width:${Math.round(pw*s)}px;height:${Math.round(ph*s)}px"><div class="pvs" style="transform:scale(${s.toFixed(4)})">${pg}</div></div><div class="pvn">Page ${i+1} of ${pages.length}</div>`).join('')}</div>`;
+}
+function outView(){
+  const dz=DESIGN.find(x=>x[0]===S.out);
+  if(dz)return `<div class="btns"><button class="btn small" data-act="out-back">‹ All prints and files</button></div><h2 style="margin:0">${dz[1]}</h2><p class="hint">${dz[2]}</p>`+designerView(S.out);
+  const o=OUTS.find(x=>x[0]===S.out);
+  let h=`<div class="btns"><button class="btn small" data-act="out-back">‹ All prints and files</button></div><h2 style="margin:0">${o[1]}</h2><p class="hint">${o[2]}</p>`;
+  if(S.out==='excel')return h+`<section class="card"><p style="margin:0">Three sheets: <b>Guests</b> with table, seat, side, meal, labels and seating wishes; <b>Tables</b>; and <b>Meals by table</b> for the caterer.</p><p class="hint">This file is for you, so private labels are included.</p><div class="btns"><button class="btn primary" data-act="xlsx">Save the spreadsheet</button></div>${S.omsg?`<p class="${S.oerr?'msg':'toast'}">${esc(S.omsg)}</p>`:''}</section>`;
+  const opts=outOptions(S.out);if(opts)h+=`<section class="card">${opts}</section>`;
+  const pages=o[3]();S.pages=pages;
+  if(!pages.length)return h+`<div class="empty"><div>${S.out==='party'?'No labels to show yet. Give your guests labels under Guests → Edit, like “dentist” or “marathon runner”, or set some to Named or Anonymous above.':'Nothing to print yet. Seat your guests first.'}</div></div>`;
+  h+=`<div class="btns"><button class="btn primary" data-act="print">Print ${pages.length} ${pages.length===1?'page':'pages'}</button><span class="hint">${paper().label} paper. The print window also lets you save a PDF.</span></div>`;
+  return h+previewHtml2(pages);
+}
+function doPrint(){
+  const pr=document.getElementById('print'),p=paper();if(!pr||!S.pages)return;
+  pr.innerHTML=`<style>@page{size:${p.w}mm ${p.h}mm;margin:0}</style>`+S.pages.join('');
+  try{window.print();}catch(e){}
+}
+window.addEventListener('afterprint',()=>{const pr=document.getElementById('print');if(pr)pr.innerHTML='';});
+
+/* ---------- share: a view-only link that carries the plan inside it ---------- */
+const SHOP_URL='https://silent-tools.github.io/';
+const b64u={enc:u8=>{let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');},
+  dec:t=>{t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const s=atob(t),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u;}};
+async function pipeBytes(u8,stream){const r=new Response(new Blob([u8]).stream().pipeThrough(stream));return new Uint8Array(await r.arrayBuffer());}
+function viewPayload(){
+  return {v:1,c:couple(),d:wdate(),e:multiEv()?evName():'',t:T().map(t=>({n:t.name,s:t.seats,l:t.shape==='long'?1:0,g:arr(t.id).map(id=>id&&DB.guests[id]?DB.guests[id].name:'')}))};
+}
+async function encodeView(p){
+  const raw=new TextEncoder().encode(JSON.stringify(p));
+  if(typeof CompressionStream!=='undefined'){try{return 'z'+b64u.enc(await pipeBytes(raw,new CompressionStream('deflate-raw')));}catch(e){}}
+  return 'j'+b64u.enc(raw);
+}
+async function decodeView(code){
+  const kind=code[0],bytes=b64u.dec(code.slice(1));
+  const raw=kind==='z'?await pipeBytes(bytes,new DecompressionStream('deflate-raw')):bytes;
+  const p=JSON.parse(new TextDecoder().decode(raw));
+  if(!p||p.v!==1||!Array.isArray(p.t))throw new Error('bad');
+  return p;
+}
+const baseUrl=()=>location.href.split('#')[0];
+async function makeViewLink(){return baseUrl()+'#v='+await encodeView(viewPayload());}
+function viewerHtml(p,inApp){
+  const q=normName(S.vq||''),names=[];p.t.forEach(t=>t.g.forEach(n=>{if(n)names.push({n,t:t.n});}));
+  const hits=q?names.filter(x=>normName(x.n).split(' ').some(w=>w.startsWith(q))||normName(x.n).includes(q)).slice(0,8):[];
+  const seated=names.length;
+  return `<div class="viewer">${inApp?`<div class="btns"><button class="btn small" data-act="view-x">‹ Back to your plan</button><span class="hint">This is what people see when they open your link.</span></div>`:''}
+    <header class="vh-head"><div class="ph-k">${p.e?esc(p.e):'Seating plan'}</div><h1 class="vh-t">${esc(p.c||'Our wedding')}</h1>${p.d?`<div class="vh-d">${esc(p.d)}</div>`:''}</header>
+    <section class="card"><label class="lbl" for="vq">Find your seat</label><input id="vq" type="search" placeholder="Type your name" autocomplete="off" value="${esc(S.vq||'')}">
+      <div id="vhits" class="vhits">${hitsHtml(hits,q)}</div></section>
+    <div class="vtables">${p.t.map(t=>{const g=t.g.filter(Boolean);return `<section class="vt"><div class="vt-h"><b>${esc(t.n)}</b><span class="num">${g.length}</span></div>${g.length?`<ul>${g.map(n=>`<li>${esc(n)}</li>`).join('')}</ul>`:'<p class="hint">No one yet</p>'}</section>`;}).join('')}</div>
+    <p class="hint" style="text-align:center">View only · ${seated} guests at ${p.t.length} ${p.t.length===1?'table':'tables'}</p>
+    <p class="vmade">Seating plan made with <a href="${SHOP_URL}" target="_blank" rel="noopener">Wedding Seating by Silent Tools</a></p></div>`;
+}
+function hitsHtml(hits,q){
+  if(!q)return '';
+  if(!hits.length)return `<p class="hint">No guest matches “${esc(S.vq)}”. Try your first name only.</p>`;
+  return hits.map(x=>`<div class="vhit"><span>${esc(x.n)}</span><b>${esc(x.t)}</b></div>`).join('');
+}
+/* ---------- backup file ---------- */
+const BK_FORMAT='silent-seating-backup';
+function backupJSON(){return JSON.stringify({format:BK_FORMAT,schema:1,exportedAt:new Date().toISOString(),data:DB},null,1);}
+function readBackupFile(text){
+  let d;try{d=JSON.parse(text);}catch(e){throw new Error('This file isn’t a seating plan backup. Choose the .json backup file, not a spreadsheet or a CSV.');}
+  if(!d||d.format!==BK_FORMAT||!d.data||!d.data.guests)throw new Error('This file isn’t a seating plan backup. Choose the .json backup file, not a spreadsheet or a CSV.');
+  if(d.schema>1)throw new Error('This backup was made by a newer version of the planner. Update the tool first.');
+  const x=d.data,have=new Set(Object.values(DB.guests).map(g=>normName(g.name)));
+  const all=Object.values(x.guests),missing=all.filter(g=>!have.has(normName(g.name)));
+  const tables=Object.values(x.tables||{}).reduce((s,a)=>s+(a||[]).length,0);
+  return {data:x,exportedAt:d.exportedAt,guests:all.length,missing:missing.length,tables,couple:(x.settings||{}).couple||''};
+}
+function replaceWithBackup(p){DB=JSON.parse(JSON.stringify(p.data));HIST=[];save();}
+function addMissingFromBackup(p){
+  const x=p.data,have=new Set(Object.values(DB.guests).map(g=>normName(g.name))),t=now();let n=0;const gmap={};
+  for(const g of Object.values(x.guests).sort((a,b)=>(a.ord||0)-(b.ord||0))){
+    if(have.has(normName(g.name)))continue;
+    let gid=null;
+    if(g.groupId&&x.groups&&x.groups[g.groupId]){gid=gmap[g.groupId];if(!gid){gid=uid();gmap[g.groupId]=gid;DB.groups[gid]={...x.groups[g.groupId],id:gid};}}
+    const id=uid();DB.seq=(DB.seq||0)+1;
+    DB.guests[id]={id,ord:DB.seq,name:g.name,groupId:gid,side:g.side||'',meal:g.meal||'',tags:[...(g.tags||[])],note:g.note||'',events:[ev()],createdAt:t,updatedAt:t};n++;
+  }
+  cleanGroups();save();return n;
+}
+function daysSinceBackup(){const b=DB.settings.lastBackupAt;return b?Math.floor((Date.now()-new Date(b).getTime())/864e5):null;}
+function shareView(){
+  if(S.viewPrev)return viewerHtml(S.viewPrev,true);
+  const guests=EG().map(g=>g.id).length,seatedN=seated().size,d=daysSinceBackup(),bk=S.bk||{};
+  let h=`<section class="card"><h2 style="margin:0">View-only link</h2>
+    <p style="margin:0">Send your seating plan to family, your planner or the venue. They see the tables and can search for their name. They can’t change anything.</p>
+    <p class="hint">The link holds only names and tables. Meals, labels, sides and your notes stay with you. It’s a snapshot: if you change the plan later, send a new link.</p>
+    ${guests?`<p class="hint">${seatedN} of ${guests} guests have a seat.</p>`:''}
+    <div class="btns"><button class="btn primary" data-act="link-share" ${T().length?'':'disabled'}>Share the link</button><button class="btn" data-act="link-copy" ${T().length?'':'disabled'}>Copy the link</button><button class="btn" data-act="link-preview" ${T().length?'':'disabled'}>See what they see</button></div>
+    ${S.lmsg?`<p class="${S.lerr?'msg':'toast'}" role="status">${esc(S.lmsg)}</p>`:''}
+    ${S.linkText?`<label class="lbl" for="link-area">Your link</label><textarea id="link-area" class="linkarea" readonly>${esc(S.linkText)}</textarea>`:''}
+    ${T().length?'':'<p class="hint">Set up your tables first.</p>'}</section>`;
+  h+=`<section class="card"><h2 style="margin:0">Backup file</h2>
+    <p style="margin:0">Your plan lives only on this device. A backup file keeps it safe, moves it to another phone or computer, or hands it to your partner so they can work on it too.</p>
+    <p class="hint">Last backup: <b>${d===null?'never':d===0?'today':d===1?'yesterday':d+' days ago'}</b>.</p>
+    <div class="btns"><button class="btn primary" data-act="bk-save" ${guests?'':'disabled'}>Save a backup file</button></div>
+    ${bk.msg?`<p class="${bk.err?'msg':'toast'}" role="status">${esc(bk.msg)}</p>`:''}</section>`;
+  h+=`<section class="card"><h2 style="margin:0">Open a backup file</h2>`;
+  if(bk.preview){const p=bk.preview;
+    h+=`<p style="margin:0">This backup${p.couple?` of <b>${esc(p.couple)}</b>`:''} has <b>${p.guests}</b> guests and <b>${p.tables}</b> tables${p.exportedAt?`, saved ${esc(new Date(p.exportedAt).toLocaleDateString())}`:''}.</p>
+      ${bk.confirm?`<div class="notice"><b>Replace your whole plan?</b><p>Your ${guests} guests, tables and seats on this device are replaced by the backup. Make a backup of this plan first if you might need it.</p><div class="btns"><button class="btn danger" data-act="bk-replace-yes">Replace my plan</button><button class="btn" data-act="bk-replace-no">Keep my plan</button></div></div>`
+      :`<div class="opt"><button class="btn primary" data-act="bk-replace">Replace my plan</button><span>Use the plan exactly as it is in the file, with all tables and seats. For moving to a new device.</span></div>
+      <div class="opt"><button class="btn" data-act="bk-add" ${p.missing?'':'disabled'}>Add ${p.missing} ${p.missing===1?'guest':'guests'}</button><span>${p.missing?'Adds the guests you don’t have yet. Your tables and seats stay as they are.':'You already have every guest in this file.'}</span></div>`}
+      <div class="btns"><button class="btn small" data-act="bk-cancel">Cancel</button></div>`;
+  } else h+=`<p class="hint">Choose a backup file (.json) made with this planner, on this or another device.</p><div class="btns"><label class="btn" for="bk-file">Choose backup file</label><input id="bk-file" class="vh" type="file" accept=".json,application/json"></div>`;
+  return h+`</section>`;
+}
+/* ---------- events: each has its own tables and guest list ---------- */
+function setEvent(id){if(!DB.events.some(e=>e.id===id))return;DB.cur=id;HIST=[];S.addT.count=0;S.addT.touched=false;S.sel=null;S.fill=null;S.openT=null;S.out=null;S.viewPrev=null;save();}
+function addEvent(name,everyone){
+  const id=uid();DB.events.push({id,name:tidy(name)||'Event '+(DB.events.length+1)});DB.tables[id]=[];DB.seats[id]={};
+  if(everyone)Object.values(DB.guests).forEach(g=>{g.events=[...new Set([...(g.events||[]),id])];});
+  save();return id;
+}
+function deleteEvent(id){
+  if(DB.events.length<2)return;
+  DB.events=DB.events.filter(e=>e.id!==id);delete DB.tables[id];delete DB.seats[id];
+  Object.values(DB.guests).forEach(g=>{if(Array.isArray(g.events))g.events=g.events.filter(x=>x!==id);});
+  if(DB.cur===id)DB.cur=DB.events[0].id;HIST=[];save();
+}
+function setComing(ids,eid,on){
+  for(const id of ids){const g=DB.guests[id];if(!g)continue;const e=new Set(Array.isArray(g.events)?g.events:DB.events.map(x=>x.id));
+    if(on)e.add(eid);else{e.delete(eid);const sm=DB.seats[eid]||{};for(const t in sm)sm[t]=sm[t].map(x=>x===id?null:x);}
+    g.events=[...e];g.updatedAt=now();}
+  save();
+}
+const evCount=eid=>Object.values(DB.guests).filter(g=>inEv(g,eid)).length;
+function evBar(){
+  if(!multiEv())return `<div class="evbar"><span class="hint">One event: <b>${esc(evName())}</b>. Planning a rehearsal dinner or a brunch too?</span><button class="btn small" data-act="ev-manage">Add an event</button></div>${S.evOpen?evPanel():''}`;
+  return `<div class="evbar"><label class="lbl" for="ev-sel">Event</label><select id="ev-sel">${DB.events.map(e=>`<option value="${e.id}" ${e.id===DB.cur?'selected':''}>${esc(e.name)} · ${evCount(e.id)} guests</option>`).join('')}</select>${S.tab==='seating'?`<button class="btn small" data-act="ev-manage" aria-expanded="${!!S.evOpen}">Manage events</button>`:''}</div>${S.evOpen&&S.tab==='seating'?evPanel():''}`;
+}
+function evPanel(){
+  if(S.evPick)return pickPanel(S.evPick);
+  const who=S.evWho||'all';
+  return `<section class="card"><h3>Events</h3><p class="hint">Each event has its own tables and its own guest list. Names, labels and meals are shared, so you add each guest only once.</p>
+    <div class="evlist">${DB.events.map(e=>`<div class="evrow"><input type="text" data-evname="${e.id}" value="${esc(e.name)}" aria-label="Event name" maxlength="40"><span class="hint">${evCount(e.id)} guests</span>
+      <span class="btns"><button class="btn small" data-evpick="${e.id}">Choose guests</button>${DB.events.length>1?(S.evDel===e.id?`<button class="btn small danger" data-evdelyes="${e.id}">Delete ${esc(e.name)} and its tables</button><button class="btn small" data-act="evdel-no">Keep</button>`:`<button class="btn small" data-evdel="${e.id}">Delete</button>`):''}</span></div>`).join('')}</div>
+    <div class="lbl">Add an event</div>
+    <input id="ev-new" type="text" maxlength="40" placeholder="Rehearsal dinner" aria-label="New event name">
+    <div class="seg two" role="group" aria-label="Who is coming"><button type="button" data-evwho="all" aria-pressed="${who==='all'}">Everyone is coming</button><button type="button" data-evwho="pick" aria-pressed="${who==='pick'}">I’ll choose guests</button></div>
+    <div class="btns"><button class="btn primary" data-act="ev-add">Add event</button><button class="btn" data-act="ev-close">Close</button></div></section>`;
+}
+function pickPanel(eid){
+  const e=DB.events.find(x=>x.id===eid);if(!e){S.evPick=null;return evPanel();}
+  const done=new Set(),rows=[];
+  for(const g of Object.values(DB.guests).sort((a,b)=>byOrd(a,b))){
+    if(done.has(g.id))continue;const gr=grp(g.id);
+    const ids=gr?members(gr.id).map(x=>x.id):[g.id];ids.forEach(x=>done.add(x));
+    const on=ids.filter(x=>inEv(DB.guests[x],eid)).length;
+    rows.push(`<label class="pk"><input type="checkbox" data-evg="${ids.join(',')}" ${on===ids.length?'checked':''}><span>${ids.map(x=>esc(DB.guests[x].name)).join(', ')}${on&&on<ids.length?` <span class="pill warn">${on} of ${ids.length}</span>`:''}</span></label>`);
+  }
+  return `<section class="card"><h3>Who’s coming to ${esc(e.name)}?</h3><p class="hint">${evCount(eid)} of ${Object.keys(DB.guests).length} guests. Couples and families are ticked together. To pick one person from a family, open that guest under Guests → Edit.</p>
+    <div class="btns"><button class="btn small" data-evall="${eid}:1">Everyone</button><button class="btn small" data-evall="${eid}:0">No one</button></div>
+    <div class="pklist">${rows.join('')}</div>
+    <div class="btns"><button class="btn primary" data-act="evpick-done">Done</button></div></section>`;
+}
+function evClick(b){
+  const d=b.dataset;
+  if(d.evwho){S.evWho=d.evwho;const i=document.getElementById('ev-new');S.evNew=i?i.value:'';render();const j=document.getElementById('ev-new');if(j)j.value=S.evNew||'';return true;}
+  if(d.evpick){S.evPick=d.evpick;render();return true;}
+  if(d.evdel){S.evDel=d.evdel;render();return true;}
+  if(d.evdelyes){deleteEvent(d.evdelyes);S.evDel=null;render();return true;}
+  if(d.evall){const[eid,on]=d.evall.split(':');setComing(Object.keys(DB.guests),eid,on==='1');render();return true;}
+  const a=d.act;
+  if(a==='ev-manage'){S.evOpen=!S.evOpen;S.evPick=null;render();return true;}
+  if(a==='ev-close'){S.evOpen=false;S.evPick=null;render();return true;}
+  if(a==='evdel-no'){S.evDel=null;render();return true;}
+  if(a==='evpick-done'){S.evPick=null;render();return true;}
+  if(a==='ev-add'){const i=document.getElementById('ev-new'),name=tidy(i&&i.value);if(!name){i.focus();return true;}
+    const id=addEvent(name,(S.evWho||'all')==='all');setEvent(id);S.evOpen=true;S.evPick=(S.evWho==='pick')?id:null;S.evNew='';render();return true;}
+  return false;
+}
+
+/* ---------- look: text size and theme ---------- */
+const VERSION='1.0.0';
+const TEXT_SIZES=[['auto','Automatic',null],['m','Normal',17],['l','Large',20],['xl','Extra large',23]];
+const THEMES={
+  beige:{label:'Beige',sw:['#EEE6DA','#8C6A3C','#1A1714','#D5B47E']},
+  minimal:{label:'Minimal',sw:['#FFFFFF','#111111','#0E0E0E','#F2F2F2'],
+    font:{'--f-display':'"Archivo",system-ui,sans-serif','--d-weight':'800'},
+    light:{bg:'#F5F5F3',surface:'#FFFFFF',ink:'#111111',muted:'#5E5E5C',line:'#E4E4E1','line-strong':'#BDBDB9',accent:'#111111','accent-soft':'#ECECE9',warn:'#8A5A00','warn-soft':'#FBF1DE',danger:'#B3261E','danger-soft':'#FBE4E2',ok:'#2E7D32'},
+    dark:{bg:'#0E0E0E',surface:'#191919',ink:'#F2F2F2',muted:'#A3A3A0',line:'#2B2B2B','line-strong':'#474747',accent:'#F2F2F2','accent-soft':'#2C2C2C',warn:'#E8B565','warn-soft':'#2E2614',danger:'#F08A80','danger-soft':'#3D1F1C',ok:'#8FC28A'}}
+};
+const TOKENS=['bg','surface','ink','muted','line','line-strong','accent','accent-soft','warn','warn-soft','danger','danger-soft','ok'];
+function hostDark(){const t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);}
+function applyLook(){
+  const st=document.documentElement.style,set=DB.settings||{};
+  const ts=TEXT_SIZES.find(x=>x[0]===(set.textSize||'auto'))||TEXT_SIZES[0];
+  st.fontSize=ts[2]?ts[2]+'px':'';
+  [...TOKENS.map(k=>'--'+k),'--f-display','--d-weight'].forEach(k=>st.removeProperty(k));st.removeProperty('color-scheme');
+  const th=THEMES[set.theme]||THEMES.beige;
+  if(th.light){const t=hostDark()?th.dark:th.light;TOKENS.forEach(k=>st.setProperty('--'+k,t[k]));st.colorScheme=hostDark()?'dark':'light';}
+  if(th.font)for(const k in th.font)st.setProperty(k,th.font[k]);
+}
+if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyLook);
+new MutationObserver(applyLook).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* ---------- keeping the plan safe on a phone ---------- */
+const UA=navigator.userAgent||'';
+const isIOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isAndroid=/Android/i.test(UA);
+const isStandalone=navigator.standalone===true||!!(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+const needsA2HS=()=>(isIOS||isAndroid)&&!isStandalone&&!(DB.settings||{}).noA2HSWarn;
+const hasCode=()=>typeof ACCESS_HASH!=='undefined';
+function a2hsList(){
+  if(isIOS)return `<ol><li>Tap <b>⋯</b> at the bottom right, then <b>Share</b>. On older iPhones, tap the Share icon <b>⬆︎</b> at the bottom instead.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol>`;
+  return `<ol><li>Tap <b>⋮</b> at the top right.</li><li>Tap <b>Add to Home screen</b> or <b>Install app</b>.</li><li>Tap <b>Add</b> or <b>Install</b>.</li></ol>`;
+}
+function a2hsGate(){
+  return `<section class="a2hs gate" role="alert"><div class="rtag">! Before you start</div><h2>Add the planner to your Home Screen</h2>
+    <p>The planner is open in a browser tab right now. Phones can erase what a website stores${isIOS?', and Safari does it after 7 days without a visit':' when it isn’t visited for a while'}. An icon on your Home Screen keeps your plan safe.</p>
+    ${a2hsList()}
+    <p>${isIOS?`Then close this tab and open the planner from the new icon.${hasCode()?' Enter your access code there once more.':''} Work there, because the icon keeps its own plan, separate from this tab.`:'Then open the planner from the new icon.'}</p>
+    <div class="btns"><button class="btn small" data-act="a2hs-later">I’ll do it later</button></div></section>`;
+}
+function a2hsBar(){
+  if(!needsA2HS())return '';
+  const n=Object.keys(DB.guests).length,how=`<details><summary>How to add it</summary>${a2hsList()}</details>`;
+  if(!n)return `<div class="a2hs" role="alert"><b class="t">Not on your Home Screen yet</b><p>Plans kept in a browser tab can be erased by the phone${isIOS?'. Safari does it after 7 days without a visit':''}. Add the planner to your Home Screen${isIOS?' and work there':''}.</p>${how}</div>`;
+  if(isIOS)return `<div class="a2hs" role="alert"><b class="t">Your ${n} guests are only in this Safari tab</b><p>Safari can erase them after 7 days without a visit. To keep them safe:</p><ol><li>Save a backup file under Share.</li><li>Add the planner to your Home Screen.</li><li>Open the new icon${hasCode()?', enter your code':''} and open the backup file under Share.</li></ol><div class="btns"><button class="btn primary small" data-tab="share">Go to backup</button></div>${how}</div>`;
+  return `<div class="a2hs" role="alert"><b class="t">Your plan is in a browser tab</b><p>Phones can erase what a website stores when it isn’t visited for a while. Add the planner to your Home Screen to keep your ${n} guests safe.</p>${how}</div>`;
+}
+function backupNudge(){
+  const n=Object.keys(DB.guests).length;if(n<10||S.tab==='share')return '';
+  const d=daysSinceBackup();if(d!==null&&d<=14)return '';
+  return `<div class="notice"><b>${d===null?'You haven’t made a backup yet':`Your last backup was ${d} days ago`}</b><p>A backup file is the only way to get your plan back if this phone is lost or replaced.</p><div class="btns"><button class="btn primary small" data-tab="share">Save a backup</button></div></div>`;
+}
+
+/* ---------- settings ---------- */
+function settingsView(){
+  const set=DB.settings||{},th=THEMES[set.theme]?set.theme:'beige';
+  return `<div class="btns"><button class="btn small" data-act="close-settings">‹ Back to your plan</button></div><h2>Settings</h2>
+  <section class="card"><div class="lbl">Text size</div>
+    <div class="tsizes" role="group" aria-label="Text size">${TEXT_SIZES.map(([k,l])=>`<button type="button" data-tsize="${k}" aria-pressed="${(set.textSize||'auto')===k}">${l}</button>`).join('')}</div>
+    <p class="hint">Automatic follows your phone’s text size where the browser allows it.</p></section>
+  <section class="card"><div class="lbl">Look</div>
+    <div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button type="button" data-theme-pick="${k}" aria-pressed="${th===k}"><span class="sw">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</span>${t.label}</button>`).join('')}</div>
+    <p class="hint">Printed pages always use the classic look on white paper.</p></section>
+  <section class="card"><div class="lbl">Keep your plan safe</div>
+    <p class="hint" style="font-size:0.8235rem">Your plan lives on this device only, with no account and no server. Two habits keep it safe: add the planner to your Home Screen, and save a backup file now and then.</p>
+    ${isIOS||isAndroid?`<details><summary>How to add it to your Home Screen</summary>${a2hsList()}</details>`:''}
+    <div class="btns"><button class="btn small" data-tab="share">Backup and sharing</button></div></section>
+  <section class="card"><div class="lbl">About</div>
+    <p class="hint" style="font-size:0.7941rem">Happily Seated ${VERSION}, made by Silent Tools. No account, no tracking, no ads. Your plan is stored only in this browser on this device.</p>
+    <p class="hint" style="font-size:0.7941rem">It’s yours to use for as long as it works in your browser, with no expiry. I look after it actively for at least 12 months after your purchase, and usually much longer. <a href="../terms.html" target="_blank" rel="noopener">Terms and privacy</a></p></section>`;
+}
+
+/* ---------- access code ---------- */
+const ACCESS_HASH='f3889c21a09ef374a55581766ded9ca5c72002b4c768a63b76b359a01c62d072';
+let unlocked=false;try{unlocked=localStorage.getItem('hs.access')==='1';}catch(e){}
+S.locked=!unlocked&&!/^#v=/.test(location.hash);S.lockMsg='';S.lockBusy=false;
+async function sha256hex(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+async function tryUnlock(raw){
+  const c=String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!c){S.lockMsg='Enter the access code from your purchase.';render();return;}
+  S.lockBusy=true;render();
+  let ok=false;try{ok=(await sha256hex(c))===ACCESS_HASH;}catch(e){S.lockBusy=false;S.lockMsg='This browser can’t check the code. Open the link in Safari or Chrome.';render();return;}
+  S.lockBusy=false;
+  if(!ok){S.lockMsg='That code doesn’t match. Check it in the PDF from your purchase. Letters and numbers only, spaces don’t matter.';render();return;}
+  try{localStorage.setItem('hs.access','1');}catch(e){}
+  S.locked=false;S.lockMsg='';document.getElementById('tabs').hidden=false;render();
+}
+function lockView(){
+  return `<section class="card lock">
+    <h2 style="margin:0">Welcome</h2>
+    <p style="margin:0">Enter the access code from the PDF you received with your purchase. You only need to do this once on each device.</p>
+    <form id="unlock-form" class="searchrow" autocomplete="off">
+      <input id="unlock-code" type="text" autocapitalize="characters" spellcheck="false" placeholder="Access code" aria-label="Access code">
+      <button class="btn primary" type="submit" ${S.lockBusy?'disabled':''}>${S.lockBusy?'Checking…':'Unlock'}</button>
+    </form>
+    ${S.lockMsg?`<p class="msg" role="alert">${esc(S.lockMsg)}</p>`:''}
+    <p class="hint">Opened a seating plan someone shared with you? Use the full link they sent, it opens without a code.</p>
+  </section>`;
+}
+
+/* ---------- render & events ---------- */
+function render(){
+  if(S.viewerMode){document.body.classList.add('viewing');document.getElementById('view').innerHTML=S.viewerData?viewerHtml(S.viewerData,false):S.viewerErr?'<div class="empty"><div>This link is incomplete or damaged. Ask for the link again, and make sure you copy all of it.</div></div>':'<p class="hint">Opening the seating plan…</p>';document.getElementById('bar').innerHTML='';return;}
+  applyLook();
+  if(S.locked){document.getElementById('hdr').innerHTML='';const tb=document.getElementById('tabs');tb.hidden=true;document.getElementById('view').innerHTML=lockView();document.getElementById('bar').innerHTML='';return;}
+  renderTop();
+  const v=document.getElementById('view');
+  if(S.screen==='settings'){v.innerHTML=settingsView();renderBar();return;}
+  if(needsA2HS()&&!Object.keys(DB.guests).length&&!S.a2hsLater&&!(DB.settings||{}).a2hsSeen){v.innerHTML=a2hsGate();renderBar();return;}S.pvw=Math.max(240,v.clientWidth||358);
+  v.innerHTML=a2hsBar()+(S.tab==='guests'||S.tab==='seating'?backupNudge():'')+(S.tab==='seating'?evBar()+seatingView():S.tab==='print'?(multiEv()?evBar():'')+printView():S.tab==='share'?(multiEv()&&!S.viewPrev?evBar():'')+shareView():guestsView());
+  if(S.tab==='share'&&!S.viewPrev)refreshLink();
+  renderBar();
+  if(!storageOk)document.getElementById('view').insertAdjacentHTML('afterbegin','<p class="msg">This browser would not save your plan. Turn off private browsing.</p>');
+}
+function doPlace(tid,seat){
+  if(!S.sel)return;
+  snapshot();const err=place(S.sel.ids,tid,seat);
+  if(err){HIST.pop();S.tmsg=err;}else{save();S.tmsg='';S.sel=null;S.only=false;S.openT=tid;S.amsg='';}
+  render();
+}
+function openFill(tid,i){S.fill={tid,i};S.fillQ='';S.fmsg='';S.openT=tid;render();const f=document.getElementById('fill-q');if(f){f.focus();f.scrollIntoView({block:'center'});}}
+const view=document.getElementById('view');
+view.addEventListener('input',ev=>{
+  if(ev.target.id==='paste')S.paste=ev.target.value;
+  if(ev.target.id==='at-count')S.addT.touched=true;
+  if(ev.target.id==='vq'){S.vq=ev.target.value;const p=S.viewPrev||S.viewerData,q=normName(S.vq),names=[];if(p){p.t.forEach(t=>t.g.forEach(n=>{if(n)names.push({n,t:t.n});}));const el=document.getElementById('vhits');if(el)el.innerHTML=hitsHtml(q?names.filter(x=>normName(x.n).split(' ').some(w=>w.startsWith(q))||normName(x.n).includes(q)).slice(0,8):[],q);}}
+  if(ev.target.id==='c-couple'){DB.settings.couple=ev.target.value;save();renderTop();}
+  if(ev.target.id==='c-date'){DB.settings.date=ev.target.value;save();}
+  if(ev.target.id==='gq'){S.q=ev.target.value;const pos=ev.target.selectionStart;render();const i=document.getElementById('gq');i.focus();try{i.setSelectionRange(pos,pos);}catch(e){}}
+  if(ev.target.id==='fill-q'){S.fillQ=ev.target.value;S.fmsg='';const s=document.getElementById('sugg');if(s)s.innerHTML=suggHtml();}
+});
+view.addEventListener('keydown',ev=>{
+  if(ev.target.id==='fill-q'&&ev.key==='Enter'){ev.preventDefault();const b=document.querySelector('#sugg [data-fill]:not(:disabled)');if(b)b.click();}
+  if(ev.target.id==='fill-q'&&ev.key==='Escape'){S.fill=null;render();}
+  if(ev.target.id==='e-tag'&&ev.key==='Enter'){ev.preventDefault();addEdTag();}
+});
+view.addEventListener('toggle',ev=>{if(ev.target.classList&&ev.target.classList.contains('lvd'))S.lvOpen=ev.target.open;},true);
+view.addEventListener('change',ev=>{
+  const t=ev.target;
+  if(t.dataset.pv!==undefined){S.preview.items[+t.dataset.pv].on=t.checked;render();return;}
+  if(t.dataset.map!==undefined){const p=S.preview;p.mapping[+t.dataset.map]=t.value;const r=parseRows(p.rawRows,p.mapping);p.items=markDupes(r.items);p.declined=r.declined;render();return;}
+  if(t.id==='gfile'){const f=t.files&&t.files[0];if(f)readFile(f);return;}
+  if(t.id==='ev-sel'){setEvent(t.value);render();return;}
+  if(t.dataset.evname){const e=DB.events.find(x=>x.id===t.dataset.evname);if(e&&tidy(t.value)){e.name=tidy(t.value);save();renderTop();}return;}
+  if(t.dataset.evg){setComing(t.dataset.evg.split(','),S.evPick,t.checked);render();return;}
+  if(t.dataset.eev){readEd();const id=t.dataset.eev;S.ed.events=t.checked?[...new Set([...S.ed.events,id])]:S.ed.events.filter(x=>x!==id);return;}
+  if(t.id==='bk-file'){const f=t.files&&t.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{S.bk={preview:readBackupFile(String(rd.result))};}catch(e){S.bk={msg:e.message,err:true};}render();};rd.onerror=()=>{S.bk={msg:'The file could not be read. Try choosing it again.',err:true};render();};rd.readAsText(f);return;}
+  if(t.id==='e-with'&&t.value){readEd();joinWith(S.editId,t.value);render();return;}
+  if(t.id==='e-apart'&&t.value){readEd();addApart(S.editId,t.value);render();return;}
+});
+function rowsPreview(rows){
+  const r=parseRows(rows,null);
+  const body=rows.filter(x=>x.some(c=>String(c??'').trim()));if(r.header)body.shift();
+  S.preview={items:markDupes(r.items),declined:r.declined,header:r.header,mapping:r.mapping,rawRows:rows,sample:body[0]?body[0].map(c=>String(c??'').slice(0,24)):null};
+}
+function readFile(f){
+  S.msg='';S.toast='';
+  const rd=new FileReader(),isText=/\.(csv|tsv|txt)$/i.test(f.name);
+  rd.onload=()=>{
+    try{
+      let rows;
+      if(window.XLSX){const wb=isText?XLSX.read(String(rd.result),{type:'string',raw:true}):XLSX.read(new Uint8Array(rd.result),{type:'array'});
+        rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:''});}
+      else if(isText){const tx=String(rd.result),sep=tx.includes('\t')?'\t':(tx.split(';').length>tx.split(',').length?';':',');rows=tx.split(/\r?\n/).map(l=>l.split(sep).map(c=>c.replace(/^"|"$/g,'')));}
+      else throw new Error('The Excel reader didn’t load. Check your internet connection and reload the page.');
+      rowsPreview(rows);
+    }catch(e){S.msg=e.message||'This file could not be read.';}
+    render();
+  };
+  rd.onerror=()=>{S.msg='The file could not be read. Try choosing it again.';render();};
+  isText?rd.readAsText(f):rd.readAsArrayBuffer(f);
+}
+view.addEventListener('submit',ev=>{
+  if(ev.target.id==='unlock-form'){ev.preventDefault();tryUnlock(document.getElementById('unlock-code').value);return;}
+  if(ev.target.id!=='one')return;ev.preventDefault();
+  const inp=document.getElementById('one-name'),p=parseLine(inp.value);
+  if(!p){S.msg='Type a name first.';render();return;}
+  const items=markDupes([{people:p.members.map(n=>({name:n,meal:'',tags:[],note:'',side:''})),group:p.group}]);
+  if(!items[0].on){S.msg=`${p.members.join(' & ')} is already on your list.`;S.toast='';render();document.getElementById('one-name').focus();return;}
+  items[0].people.forEach(x=>x.dupe='');addItems(items);S.msg='';S.toast=`Added ${p.members.join(' & ')}.`;render();document.getElementById('one-name').focus();
+});
+function readEd(){if(!S.ed)return;const n=document.getElementById('e-name'),m=document.getElementById('e-meal');if(n)S.ed.name=n.value;if(m)S.ed.meal=m.value;}
+function addEdTag(){readEd();const i=document.getElementById('e-tag'),v=tidy(i&&i.value);if(v&&!S.ed.tags.some(x=>x.toLowerCase()===v.toLowerCase()))S.ed.tags.push(v);render();const n=document.getElementById('e-tag');if(n)n.focus();}
+view.addEventListener('click',ev=>{
+  if(dragJustEnded)return;
+  const b=ev.target.closest('button');
+  if(!b){const tc=ev.target.closest('.tcard');if(tc&&S.sel&&!ev.target.closest('.edit')&&!ev.target.closest('.fillbox'))doPlace(tc.dataset.tid,null);return;}
+  if(b.dataset.tab){S.tab=b.dataset.tab;S.screen='';render();window.scrollTo(0,0);return;}
+  if(b.dataset.tsize){DB.settings.textSize=b.dataset.tsize;save();render();return;}
+  if(b.dataset.themePick){DB.settings.theme=b.dataset.themePick;save();render();return;}
+  if(b.dataset.act==='close-settings'){S.screen='';render();window.scrollTo(0,0);return;}
+  if(b.dataset.act==='a2hs-later'){S.a2hsLater=true;DB.settings.a2hsSeen=true;save();render();window.scrollTo(0,0);return;}
+  if(evClick(b))return;
+  if(b.dataset.in){S.inMode=b.dataset.in;S.preview=null;S.msg='';S.toast='';render();return;}
+  if(b.dataset.shape){readAddT();S.addT.shape=b.dataset.shape;S.addT.seats=b.dataset.shape==='long'?10:8;render();return;}
+  if(b.dataset.mode){S.mode=b.dataset.mode;render();return;}
+  if(b.dataset.out){S.out=b.dataset.out;S.omsg='';render();window.scrollTo(0,0);return;}
+  if(b.dataset.paper){DB.settings.paper=b.dataset.paper;save();render();return;}
+  if(b.dataset.oo){const[k,v]=b.dataset.oo.split(':');S.oo[k]=v==='true'?true:v==='false'?false:v;S.omsg='';render();return;}
+  if(b.dataset.lv){const[t,v]=b.dataset.lv.split('|');DB.labels=DB.labels||{};DB.labels[t.toLowerCase()]={vis:v};save();render();return;}
+  if(b.dataset.etshape){const n=document.getElementById('et-name'),c=document.getElementById('et-seats');if(n)S.et.name=n.value;if(c)S.et.seats=+c.value||S.et.seats;S.et.shape=b.dataset.etshape;render();return;}
+  if(b.dataset.gkind){const[gid,k]=b.dataset.gkind.split(':');if(DB.groups[gid]){DB.groups[gid].kind=k;save();}render();return;}
+  if(b.dataset.eside!==undefined){readEd();S.ed.side=b.dataset.eside;render();return;}
+  if(b.dataset.etag!==undefined){readEd();const t=b.dataset.etag,i=S.ed.tags.findIndex(x=>x.toLowerCase()===t.toLowerCase());i>=0?S.ed.tags.splice(i,1):S.ed.tags.push(t);render();return;}
+  if(b.dataset.unapart){readEd();removeApart(S.editId,b.dataset.unapart);render();return;}
+  if(b.dataset.unit){const u=poolUnits().find(x=>x.key===b.dataset.unit);const same=S.sel&&S.sel.key===u.key&&!S.sel.from;S.sel=same?null:{key:u.key,ids:u.ids,label:u.label};S.only=false;S.tmsg='';S.fill=null;if(!same&&!isWide())S.showPool=false;render();return;}
+  if(b.dataset.fill){const u=poolUnits().find(x=>x.key===b.dataset.fill),f=S.fill;if(!u||!f)return;
+    snapshot();const err=place(u.ids,f.tid,f.i);if(err){HIST.pop();S.fmsg=err;const s=document.getElementById('sugg');if(s)s.innerHTML=suggHtml();return;}
+    save();const t=tableById(f.tid),a=arr(f.tid),nx=a.findIndex(x=>!x);S.amsg='';
+    if(nx>=0&&poolUnits().length){S.fill={tid:f.tid,i:nx};S.fillQ='';render();const q=document.getElementById('fill-q');if(q){q.focus();q.scrollIntoView({block:'center'});}}
+    else{S.fill=null;render();}
+    return;}
+  if(b.dataset.topen){const tid=b.dataset.topen;if(S.sel){doPlace(tid,null);return;}if(!isWide()){S.openT=S.openT===tid?null:tid;S.fill=null;}render();return;}
+  if(b.dataset.seat){
+    const[tid,i]=b.dataset.seat.split(':'),idx=+i,occ=arr(tid)[idx];
+    if(S.sel){if(occ&&S.sel.ids.includes(occ)&&S.sel.ids.length>1){S.sel=null;render();return;}doPlace(tid,idx);return;}
+    if(occ){S.only=false;S.fill=null;S.sel=selFromGuest(occ);S.tmsg='';render();}
+    else openFill(tid,idx);
+    return;
+  }
+  const a=b.dataset.act,id=b.dataset.id,tid=b.dataset.tid;
+  if(a==='parse'){const p=parseText(S.paste);S.msg='';S.toast='';
+    if(p.kind==='rows')rowsPreview(p.rows);else{if(!p.items.length){S.msg='Paste at least one name.';render();return;}S.preview={items:markDupes(p.items),header:null,mapping:null};}
+    render();}
+  else if(a==='cancel-preview'){S.preview=null;render();}
+  else if(a==='add-preview'){const n=addItems(S.preview.items);S.preview=null;S.paste='';S.toast=`Added ${n} ${n===1?'guest':'guests'}. Set up your tables under Seating.`;render();}
+  else if(a==='e-open'){const g=DB.guests[id];S.editId=id;S.ed={name:g.name,meal:g.meal||'',side:g.side||'',tags:[...(g.tags||[])],events:Array.isArray(g.events)?[...g.events]:DB.events.map(e=>e.id)};render();const i=document.getElementById('e-name');if(i)i.focus();}
+  else if(a==='e-cancel'){S.editId=null;S.ed=null;render();}
+  else if(a==='e-addtag')addEdTag();
+  else if(a==='e-save'){readEd();const g=DB.guests[id],v=tidy(S.ed.name);if(v)g.name=v;g.meal=tidy(S.ed.meal);g.side=S.ed.side;g.tags=S.ed.tags.slice();if(multiEv()){DB.events.forEach(e=>setComing([g.id],e.id,S.ed.events.includes(e.id)));}g.updatedAt=now();save();S.editId=null;S.ed=null;render();}
+  else if(a==='e-split'){readEd();DB.guests[id].groupId=null;DB.guests[id].updatedAt=now();cleanGroups();save();render();}
+  else if(a==='e-del'){removeGuest(id);S.editId=null;S.ed=null;render();}
+  else if(a==='t-add'){readAddT();const c=Math.min(60,Math.max(1,S.addT.count|0)),s=Math.min(MAXSEATS,Math.max(1,S.addT.seats|0));addTables(S.addT.shape,s,c);S.tmsg=S.addT.seats>MAXSEATS?`A table can have up to ${MAXSEATS} seats, so these tables have ${MAXSEATS}.`:'';S.addOpen=false;S.addT.count=0;S.addT.touched=false;render();}
+  else if(a==='add-open'){S.addOpen=!S.addOpen;S.addT.count=1;render();}
+  else if(a==='add-x'){S.addOpen=false;render();}
+  else if(a==='t-edit'){const t=tableById(tid);S.editT=S.editT===tid?null:tid;S.et={name:t.name,seats:t.seats,shape:t.shape};render();}
+  else if(a==='t-cancel'){S.editT=null;render();}
+  else if(a==='t-save'){const t=tableById(tid),nm=tidy(document.getElementById('et-name').value),want=+document.getElementById('et-seats').value|0,s=Math.min(MAXSEATS,Math.max(1,want));if(nm)t.name=nm;snapshot();if(S.et)t.shape=S.et.shape;const lost=resizeTable(tid,s);S.tmsg=(want>MAXSEATS?`A table can have up to ${MAXSEATS} seats, so ${t.name} has ${MAXSEATS}. `:'')+(lost?`${lost} ${lost===1?'guest is':'guests are'} back in Not seated.`:'');S.editT=null;save();render();}
+  else if(a==='t-clear'){snapshot();SM()[tid]=Array(tableById(tid).seats).fill(null);save();S.editT=null;render();}
+  else if(a==='t-del'){snapshot();deleteTable(tid);S.editT=null;render();}
+  else if(a==='fill-x'){S.fill=null;render();}
+  else if(a==='out-back'){S.out=null;S.pages=null;render();window.scrollTo(0,0);}
+  else if(a==='print')doPrint();
+  else if(a==='link-preview'){S.viewPrev=viewPayload();S.vq='';render();window.scrollTo(0,0);}
+  else if(a==='view-x'){S.viewPrev=null;S.vq='';render();}
+  else if(a==='link-copy'||a==='link-share')linkAction(a);
+  else if(a==='bk-save'){(async()=>{try{const r=await saveFile(`${fileStem()}-backup-${new Date().toISOString().slice(0,10)}.json`,backupJSON(),'application/json');if(r==='declined')S.bk={msg:'Nothing was saved.'};else{DB.settings.lastBackupAt=new Date().toISOString();save();S.bk={msg:'Backup file is ready. Keep it somewhere safe, like iCloud Drive, Google Drive or your email.'};}}catch(e){S.bk={msg:'The file could not be saved. Try again.',err:true};}render();})();}
+  else if(a==='bk-cancel'){S.bk={};render();}
+  else if(a==='bk-replace'){S.bk.confirm=true;render();}
+  else if(a==='bk-replace-no'){S.bk.confirm=false;render();}
+  else if(a==='bk-replace-yes'){replaceWithBackup(S.bk.preview);S.bk={msg:'Done. Your plan now matches the backup file.'};S.sel=null;S.fill=null;render();}
+  else if(a==='bk-add'){const n=addMissingFromBackup(S.bk.preview);S.bk={msg:`Added ${n} ${n===1?'guest':'guests'}. Seat them under Seating.`};render();}
+  else if(a==='canva-csv'||a==='canva-xlsx'||a==='stationer-xlsx')designerSave(a);
+  else if(a==='copy-text')copyText();
+  else if(a==='xlsx'){(async()=>{try{const r=await saveFile(fileStem()+'.xlsx',buildXlsx(),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');S.omsg=r==='declined'?'Nothing was saved.':'The spreadsheet is ready.';S.oerr=false;}catch(e){S.omsg=e.message||'The file could not be saved.';S.oerr=true;}render();})();}
+  else if(a==='pool'){S.showPool=!S.showPool;S.fill=null;render();}
+  else if(a==='auto'){S.auto=!S.auto;S.amsg='';render();}
+  else if(a==='auto-x'){S.auto=false;render();}
+  else if(a==='auto-go'){const r=seatForMe(S.mode);S.auto=false;S.sel=null;S.fill=null;S.showPool=false;
+    S.amsg=r.placed?`Seated ${r.placed} ${r.placed===1?'guest':'guests'}.${r.left?` ${r.left} still need a seat: there was no table with enough free seats together, or a keep-apart wish was in the way.`:''} Undo puts everything back.`:'No one could be seated. Add tables or seats first.';
+    render();window.scrollTo(0,0);}
+  else if(a==='undo'){undo();S.sel=null;S.fill=null;S.amsg='';render();}
+  else if(a==='reset'){S.confirmReset=true;render();}
+  else if(a==='reset-no'){S.confirmReset=false;render();}
+  else if(a==='reset-yes'){DB=fresh();HIST=[];save();S.confirmReset=false;S.toast='Everything is cleared. Add your guests again.';S.preview=null;S.sel=null;S.fill=null;S.addT.count=0;render();window.scrollTo(0,0);}
+});
+let linkBusy=null;
+function refreshLink(){const key=JSON.stringify(viewPayload());if(S.linkKey===key&&S.linkCache)return;linkBusy=makeViewLink().then(l=>{S.linkCache=l;S.linkKey=key;linkBusy=null;});}
+async function linkAction(a){
+  if(!S.linkCache||S.linkKey!==JSON.stringify(viewPayload())){refreshLink();if(linkBusy)await linkBusy;}
+  const url=S.linkCache;S.lerr=false;
+  if(a==='link-share'&&navigator.share){try{await navigator.share({title:(couple()||'Our')+' seating plan',url});S.lmsg='';return;}catch(e){if(e&&e.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(url);S.lmsg='Link copied. Paste it into a message or an email.';S.linkText='';}
+  catch(e){S.lmsg='Select the link below and copy it.';S.linkText=url;}
+  render();const ta=document.getElementById('link-area');if(ta){ta.focus();ta.select();}
+}
+function readAddT(){const c=document.getElementById('at-count'),s=document.getElementById('at-seats');if(c)S.addT.count=+c.value||1;if(s)S.addT.seats=+s.value||8;}
+document.getElementById('hdr').addEventListener('click',ev=>{const b=ev.target.closest('[data-act="open-settings"]');if(!b)return;S.screen='settings';S.sel=null;S.fill=null;render();window.scrollTo(0,0);});
+document.getElementById('tabs').addEventListener('click',ev=>{S.screen='';const b=ev.target.closest('[data-tab]');if(!b)return;S.viewPrev=null;S.lmsg='';S.linkText='';if(b.dataset.tab==='print'&&S.tab==='print')S.out=null;S.tab=b.dataset.tab;S.sel=null;S.tmsg='';S.fill=null;render();window.scrollTo(0,0);});
+document.getElementById('bar').addEventListener('click',ev=>{
+  const b=ev.target.closest('button');if(!b)return;const a=b.dataset.act;
+  if(a==='sel-cancel'||a==='bar-ok'){S.sel=null;S.only=false;S.tmsg='';render();}
+  else if(a==='only'){S.only=!S.only;S.sel=selFromGuest(S.sel.from);render();}
+  else if(a==='to-pool'){snapshot();unseat(S.sel.ids);save();S.sel=null;S.only=false;render();}
+});
+
+/* ---------- drag with a mouse or pen (touch uses tap, so the page still scrolls) ---------- */
+let drag=null,dragJustEnded=false;
+view.addEventListener('pointerdown',ev=>{
+  if(ev.pointerType==='touch'||ev.button!==0)return;
+  const src=ev.target.closest('[data-drag]');if(!src)return;
+  drag={key:src.dataset.drag,x:ev.clientX,y:ev.clientY,on:false,ghost:null,hot:null};
+});
+window.addEventListener('pointermove',ev=>{
+  if(!drag)return;
+  if(!drag.on){if(Math.hypot(ev.clientX-drag.x,ev.clientY-drag.y)<6)return;
+    drag.on=true;const k=drag.key;
+    if(k.startsWith('g:')){const u=poolUnits().find(x=>x.key===k);drag.sel=u?{key:u.key,ids:u.ids,label:u.label}:null;}
+    else{const pu=poolUnits().find(x=>x.key===k);drag.sel=pu?{key:k,ids:pu.ids,label:pu.label}:selFromGuest(k.slice(2));}
+    if(!drag.sel){drag=null;return;}
+    drag.ghost=document.createElement('div');drag.ghost.className='ghost';drag.ghost.textContent=drag.sel.label+(drag.sel.ids.length>1?` (${drag.sel.ids.length})`:'');document.body.appendChild(drag.ghost);document.body.classList.add('dragging');}
+  drag.ghost.style.left=ev.clientX+'px';drag.ghost.style.top=ev.clientY+'px';
+  const el=document.elementFromPoint(ev.clientX,ev.clientY),hot=el&&el.closest('[data-drop]');
+  if(hot!==drag.hot){if(drag.hot)drag.hot.classList.remove('drop-hot');drag.hot=hot;if(hot)hot.classList.add('drop-hot');}
+});
+window.addEventListener('pointerup',()=>{
+  if(!drag)return;const d=drag;drag=null;
+  if(!d.on)return;
+  d.ghost.remove();document.body.classList.remove('dragging');if(d.hot)d.hot.classList.remove('drop-hot');
+  dragJustEnded=true;setTimeout(()=>dragJustEnded=false,50);
+  const h=d.hot;if(!h)return;
+  if(h.dataset.drop==='pool'){snapshot();unseat(d.sel.ids);save();render();return;}
+  S.sel=d.sel;
+  if(h.dataset.drop==='seat'){const[tid,i]=h.dataset.seat.split(':');doPlace(tid,+i);}
+  else doPlace(h.dataset.tid,null);
+});
+
+/* test hooks for the dev build only */
+{const hv=location.hash.match(/^#v=([A-Za-z0-9_-]+)$/);if(hv){S.viewerMode=true;decodeView(hv[1]).then(p=>{S.viewerData=p;render();}).catch(()=>{S.viewerErr=true;render();});}}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(S.tab==='print'&&S.out)render();});
+save();render();
+})();
+</script>
+
+</body>
+</html>
