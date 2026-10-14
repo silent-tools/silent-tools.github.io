@@ -111,7 +111,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.5}
 .hp[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
 .hp.new .av{border:2px dashed var(--line-strong);border-radius:50%;display:grid;place-items:center;font-size:1.7647rem;color:var(--accent)}
 .av{border-radius:50%;overflow:hidden;background:var(--accent-soft);flex:none;display:block}
-.av img,.av svg{width:100%;height:100%;object-fit:cover;display:block}
+.av img,.av svg{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
 
 /* moods */
 .moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
@@ -145,7 +145,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.5}
 /* ride detail and horse detail */
 .back{border:0;background:none;color:var(--accent);font-family:var(--f-display);font-weight:600;font-size:0.9412rem;cursor:pointer;padding:4px 0;min-height:40px;text-align:left}
 .hero{width:100%;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:var(--accent-soft);display:block}
-.hero img,.hero svg{width:100%;height:100%;object-fit:cover;display:block}
+.hero img,.hero svg{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
 .facts{display:grid;gap:8px}
 .fact{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;font-size:0.9118rem;align-items:baseline}
 .fact span:first-child{color:var(--muted);font-size:0.8235rem}
@@ -163,7 +163,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.5}
 @media (min-width:640px){.hgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .hcard{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:10px;display:grid;gap:6px;text-align:center;cursor:pointer;color:inherit}
 .hcard .pic{width:100%;aspect-ratio:1;border-radius:18px;overflow:hidden;background:var(--accent-soft)}
-.hcard .pic img,.hcard .pic svg{width:100%;height:100%;object-fit:cover;display:block}
+.hcard .pic img,.hcard .pic svg{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block}
 .hcard b{font-family:var(--f-display);font-weight:600;font-size:1.0588rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hcard span{font-size:0.7941rem;color:var(--muted)}
 .hcard.add{border:2px dashed var(--line-strong);background:transparent;place-content:center;min-height:180px;font-family:var(--f-display);font-weight:600;color:var(--accent);font-size:1.0rem}
@@ -628,7 +628,7 @@ function statsView(){
 /* ---------- keepsakes: rosettes, horse cards, riding year poster ---------- */
 async function fontsReady(){try{await Promise.all(['600 40px Fredoka','500 20px Jost','600 30px Caveat'].map(f=>document.fonts.load(f)));}catch(e){}}
 function rr(x,cx,cy,w,h,r){x.beginPath();x.moveTo(cx+r,cy);x.arcTo(cx+w,cy,cx+w,cy+h,r);x.arcTo(cx+w,cy+h,cx,cy+h,r);x.arcTo(cx,cy+h,cx,cy,r);x.arcTo(cx,cy,cx+w,cy,r);x.closePath();}
-function cover(x,img,dx,dy,dw,dh){const s=Math.max(dw/img.width,dh/img.height),sw=dw/s,sh=dh/s;x.drawImage(img,(img.width-sw)/2,(img.height-sh)/2,sw,sh,dx,dy,dw,dh);}
+function cover(x,img,dx,dy,dw,dh){const s=Math.max(dw/img.width,dh/img.height),sw=dw/s,sh=dh/s;x.drawImage(img,(img.width-sw)/2,(img.height-sh)*0.3,sw,sh,dx,dy,dw,dh);}
 function fitFont(x,text,weight,family,max,width){let s=max;do{x.font=`${weight} ${s}px ${family}`;if(x.measureText(text).width<=width)break;s-=2;}while(s>14);return s;}
 function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
 const PAL=()=>{const t=THEMES[DB.settings.theme]||THEMES.pink;return t.print;};
@@ -718,7 +718,7 @@ async function saveFile(name,data,mime){
   const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
   return 'saved';
 }
-const slug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const slug=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 async function savePicture(kind,id){
   try{const u=await imgFor(kind,id),b=await (await fetch(u)).blob();
     const name=kind==='card'?`${slug(DB.horses[id].name)||'horse'}-card.png`:`${slug(riderName())?slug(riderName())+'-':''}riding-year-${id}.png`;
@@ -808,7 +808,7 @@ function settingsView(){
   const set=DB.settings||{},th=THEMES[set.theme]?set.theme:'pink',d=daysSinceBackup(),bk=S.bk||{},pk=paperKey();
   const nR=Object.keys(DB.rides).length,nH=Object.keys(DB.horses).length;
   let h=`<button class="back" data-act="close-settings">‹ Back to the diary</button><h2>Settings</h2>
-  <section class="card"><label class="field"><span class="lbl">Rider’s name</span><input type="text" id="s-rider" value="${esc(set.rider||'')}" placeholder="Mia" autocomplete="off"></label><p class="hint">Shown at the top and on the horse cards and the riding year.</p>${S.msg&&S.msgFor==='rider'?`<p class="msg">${esc(S.msg)}</p>`:''}</section>
+  <section class="card"><label class="field"><span class="lbl">Rider’s name</span><input type="text" id="s-rider" value="${esc(set.rider||'')}" placeholder="Säde" autocomplete="off"></label><p class="hint">Shown at the top and on the horse cards and the riding year.</p>${S.msg&&S.msgFor==='rider'?`<p class="msg">${esc(S.msg)}</p>`:''}</section>
   <section class="card"><div class="lbl">Colors</div><div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button type="button" data-theme-pick="${k}" aria-pressed="${th===k}"><span class="sw3">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</span>${t.label}</button>`).join('')}</div></section>
   <section class="card"><div class="lbl">Text size</div><div class="tsizes" role="group" aria-label="Text size">${TEXT_SIZES.map(([k,l])=>`<button type="button" data-tsize="${k}" aria-pressed="${(set.textSize||'auto')===k}">${l}</button>`).join('')}</div><p class="hint">Automatic follows the phone’s text size where the browser allows it.</p></section>
   <section class="card"><div class="lbl">Paper for printing</div><div class="tsizes" role="group" aria-label="Paper size">${Object.entries(PAPER).map(([k,p])=>`<button type="button" data-paper="${k}" aria-pressed="${pk===k}">${p.label}</button>`).join('')}</div></section>
