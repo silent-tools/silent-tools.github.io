@@ -263,7 +263,7 @@ textarea{min-height:120px;resize:vertical;line-height:1.5}
     <nav class="tabs" id="tabs" aria-label="Views"></nav>
   </header>
   <main id="view"></main>
-  <p class="foot">Pony Pages 1.0.0 · made by Silent Tools · the diary stays on this device · <a href="../terms.html">Terms and privacy</a></p>
+  <p class="foot">Pony Pages 1.0.1 · made by Silent Tools · the diary stays on this device · <a href="../terms.html">Terms and privacy</a></p>
 </div>
 <div id="fabhost"></div>
 <div id="overlay"></div>
@@ -729,26 +729,37 @@ async function savePicture(kind,id){
 
 /* ---------- backup ---------- */
 const BK_FORMAT='pony-pages-backup';
-function backupJSON(){
+function backupPhotos(){
   const used=new Set([...Object.values(DB.horses).map(h=>h.photo),...Object.values(DB.rides).map(r=>r.photo)].filter(Boolean));
   const ph={};for(const id of used)if(PHOTOS[id])ph[id]=PHOTOS[id];
-  return JSON.stringify({format:BK_FORMAT,schema:1,exportedAt:new Date().toISOString(),data:DB,photos:ph});
+  return ph;
 }
+function backupJSON(withPhotos){
+  const lite=withPhotos===false;
+  return JSON.stringify({format:BK_FORMAT,schema:1,exportedAt:new Date().toISOString(),data:DB,photos:lite?{}:backupPhotos(),noPhotos:lite||undefined});
+}
+const fmtSize=b=>b<1e6?Math.max(1,Math.round(b/1e3))+' KB':(b<1e7?(Math.round(b/1e5)/10):Math.round(b/1e6))+' MB';
+const BK_BIG=20e6;
 function readBackupFile(text){
   let d;try{d=JSON.parse(text);}catch(e){throw new Error('This file isn’t a Pony Pages backup. Choose the .json backup file.');}
   if(!d||d.format!==BK_FORMAT||!d.data||!d.data.rides||!d.data.horses)throw new Error('This file isn’t a Pony Pages backup. Choose the .json backup file.');
   if(d.schema>1)throw new Error('This backup was made by a newer version of Pony Pages. Update the diary first.');
   const R=Object.keys(d.data.rides),Hs=Object.keys(d.data.horses);
-  return {data:d.data,photos:d.photos||{},exportedAt:d.exportedAt,rides:R.length,horses:Hs.length,newRides:R.filter(k=>!DB.rides[k]).length,newHorses:Hs.filter(k=>!DB.horses[k]).length,rider:(d.data.settings||{}).rider||''};
+  return {data:d.data,photos:d.photos||{},exportedAt:d.exportedAt,rides:R.length,horses:Hs.length,newRides:R.filter(k=>!DB.rides[k]).length,newHorses:Hs.filter(k=>!DB.horses[k]).length,rider:(d.data.settings||{}).rider||'',noPhotos:!!d.noPhotos};
 }
-async function replaceWithBackup(p){await photoClear();DB=Object.assign(fresh(),JSON.parse(JSON.stringify(p.data)));for(const [k,v] of Object.entries(p.photos))await photoPut(k,v);save();}
+async function replaceWithBackup(p){
+  const data=JSON.parse(JSON.stringify(p.data));
+  if(p.noPhotos){const keep=new Set([...Object.values(data.horses).map(h=>h.photo),...Object.values(data.rides).map(r=>r.photo)].filter(Boolean));for(const id of Object.keys(PHOTOS))if(!keep.has(id))await photoDel(id);}
+  else{await photoClear();for(const [k,v] of Object.entries(p.photos))await photoPut(k,v);}
+  DB=Object.assign(fresh(),data);save();
+}
 async function addFromBackup(p){let n=0;for(const [k,h] of Object.entries(p.data.horses))if(!DB.horses[k]){DB.horses[k]=h;if(h.photo&&p.photos[h.photo])await photoPut(h.photo,p.photos[h.photo]);}
   for(const [k,r] of Object.entries(p.data.rides))if(!DB.rides[k]){DB.rides[k]=r;n++;if(r.photo&&p.photos[r.photo])await photoPut(r.photo,p.photos[r.photo]);}
   save();checkAwards(true);return n;}
 function daysSinceBackup(){const b=DB.settings.lastBackupAt;return b?Math.floor((Date.now()-new Date(b).getTime())/864e5):null;}
 
 /* ---------- look: text size and theme ---------- */
-const VERSION='1.0.0';
+const VERSION='1.0.1';
 const TEXT_SIZES=[['auto','Automatic',null],['m','Normal',17],['l','Large',20],['xl','Extra large',23]];
 const THEMES={
   pink:{label:'Pink',sw:['#FFF5F8','#D9558F','#B9A3E3'],print:{a:'#F9B9D3',b:'#D9C8F5',accent:'#D9558F',soft:'#FDE4EF',ink:'#3D2B48',muted:'#86708C'}},
@@ -807,6 +818,7 @@ function backupNudge(){
 function settingsView(){
   const set=DB.settings||{},th=THEMES[set.theme]?set.theme:'pink',d=daysSinceBackup(),bk=S.bk||{},pk=paperKey();
   const nR=Object.keys(DB.rides).length,nH=Object.keys(DB.horses).length;
+  const bph=backupPhotos(),pc=Object.keys(bph).length,pb=Object.values(bph).reduce((s,u)=>s+u.length,0);
   let h=`<button class="back" data-act="close-settings">‹ Back to the diary</button><h2>Settings</h2>
   <section class="card"><label class="field"><span class="lbl">Rider’s name</span><input type="text" id="s-rider" value="${esc(set.rider||'')}" placeholder="Säde" autocomplete="off"></label><p class="hint">Shown at the top and on the horse cards and the riding year.</p>${S.msg&&S.msgFor==='rider'?`<p class="msg">${esc(S.msg)}</p>`:''}</section>
   <section class="card"><div class="lbl">Colors</div><div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button type="button" data-theme-pick="${k}" aria-pressed="${th===k}"><span class="sw3">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</span>${t.label}</button>`).join('')}</div></section>
@@ -814,11 +826,13 @@ function settingsView(){
   <section class="card"><div class="lbl">Paper for printing</div><div class="tsizes" role="group" aria-label="Paper size">${Object.entries(PAPER).map(([k,p])=>`<button type="button" data-paper="${k}" aria-pressed="${pk===k}">${p.label}</button>`).join('')}</div></section>
   <section class="card"><h3>Backup file <small class="muted" style="font-family:var(--f-body);font-weight:400;font-size:13px">for grown-ups</small></h3>
     <p style="margin:0;font-size:15px">The diary lives only on this device. A backup file keeps all rides and photos safe, and moves the diary to a new phone or tablet.</p>
-    <p class="hint">Last backup: <b>${d===null?'never':d===0?'today':d===1?'yesterday':d+' days ago'}</b>. ${nR} rides, ${nH} horses.</p>
-    <div class="btns"><button class="btn primary" data-act="bk-save" ${nR||nH?'':'disabled'}>Save a backup file</button></div>
+    <p class="hint">Last backup: <b>${d===null?'never':d===0?'today':d===1?'yesterday':d+' days ago'}</b>. ${plural(nR,'ride')}, ${plural(nH,'horse')}.</p>
+    <div class="btns"><button class="btn primary" data-act="bk-save" ${nR||nH?'':'disabled'}>Save a backup file</button>${pc?'<button class="btn small" data-act="bk-save-lite">Save without photos</button>':''}</div>
+    ${nR||nH?`<p class="hint">${pc?`With ${plural(pc,'photo')}, the file is about <b>${fmtSize(pb+JSON.stringify(DB).length)}</b>.`:`The file is about <b>${fmtSize(JSON.stringify(DB).length)}</b>.`}</p>`:''}
+    ${pb>BK_BIG?`<div class="notice"><p><b>This backup is large.</b> Email often can’t send files over 20 MB. Save it to iCloud Drive, Google Drive or a computer instead, or save a small one without photos.</p></div>`:''}
     ${bk.msg?`<p class="${bk.err?'msg':'toast'}" role="status">${esc(bk.msg)}</p>`:''}`;
   if(bk.preview){const p=bk.preview;
-    h+=`<div class="notice"><p>This backup${p.rider?` of <b>${esc(possessive(p.rider))}</b> diary`:''} has <b>${p.rides}</b> rides and <b>${p.horses}</b> horses${p.exportedAt?`, saved ${esc(new Date(p.exportedAt).toLocaleDateString('en-US'))}`:''}.</p>
+    h+=`<div class="notice"><p>This backup${p.rider?` of <b>${esc(possessive(p.rider))}</b> diary`:''} has <b>${p.rides}</b> rides and <b>${p.horses}</b> horses${p.exportedAt?`, saved ${esc(new Date(p.exportedAt).toLocaleDateString('en-US'))}`:''}.</p>${p.noPhotos?'<p>This backup has no photos. Photos already on this device are kept.</p>':''}
       ${bk.confirm?`<p><b>Replace the whole diary?</b> The ${nR} rides and ${nH} horses on this device are replaced by the backup.</p><div class="btns"><button class="btn danger" data-act="bk-replace-yes">Replace diary</button><button class="btn" data-act="bk-replace-no">Keep my diary</button></div>`
       :`<div class="opt"><button class="btn primary small" data-act="bk-replace">Replace diary</button><span>Use the diary exactly as it is in the file. For a new phone.</span></div>
       <div class="opt"><button class="btn small" data-act="bk-add" ${p.newRides||p.newHorses?'':'disabled'}>Add ${plural(p.newRides,'ride')}</button><span>${p.newRides||p.newHorses?'Adds the rides and horses this device doesn’t have yet.':'This device already has everything in the file.'}</span></div>
@@ -945,7 +959,7 @@ document.body.addEventListener('click',async ev=>{
   if(d.themePick){DB.settings.theme=d.themePick;save();render();return;}
   if(d.tsize){DB.settings.textSize=d.tsize;save();render();return;}
   if(d.paper){DB.settings.paper=d.paper;save();render();return;}
-  if(a==='bk-save'){try{const r=await saveFile(`${slug(riderName())?slug(riderName())+'-':''}pony-pages-backup-${todayStr()}.json`,backupJSON(),'application/json');if(r==='declined')S.bk={msg:'Nothing was saved.'};else{DB.settings.lastBackupAt=new Date().toISOString();save();S.bk={msg:'Backup file is ready. Keep it somewhere safe, like iCloud Drive, Google Drive or your email.'};}}catch(e){S.bk={msg:'The file could not be saved. Try again.',err:true};}render();return;}
+  if(a==='bk-save'||a==='bk-save-lite'){const lite=a==='bk-save-lite';try{const r=await saveFile(`${slug(riderName())?slug(riderName())+'-':''}pony-pages-backup-${todayStr()}${lite?'-no-photos':''}.json`,backupJSON(!lite),'application/json');if(r==='declined')S.bk={msg:'Nothing was saved.'};else if(lite)S.bk={msg:'Backup without photos is ready. The photos are still only on this device, so save a full backup now and then too.'};else{DB.settings.lastBackupAt=new Date().toISOString();save();S.bk={msg:'Backup file is ready. Keep it somewhere safe, like iCloud Drive, Google Drive or your email.'};}}catch(e){S.bk={msg:'The file could not be saved. Try again.',err:true};}render();return;}
   if(a==='bk-cancel'){S.bk={};render();return;}
   if(a==='bk-replace'){S.bk.confirm=true;render();return;}
   if(a==='bk-replace-no'){S.bk.confirm=false;render();return;}
