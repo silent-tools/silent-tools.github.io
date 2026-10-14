@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bookcase Diary · Demo</title>
+<meta name="description" content="A reading diary for kids, in English and Estonian. Put your books on your own bookcase, tick the days you read, write one line, fill jars and collect badges. No account, the diary stays on your device.">
+<meta name="theme-color" content="#F4EEE6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1714" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../icon-180.png">
+<style>
+html{font-size:17px;font:-apple-system-body;font-family:inherit}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+.lock{margin-top:24px}
+.foot a{color:inherit}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30;pointer-events:none}
+
+</style>
+<link rel="stylesheet" href="../../fonts.css">
+<style>
+/* Layout: home is the child's bookcase (one per year). Tapping a spine opens a cream two-page book with a handwritten line for today. */
+:root{
+  --bg:#F4EEE6; --surface:#FFFDF9; --ink:#2C2622; --muted:#7A6E64; --line:#E6DCCF; --line-strong:#D3C4B2;
+  --accent:#C8553D; --accent-ink:#FFFFFF; --ok:#2F9B5A; --ok-soft:#DDF1E3;
+  --wood:#B07444; --wood-d:#87552F; --case:#E9D8C2; --paper:#FBF6EA; --pen:#2E3A6B; --pen-soft:#7A84A8; --rule:#D7DDEA;
+  --f-display:"Baloo 2","Arial Rounded MT Bold",system-ui,sans-serif;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --f-name:"Grandstander","Baloo 2",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1B1714; --surface:#26201B; --ink:#F3ECE4; --muted:#B5A79A; --line:#3A312A; --line-strong:#52463C;
+  --accent:#EE8A6E; --accent-ink:#2A1610; --ok:#5FCB8A; --ok-soft:#1E3A29;
+  --wood:#8E5D37; --wood-d:#6A4426; --case:#3A2F27; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#1B1714; --surface:#26201B; --ink:#F3ECE4; --muted:#B5A79A; --line:#3A312A; --line-strong:#52463C;
+  --accent:#EE8A6E; --accent-ink:#2A1610; --ok:#5FCB8A; --ok-soft:#1E3A29;
+  --wood:#8E5D37; --wood-d:#6A4426; --case:#3A2F27; color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:0.9412rem;line-height:1.45;min-height:100vh}
+button,input,textarea{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{max-width:500px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 60px;display:grid;gap:14px}
+header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{flex:1;min-width:0}
+.brand h1{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:10px;line-height:1;min-width:0}
+.nm{font-family:var(--f-name);font-weight:800;font-size:2.3529rem;letter-spacing:.01em;overflow-wrap:anywhere;min-width:0}
+.nm i{font-style:normal;display:inline-block;text-shadow:0 2px 0 rgba(0,0,0,.12)}
+.nm i:nth-child(odd){transform:rotate(-4deg) translateY(1px)}.nm i:nth-child(even){transform:rotate(3deg) translateY(-2px)}
+.kind{font-family:var(--f-hand);font-weight:700;font-size:1.7647rem;color:var(--muted);white-space:nowrap}
+.gear{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--accent);padding:0}
+.gear svg{width:22px;height:22px}
+nav{flex:1 0 100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:4px}
+nav button{border:0;background:transparent;border-radius:14px;padding:8px 0;font-family:var(--f-display);font-weight:700;font-size:0.9412rem;color:var(--muted);cursor:pointer}
+nav button[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+main{display:grid;gap:14px;min-width:0}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:10px;min-width:0}
+h2{font-family:var(--f-display);font-weight:700;font-size:1.2941rem;margin:0;line-height:1.15}
+.hint{margin:0;font-size:0.8235rem;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:9px 18px;cursor:pointer;min-height:44px;font-family:var(--f-display);font-weight:700;font-size:0.9412rem}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.btn.small{min-height:36px;padding:5px 12px;font-size:0.8235rem}
+.msg{margin:0;color:#C2364B;font-weight:700;font-size:0.8824rem}
+.ex{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--ok-soft);border-radius:16px;padding:10px 12px;font-size:0.8235rem}
+
+/* today strip */
+.todaybar{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center}
+.tick{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:3px dashed var(--line-strong);color:var(--muted)}
+.tick.on{border:3px solid var(--ok);background:var(--ok);color:#fff}
+.tick svg{width:30px;height:30px}
+.todaybar b{font-family:var(--f-display);font-size:1.0588rem;display:block;line-height:1.2}
+.week{display:flex;gap:6px;margin-top:4px}
+.wd{width:24px;display:grid;justify-items:center;gap:2px;font-size:0.6471rem;color:var(--muted)}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-strong)}
+.dot.on{background:var(--ok);border-color:var(--ok)}
+.dot.now{outline:2px solid var(--accent);outline-offset:1px}
+
+/* goals */
+.jars{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px 8px;align-items:end}
+.jar{display:grid;justify-items:center;text-align:center;gap:2px;min-width:0}
+.jar svg{max-width:100%;height:auto}
+.jl{font-family:var(--f-hand);font-weight:700;font-size:1.1765rem;line-height:1.05;color:var(--ink);overflow-wrap:anywhere}
+.jn{font-family:var(--f-display);font-weight:700;font-size:0.8824rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.jar.done .jn{color:var(--ok)}
+.fall{animation:fall .7s cubic-bezier(.3,1.5,.5,1)}@keyframes fall{from{transform:translateY(-150px)}to{transform:none}}
+.fall.d{animation-delay:.35s;animation-duration:.85s;animation-fill-mode:backwards}
+#pop .jpop{position:fixed;inset:0;z-index:65;display:grid;place-items:center;background:rgba(30,22,16,.4);padding:16px;cursor:pointer}
+.jcard{background:#FBF6EA;color:#2C2622;border-radius:26px;padding:20px 28px 18px;display:grid;justify-items:center;gap:4px;box-shadow:0 20px 50px rgba(0,0,0,.35);animation:popin .35s cubic-bezier(.2,1.5,.4,1);max-width:300px;text-align:center}
+.jcard .jl{color:#2C2622;font-size:1.5882rem}.jcard .jn{color:#7A6E64;font-size:1.0rem}.jcard .hint{color:#7A6E64;font-family:var(--f-display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:0.7647rem}
+.bpop svg{width:150px;height:150px;animation:spinin .9s cubic-bezier(.2,1.4,.4,1)}
+@keyframes popin{from{transform:scale(.6);opacity:0}}@keyframes spinin{from{transform:perspective(400px) rotateY(200deg) scale(.3)}}
+.bhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:10px}
+.bdg{display:grid;justify-items:center;gap:3px;text-align:center;font-size:0.7647rem;line-height:1.2;font-weight:700}
+.bdg svg{width:72px;height:72px}
+.bdg.off{color:var(--muted);font-weight:600}.bdg.off svg{filter:grayscale(1);opacity:.35}
+.bdg.new svg{animation:pinpop .7s cubic-bezier(.2,1.6,.4,1)}@keyframes pinpop{from{transform:scale(.2) rotate(-30deg)}to{transform:none}}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-family:var(--f-display);font-weight:700;padding:10px 18px;border-radius:999px;z-index:70;max-width:calc(100% - 32px);text-align:center}
+.goal{display:grid;gap:4px}
+.goal .gt{display:flex;justify-content:space-between;gap:8px;font-size:0.8824rem}
+.goal .gt b{font-family:var(--f-display);font-weight:700}
+.goal .gt span{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.gbar{height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.gbar i{display:block;height:100%;background:var(--ok);border-radius:999px;transition:width .4s}
+.goal.done .gt span{color:var(--ok);font-weight:700}
+
+/* bookcase */
+.years{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;min-height:38px;font-family:var(--f-display);font-weight:700}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.case{background:var(--case);border:10px solid var(--wood);border-radius:10px;padding:10px 8px 0;box-shadow:inset 0 6px 12px rgba(0,0,0,.12)}
+.case-top{display:flex;justify-content:center;margin:-2px 0 12px}
+.plate{position:relative;background:#FBF6EA;color:#2C2622;border:2px solid #C9A169;border-radius:8px;padding:5px 22px 6px;text-align:center;box-shadow:0 2px 0 #87552F,0 4px 8px rgba(0,0,0,.18);max-width:100%}
+.plate::before,.plate::after{content:"";position:absolute;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#B48A55;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.plate::before{left:7px}.plate::after{right:7px}
+.plate b{display:block;font-family:var(--f-display);font-weight:800;font-size:1.1176rem;line-height:1.15}
+.plate span{display:block;font-family:var(--f-hand);font-weight:700;font-size:1.1765rem;line-height:1.05;color:#6B5444}
+.shelves{display:flex;flex-wrap:wrap;column-gap:3px;row-gap:14px;align-items:flex-end;padding-bottom:14px;
+  background:repeating-linear-gradient(to bottom,transparent 0 136px,var(--wood) 136px 146px,var(--wood-d) 146px 150px);background-position:0 0}
+.slot{height:136px;display:flex;align-items:flex-end}
+.spine{position:relative;width:var(--w);height:var(--h);border:0;border-radius:3px 3px 1px 1px;cursor:pointer;padding:8px 0;
+  background:var(--pat,none),var(--c);color:#fff;writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:var(--f-display);font-weight:700;font-size:0.7647rem;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  box-shadow:inset -4px 0 0 rgba(0,0,0,.16),inset 2px 0 0 rgba(255,255,255,.18);text-shadow:0 1px 1px rgba(0,0,0,.35);transition:transform .15s}
+.spine:hover{transform:translateY(-4px)}
+.spine.done::before{content:"";position:absolute;right:4px;top:0;width:10px;height:74%;background:#2F9B5A;box-shadow:0 0 0 1.5px rgba(255,255,255,.7);clip-path:polygon(0 0,100% 0,100% 100%,50% 86%,0 100%)}
+.spine.reading::after{content:"";position:absolute;right:5px;top:0;width:7px;height:18px;background:#E8483A;clip-path:polygon(0 0,100% 0,100% 100%,50% 75%,0 100%)}
+.stack{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 4px}
+.lying{position:relative;display:block;width:var(--lw);height:var(--lh);border:0;border-radius:2px 4px 4px 2px;cursor:pointer;padding:0 8px 0 10px;background:var(--pat,none),var(--c);color:#fff;
+  font-family:var(--f-display);font-weight:700;font-size:0.6471rem;line-height:var(--lh);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.16),inset 0 2px 0 rgba(255,255,255,.18);text-shadow:0 1px 1px rgba(0,0,0,.35);transition:transform .15s}
+.lying:nth-child(odd){transform:translateX(-3px)}.lying:nth-child(even){transform:translateX(4px)}
+.lying::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:rgba(255,255,255,.5)}
+.lying:hover{filter:brightness(1.08)}
+.spine.done{padding-right:14px}.spine.hasface{padding-bottom:22px}
+.spine .face{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);writing-mode:horizontal-tb;font-size:0.7059rem;text-shadow:none}
+.spine.new{animation:drop .6s cubic-bezier(.2,1.5,.4,1)}
+@keyframes drop{from{transform:translateY(-60px);opacity:0}to{transform:none;opacity:1}}
+.addspine{width:34px;height:110px;border:2px dashed var(--wood-d);border-radius:4px;background:transparent;color:var(--wood-d);font-family:var(--f-display);font-weight:800;font-size:1.5294rem;cursor:pointer;display:grid;place-items:center}
+.yearb{justify-self:start}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:0.7647rem;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:10px;vertical-align:0;margin-right:5px;border-radius:2px}
+.fact{background:var(--surface);border:1.5px dashed var(--line-strong);border-radius:22px;padding:14px 16px;display:grid;gap:4px}
+.fact b{font-family:var(--f-display);font-size:1.1765rem;line-height:1.2}
+.nums{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.nb{background:var(--bg);border-radius:16px;padding:10px 6px;text-align:center}
+.nb b{display:block;font-family:var(--f-display);font-weight:800;font-size:1.5294rem;color:var(--accent);line-height:1.1;font-variant-numeric:tabular-nums}
+.nb span{font-size:0.7647rem;color:var(--muted)}
+
+/* open book overlay */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(30,22,16,.55);overflow:auto;padding:max(16px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));display:grid;justify-items:center;align-content:start}
+.sheet{width:100%;max-width:520px;display:grid;gap:12px}
+.sheet .close{justify-self:end;border:0;background:rgba(255,255,255,.9);color:#2C2622;border-radius:999px;padding:6px 14px;font-family:var(--f-display);font-weight:700;cursor:pointer;min-height:40px}
+.open{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:var(--paper);border-radius:6px 6px 10px 10px;position:relative;box-shadow:0 18px 40px rgba(0,0,0,.35),0 0 0 6px var(--c,#C8553D);color:var(--pen);animation:openb .45s ease-out}
+@keyframes openb{from{transform:perspective(900px) rotateX(18deg) scale(.92);opacity:0}to{transform:none;opacity:1}}
+.open::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:34px;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(120,90,50,.18) 45%,rgba(120,90,50,.28) 50%,rgba(120,90,50,.18) 55%,transparent);pointer-events:none}
+.pg{padding:16px 14px 18px;min-height:340px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pg.l{padding-right:20px}.pg.r{padding-left:20px}
+.hand{font-family:var(--f-hand);font-weight:600;color:var(--pen);line-height:1.15;overflow-wrap:anywhere}
+.date{font-size:1.1765rem;color:var(--pen-soft)}
+.btitle{font-size:1.7647rem;font-weight:700}
+.bauthor{font-size:1.2353rem;color:var(--pen-soft)}
+.small{font-family:var(--f-body);font-size:0.7059rem;color:#8A7F72}
+.checks{margin-top:auto;display:grid;gap:6px}
+.check{display:flex;align-items:center;gap:8px;border:0;background:transparent;cursor:pointer;padding:4px 0;text-align:left}
+.check .bx{flex:none;width:40px;height:40px;border:2.5px solid var(--pen);border-radius:6px 4px 7px 5px;transform:rotate(-3deg);display:grid;place-items:center}
+.check .bx svg{width:34px;height:34px;opacity:0;transform:scale(.4);transition:all .25s cubic-bezier(.2,1.6,.4,1)}
+.check.on .bx svg{opacity:1;transform:none}
+.check.fin .bx{border-color:#2F9B5A;border-width:3px}.check.fin.on span:last-child{color:#2F9B5A}
+.check span{font-family:var(--f-hand);font-weight:700;font-size:1.4706rem;color:var(--pen);line-height:1.05}
+.prompt{font-size:1.2941rem;color:var(--pen-soft)}
+.note{flex:1;width:100%;min-height:200px;border:0;resize:none;background:transparent;font-family:var(--f-hand);font-weight:600;font-size:1.4706rem;line-height:32px;color:var(--pen);padding:0;
+  background-image:repeating-linear-gradient(to bottom,transparent 0 31px,var(--rule) 31px 32px);background-attachment:local}
+.note::placeholder{color:#B9BFD3}
+.note:focus{outline:none}
+.saved{font-family:var(--f-body);font-size:0.7059rem;color:#8A7F72;min-height:16px}
+.past{background:var(--paper);border-radius:12px;padding:12px 14px;display:grid;gap:6px;color:var(--pen)}
+.past h3{margin:0;font-family:var(--f-display);font-size:0.9412rem;color:#5F574F}
+.past p{margin:0}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.pi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:start}
+.star{border:0;background:transparent;cursor:pointer;color:#C98F12;min-width:44px;min-height:44px;padding:0 4px;font-family:var(--f-body);font-size:0.7647rem}
+.star b{font-size:1.6471rem;line-height:1;vertical-align:-3px}
+.star[aria-pressed="true"] b{color:#E7A93A;text-shadow:0 1px 0 #A87B1C}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}.tstar{min-width:0;color:#8A7F72;text-align:left}
+.memobox{background:var(--bg);border-radius:14px;padding:10px;display:grid;place-items:center;min-height:200px}
+.memobox img{width:100%;height:auto;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+a.btn{text-decoration:none;display:inline-flex;align-items:center;color:inherit}
+@media print{body *{visibility:hidden!important}#memoimg{visibility:visible!important;position:fixed;left:0;top:0;width:100%;height:auto;box-shadow:none}}
+.past .pd{font-family:var(--f-body);font-size:0.7059rem;color:#8A7F72}
+.past .pl{font-family:var(--f-hand);font-weight:600;font-size:1.2941rem;line-height:1.1;overflow-wrap:anywhere}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.acts .btn{background:#FFFDF9;color:#2C2622;border-color:transparent}
+.acts .btn.ok{background:var(--ok);color:#fff}
+
+/* finished-book page */
+.paperbox{background:var(--paper);border-radius:10px;padding:10px;box-shadow:0 18px 40px rgba(0,0,0,.35);color:var(--pen);animation:openb .45s ease-out}
+.frame{border:2.5px solid var(--pen);border-radius:7px 11px 8px 10px;box-shadow:inset 0 0 0 4px var(--paper),inset 0 0 0 5.5px var(--pen-soft);padding:20px 16px 18px;display:grid;gap:12px}
+.pbh{font-size:2.4706rem;font-weight:700;text-align:center;line-height:1;transform:rotate(-2deg)}
+.pq{font-size:1.4118rem}
+.paperbox .faceb{background:transparent;border-color:#C9C2B4}
+.paperbox .btn{background:#FFFDF9;color:#2C2622}.paperbox .btn.ok{background:#2F9B5A;color:#fff;border-color:#2F9B5A}
+.rib::before{animation:rib .9s .2s cubic-bezier(.3,1.3,.5,1) backwards}@keyframes rib{from{height:0}}
+/* forms in sheet */
+.panel{background:var(--surface);border-radius:22px;padding:16px;display:grid;gap:10px}
+.panel label,.lbl{font-family:var(--f-display);font-weight:700;font-size:0.8824rem}
+input[type=text],input[type=number],input[type=date]{width:100%;border:1.5px solid var(--line-strong);border-radius:14px;padding:10px 12px;font-size:0.9412rem;background:var(--bg);min-width:0}
+.sws{display:flex;flex-wrap:wrap;gap:8px}
+.swb{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer;padding:0}
+.swb[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface) inset}
+.patb{width:38px;height:56px;border-radius:4px;border:2px solid transparent;cursor:pointer;padding:0}
+.patb[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--surface) inset}
+.faceb{font-size:1.7647rem;border:2px solid var(--line-strong);background:var(--surface);border-radius:14px;padding:4px 10px;cursor:pointer;min-height:52px}
+.faceb[aria-pressed="true"]{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}
+.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.seg button{border:1.5px solid var(--line-strong);background:var(--surface);border-radius:14px;padding:10px 6px;cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);font-weight:700}
+.prevspine{display:flex;gap:14px;align-items:center}
+
+/* calendar */
+.mhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mhead h2{text-transform:capitalize}
+.nav2{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--surface);cursor:pointer;font-size:1.2941rem;line-height:1}
+.nav2:disabled{opacity:.35;cursor:default}
+.grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.gh{text-align:center;font-size:0.7059rem;color:var(--muted);font-weight:700}
+.day{aspect-ratio:1;max-width:100%;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);cursor:pointer;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:0.9412rem;padding:0;position:relative}
+.day.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.day.hasnote::after{content:"";position:absolute;right:5px;top:5px;width:7px;height:7px;border-radius:50%;background:#fff}
+.day.now{outline:2px solid var(--accent);outline-offset:1px}
+.day:disabled{opacity:.35;cursor:default}
+.day.blank{visibility:hidden}
+
+/* goals editor */
+.gedit{display:grid;gap:10px}
+.gi{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;border-top:1px solid var(--line);padding-top:10px}
+.gi input[type=checkbox]{width:24px;height:24px;margin-top:2px;accent-color:var(--ok)}
+.gi .gf{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.gi .gf input[type=number]{width:84px}
+.gi .gf input[type=date]{width:auto}
+.hold{position:relative;overflow:hidden}
+.hold i{position:absolute;left:0;bottom:0;height:4px;background:var(--accent);width:0}
+.hold.going i{width:100%;transition:width 2s linear}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:60}
+.confetti i{position:absolute;top:40%;left:50%;width:9px;height:13px;border-radius:3px;animation:burst 1.1s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--x),var(--y)) rotate(400deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.fall,.bdg.new svg,.jcard,.bpop svg,.rib::before{animation:none}.confetti{display:none}.open,.spine.new{animation:none}.spine{transition:none}}
+.danger{margin-top:28px;border-color:#E9B8B8}.dangerbtn{border-color:#C2364B;color:#C2364B}.dangerbtn:disabled{opacity:.4;cursor:default}
+.daylist{display:grid;gap:8px}.dayb{display:flex;align-items:center;gap:10px;border:1.5px solid var(--line-strong);background:var(--bg);border-radius:14px;padding:8px 12px;cursor:pointer;text-align:left;min-height:52px}
+.dayb[aria-pressed="true"]{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok)}.dayb:disabled{cursor:default}.dayb i{flex:none;width:12px;height:34px;border-radius:2px}.dayb b{font-family:var(--f-display);display:block;line-height:1.2}.dayb small{color:var(--muted)}.dayb .ck{margin-left:auto;color:var(--ok);font-size:1.2941rem;font-weight:800}
+.notice{background:var(--surface);border:1.5px solid #E7A93A;border-radius:18px;padding:12px 14px;display:grid;gap:6px;font-size:0.8529rem}.notice p{margin:0}.notice ol{margin:4px 0 0;padding-left:20px}.notice b{font-family:var(--f-display)}
+details summary{cursor:pointer;font-weight:700;font-size:0.8529rem}details ol{padding-left:20px;font-size:0.8529rem}
+.vh{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.welcome{border-color:var(--accent)}
+.foot{font-size:0.7353rem;color:var(--muted);text-align:center}
+@media (max-width:360px){.pg{padding-left:10px;padding-right:12px}.pg.r{padding-left:14px}.btitle{font-size:1.5294rem}.note{font-size:1.2941rem}.check span{font-size:1.2941rem}}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><h1 id="who"></h1></div>
+    <button class="gear" id="gear" data-act="settings" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <nav id="tabs"></nav>
+  </header>
+  <main id="view"></main>
+  <p class="foot" id="foot"></p>
+</div>
+<div id="sheet"></div>
+<div id="fx"></div>
+<div id="pop"></div>
+
+<script>
+(function(){
+/* ---------- words ---------- */
+const T={
+ en:{app:'Bookcase Diary',safeT:'Keep the diary safe',safeHint:'The diary lives only on this device. A backup file brings it back if the phone is lost or replaced, and moves it to a new one.',
+  lastBk:d=>`Last backup: <b>${d===null?'never':d===0?'today':d===1?'yesterday':d+' days ago'}</b>.`,bkCounts:(b,d)=>`${b} ${b===1?'book':'books'}, ${d} reading ${d===1?'day':'days'}.`,
+  bkSave:'Save a backup file',bkOpen:'Open a backup file',bkDone:'Backup file is ready. Keep it somewhere safe, like iCloud Drive, Google Drive or your email.',bkNo:'Nothing was saved.',bkFail:'The file could not be saved. Try again.',
+  bkBad:'This file isn’t a Bookcase Diary backup. Choose the .json backup file.',bkNewer:'This backup was made by a newer version of Bookcase Diary. Update the diary first.',bkRead:'The file could not be read. Try choosing it again.',
+  bkPrev:(n,b,d,dt)=>`This backup${n?` of ${n}`:''} has <b>${b}</b> books and <b>${d}</b> reading days${dt?`, saved ${dt}`:''}.`,bkQ:(b,d)=>`Replace the whole diary? The ${b} books and ${d} reading days on this device are replaced by the backup.`,bkYes:'Replace diary',bkKeep:'Keep my diary',bkRestored:'Done. The diary now matches the backup file.',
+  nudgeT:d=>d===null?'No backup yet':`Last backup was ${d} days ago`,nudgeP:'Grown-ups: a backup file is the only way to get the diary back if this phone is lost or replaced.',nudgeBtn:'Save a backup',
+  a2hsT:'Add the diary to the Home Screen',a2hsP:ios=>`Phones can erase what a website stores${ios?', and Safari does it after 7 days without a visit':' when it isn’t visited for a while'}. An icon on the Home Screen keeps the bookcase safe.`,a2hsHow:'How to add it',a2hsOk:'Done',
+  a2hsIOS:['Tap <b>⋯</b> at the bottom right, then <b>Share</b>. On older iPhones, tap the Share icon <b>⬆︎</b> at the bottom instead.','Scroll down and tap <b>Add to Home Screen</b>.','Tap <b>Add</b>.'],a2hsAnd:['Tap <b>⋮</b> at the top right.','Tap <b>Add to Home screen</b> or <b>Install app</b>.','Tap <b>Add</b> or <b>Install</b>.'],
+  welT:'Welcome to your bookcase!',welP:'Write your name and put the book you’re reading now on the shelf.',welBtn:'Put my first book on the shelf',saveShare:'Save or share',picSaved:'Picture saved.',terms:'Terms and privacy',kind:'reading diary',mine:'My',poss:n=>/s$/i.test(n)?n+'’':n+'’s',shelf:'Bookcase',cal:'Calendar',
+  todayDone:b=>b?`Read today: ${b}`:'Read today!',todayNot:'Tap the book you read today',streak:n=>n===1?'1 day in a row':`${n} days in a row`,noStreak:'Read today to start a streak',
+  caseOf:y=>`My ${y} bookcase`,nBooks:n=>n===1?'1 book read':`${n} books read`,addBook:'Add a book',
+  legRead:'reading now',legDone:'finished (green ribbon)',legWant:'lying down: want to read',pastYear:y=>`Everything you finished in ${y}.`,
+  goals:'My jars',goalDone:'Full!',jarHint:'Every reading day drops a ball in the color of your book.',badges:'My badges',badgeNewT:'New badge!',thisWeek:'This week',finishBox:'I finished the book',finDone:'Finished!',badgeNew:n=>`New badge: ${n}!`,badgeHint:(a,b)=>`${a} of ${b} badges`,didYou:'Did you know?',more:'Another one',
+  factT:'If your words stood in a row',factB:(m,c)=>`about ${m} — ${c}`,factHint:'An estimate from the page counts of your finished books.',factNone:'Add the number of pages to your books and see how far your words would reach.',
+  stDays:'reading days',stBooks:'books finished',stLines:'diary lines',
+  readToday:'I read today',readTodayOn:'I read today!',sinceD:(d,n)=>`Started ${d}${n?` · read on ${n} ${n===1?'day':'days'}`:''}`,wantLine:'On your “want to read” shelf.',
+  doneLine:(a,b,n)=>a===b?`Finished ${b}`:`${a} – ${b} · ${n} days`,
+  notePh:'Write here…',saved:'Saved',pastPages:'Earlier pages',memoBtn:'Memory page',yearT:y=>`My reading year ${y}`,yearHint:'Your bookcase, best ★ lines, numbers and badges on one page. Nice to print or send to grandma.',yearHead:(y,n)=>n?`reading year ${y}`:`My reading year ${y}`,yearEmpty:'Your finished books will stand here.',yearPages:'pages read',yearBadges:n=>n===1?'1 new badge':`${n} new badges`,memoT:'Memory page',memoHint:'Lines with a ★ go on the page.',memoNone:'No lines have a ★ yet. Star the lines in the book that should go on the page.',share:'Share',savePic:'Save picture',print:'Print',longPress:'On a phone you can also press and hold the picture and choose “Save image”.',toMemo:'on the memory page',starHint:'★ = goes on the memory page',memoHead:'finished',memoHeadNo:'Finished!',memoDays:n=>`read on ${n} ${n===1?'day':'days'}`,faceW:['Loved it!','Good','So-so','Boring'],memoFoot:'Reading Diary',back2:'‹ Back',pagesShort:'pages',making:'Making the page…',
+  finishBtn:'I finished it!',startBtn:'Start reading',editBtn:'Edit',close:'Close',
+  ribbonT:'You finished it!',faceQ:'How was it?',putRibbon:'Put it back on the shelf',cancel:'Cancel',
+  newBook:'A new book on the shelf',title:'Title',author:'Author (if you like)',pages:'Pages (look at the last page, if you like)',
+  status:'This book is…',stRead:'Reading now',stWant:'Want to read',color:'Spine color',pattern:'Pattern',putShelf:'Put it on the shelf',save:'Save',
+  titleReq:'Write the title.',tooLong:n=>`Use up to ${n} letters.`,pagesBad:'Pages should be a number, like 120.',removeBook:'Take off the shelf',removeQ:'Take this book off the shelf? Its diary lines go too.',removeYes:'Yes, take it off',
+  settings:'Settings',back:'‹ Back',name:'Reader’s name',lang:'Language',parents:'For grown-ups',goalsBtn:'Set reading goals',goalsHide:'Hide goals',goalsOff:'Turn all goals off',
+  gTitle:'Reading goals',gHint:'The child sees only progress, never “behind”.',reset:'Delete the whole bookcase',resetT:'Delete everything',resetHint:'Removes every book from every year, all diary lines and badges on this device.',resetQ:(b,d,y)=>`This deletes ${b} books, ${d} reading days and ${y} ${y===1?'year':'years'} of bookcases.`,resetType:w=>`Type ${w} to confirm`,resetWord:'DELETE',yes:'Delete everything',no:'Keep',undoMsg:'The bookcase was deleted.',undoBtn:'Undo',undoX:'OK',
+  example:'Demo: Säde’s bookcase. Try everything, nothing is saved.',clearEx:'Get your own diary',foot:'Demo of Bookcase Diary 1.0.0 · made by Silent Tools',
+  readDays:'days read',monthBest:'best streak',monthBooks:'books finished',tapDay:'Tap a day to mark which book you read.',dayQ:d=>`What did you read on ${d}?`,dayOther:'Another book / I don’t remember',dayDone:'Done',dayNote:'has a diary line',
+  wd:['S','M','T','W','T','F','S'],weekStart:0,locale:'en-US',
+  prompts:{start:['Who is the main character?','Where does the story happen?','Why did you pick this book?','What do you think this book is about?','What does the cover tell you?','Which character do you like so far?','What is the first thing that happened?','Does the book remind you of another book?'],
+   mid:['What was the funniest part today?','What do you think happens next?','Who was the best character today?','What surprised you?','If you were in the book, what would you do?','Which word or sentence did you like?','Would you want to be friends with someone in the book?','What would you change in today’s pages?','Was it exciting, funny or sad today?','Draw it in words: what did you see in your head?'],
+   any:['What did you like most today?','Where would you like to be in this story?','What question would you ask the author?','Who would you give this book to?','What sound would today’s pages make?','Give today’s pages a title of your own.','What did a character learn today?','What made you keep reading?','Which part would make a good film scene?','One word for today’s reading:']},
+  G:{week:['Read on {n} days this week','days'],month:['Finish {n} books this month','books'],challenge:['Finish {n} books by {d}','books'],streak:['Read {n} days in a row','days'],lines:['Write {n} diary lines this week','lines'],authors:['Read books by {n} different authors this year','authors'],pages:['Read {n} pages this year','pages']},
+  B:{book1:'First book',book3:'3 books',book10:'10 books',days30:'30 reading days',days100:'100 reading days',run7:'7 days in a row',line1:'First diary line',line20:'20 diary lines',auth5:'5 authors',thick:'A thick book',weekend:'Weekend reader',jar:'A full jar'},
+  F:{run:n=>`Your longest streak is ${n} days in a row.`,author:(a,n)=>`Your favorite author is ${a}: ${n} books.`,thick:(t,n)=>`Your thickest finished book is “${t}” with ${n} pages.`,fast:(t,n)=>`You read “${t}” in just ${n} ${n===1?'day':'days'}.`,wday:d=>`You read most often on ${d}.`,lines:(t,n)=>`You wrote the most about “${t}”: ${n} lines.`,stack:cm=>`Your finished books stacked on top of each other would be about ${cm} cm tall.`,month:(a,b)=>`This month you have read on ${a} days. Last month it was ${b}.`,avg:n=>`One book takes you about ${n} days on average.`,first:t=>`Your first finished book this year was “${t}”.`,daysY:n=>`This year you have read on ${n} days.`},
+  days:['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'],
+  cmp:[[12,'longer than a city bus'],[28,'longer than a basketball court'],[105,'longer than a football pitch'],[314,'taller than the Tallinn TV Tower'],[330,'taller than the Eiffel Tower'],[828,'taller than the tallest building in the world'],[5000,'longer than 5 kilometres']]},
+ et:{app:'Lugemispäevik',safeT:'Hoia päevik alles',safeHint:'Päevik on ainult selles seadmes. Varukoopia fail toob selle tagasi, kui telefon kaob või vahetub, ja viib päeviku uude seadmesse.',
+  lastBk:d=>`Viimane varukoopia: <b>${d===null?'veel pole':d===0?'täna':d===1?'eile':d+' päeva tagasi'}</b>.`,bkCounts:(b,d)=>`${b} raamatut, ${d} lugemispäeva.`,
+  bkSave:'Salvesta varukoopia',bkOpen:'Ava varukoopia fail',bkDone:'Varukoopia on valmis. Hoia seda kindlas kohas, näiteks iCloud Drive’is, Google Drive’is või e-postis.',bkNo:'Midagi ei salvestatud.',bkFail:'Faili ei õnnestunud salvestada. Proovi uuesti.',
+  bkBad:'See fail ei ole Bookcase Diary varukoopia. Vali .json varukoopia fail.',bkNewer:'Selle varukoopia tegi päeviku uuem versioon. Uuenda enne päevikut.',bkRead:'Faili ei õnnestunud lugeda. Proovi see uuesti valida.',
+  bkPrev:(n,b,d,dt)=>`Selles varukoopias${n?` (${n})`:''} on <b>${b}</b> raamatut ja <b>${d}</b> lugemispäeva${dt?`, salvestatud ${dt}`:''}.`,bkQ:(b,d)=>`Asendada kogu päevik? Selle seadme ${b} raamatut ja ${d} lugemispäeva asendatakse varukoopiaga.`,bkYes:'Asenda päevik',bkKeep:'Jäta minu päevik',bkRestored:'Valmis. Päevik on nüüd sama mis varukoopias.',
+  nudgeT:d=>d===null?'Varukoopiat pole veel':`Viimane varukoopia oli ${d} päeva tagasi`,nudgeP:'Vanematele: varukoopia fail on ainus viis päevik tagasi saada, kui telefon kaob või vahetub.',nudgeBtn:'Salvesta varukoopia',
+  a2hsT:'Lisa päevik avaekraanile',a2hsP:ios=>`Telefon võib veebilehe salvestatud andmed ära kustutada${ios?', Safari teeb seda 7 päeva pärast, kui lehte pole avatud':', kui lehte pole tükk aega avatud'}. Ikoon avaekraanil hoiab riiuli alles.`,a2hsHow:'Kuidas lisada',a2hsOk:'Tehtud',
+  a2hsIOS:['Puuduta all paremal <b>⋯</b> ja siis <b>Jaga</b>. Vanemal iPhone’il puuduta all jagamise ikooni <b>⬆︎</b>.','Keri alla ja puuduta <b>Lisa avakuvale</b> (Add to Home Screen).','Puuduta <b>Lisa</b>.'],a2hsAnd:['Puuduta üleval paremal <b>⋮</b>.','Puuduta <b>Lisa avaekraanile</b> või <b>Installi rakendus</b>.','Puuduta <b>Lisa</b> või <b>Installi</b>.'],
+  welT:'Tere tulemast oma riiuli juurde!',welP:'Kirjuta oma nimi ja pane riiulisse raamat, mida praegu loed.',welBtn:'Pane esimene raamat riiulisse',saveShare:'Salvesta või jaga',picSaved:'Pilt on salvestatud.',terms:'Tingimused ja privaatsus',kind:'lugemispäevik',mine:'Minu',poss:n=>n,shelf:'Riiul',cal:'Kalender',
+  todayDone:b=>b?`Täna loetud: ${b}`:'Täna loetud!',todayNot:'Puuduta raamatut, mida täna lugesid',streak:n=>n===1?'1 päev järjest':`${n} päeva järjest`,noStreak:'Loe täna ja alusta seeriat',
+  caseOf:y=>`${y}. aasta riiul`,nBooks:n=>n===1?'1 raamat loetud':`${n} raamatut loetud`,addBook:'Lisa raamat',
+  legRead:'praegu loen',legDone:'läbi (roheline pael)',legWant:'pikali: tahan lugeda',pastYear:y=>`Kõik, mis sa ${y}. aastal läbi lugesid.`,
+  goals:'Minu purgid',goalDone:'Täis!',jarHint:'Iga lugemispäev kukutab purki palli sinu raamatu värvi.',badges:'Minu märgid',badgeNewT:'Uus märk!',thisWeek:'Sel nädalal',finishBox:'Lugesin raamatu läbi',finDone:'Raamat on läbi!',badgeNew:n=>`Uus märk: ${n}!`,badgeHint:(a,b)=>`${a} märki ${b}-st`,didYou:'Kas teadsid?',more:'Veel üks',
+  factT:'Kui sinu loetud sõnad ritta panna',factB:(m,c)=>`umbes ${m} — ${c}`,factHint:'Hinnang läbiloetud raamatute lehekülgede järgi.',factNone:'Lisa raamatutele lehekülgede arv ja vaata, kui kaugele su sõnad ulatuksid.',
+  stDays:'lugemispäeva',stBooks:'raamatut läbi',stLines:'päeviku rida',
+  readToday:'Lugesin täna',readTodayOn:'Lugesin täna!',sinceD:(d,n)=>`Alustasin ${d}${n?` · loetud ${n} ${n===1?'päeval':'päeval'}`:''}`,wantLine:'Riiulis ootel: tahan lugeda.',
+  doneLine:(a,b,n)=>a===b?`Läbi ${b}`:`${a} – ${b} · ${n} päeva`,
+  notePh:'Kirjuta siia…',saved:'Salvestatud',pastPages:'Varasemad leheküljed',memoBtn:'Mälestusleht',yearT:y=>`Minu lugemisaasta ${y}`,yearHint:'Sinu riiul, parimad ★ read, numbrid ja märgid ühel lehel. Hea välja printida või vanaemale saata.',yearHead:(y,n)=>n?`lugemisaasta ${y}`:`Minu lugemisaasta ${y}`,yearEmpty:'Siia tulevad sinu läbiloetud raamatud.',yearPages:'lehekülge',yearBadges:n=>n===1?'1 uus märk':`${n} uut märki`,memoT:'Mälestusleht',memoHint:'Lehele lähevad ★ tähega read.',memoNone:'Ühtegi rida pole veel ★ tähega märgitud. Märgi raamatus read, mis lehele lähevad.',share:'Jaga',savePic:'Salvesta pilt',print:'Prindi',longPress:'Telefonis saad ka pildil sõrme all hoida ja valida „Salvesta pilt“.',toMemo:'mälestuslehele',starHint:'★ = läheb mälestuslehele',memoHead:'luges läbi',memoHeadNo:'Loetud!',memoDays:n=>`loetud ${n} päeval`,faceW:['Super!','Hea','Nii ja naa','Igav'],memoFoot:'Lugemispäevik',back2:'‹ Tagasi',pagesShort:'lk',making:'Teen lehte…',
+  finishBtn:'Lugesin läbi!',startBtn:'Hakkan lugema',editBtn:'Muuda',close:'Sulge',
+  ribbonT:'Raamat on läbi!',faceQ:'Kuidas meeldis?',putRibbon:'Pane tagasi riiulisse',cancel:'Tühista',
+  newBook:'Uus raamat riiulisse',title:'Pealkiri',author:'Autor (kui tahad)',pages:'Lehekülgi (vaata viimaselt lehelt, kui tahad)',
+  status:'See raamat on…',stRead:'Loen praegu',stWant:'Tahan lugeda',color:'Selja värv',pattern:'Muster',putShelf:'Pane riiulisse',save:'Salvesta',
+  titleReq:'Kirjuta pealkiri.',tooLong:n=>`Kuni ${n} tähte.`,pagesBad:'Lehekülgede arv peaks olema number, näiteks 120.',removeBook:'Võta riiulist ära',removeQ:'Võtta see raamat riiulist ära? Ka päeviku read kaovad.',removeYes:'Jah, võta ära',
+  settings:'Seaded',back:'‹ Tagasi',name:'Lugeja nimi',lang:'Keel',parents:'Vanematele',goalsBtn:'Sea lugemise eesmärgid',goalsHide:'Peida eesmärgid',goalsOff:'Lülita kõik eesmärgid välja',
+  gTitle:'Lugemise eesmärgid',gHint:'Laps näeb ainult edenemist, mitte „jääd maha“.',reset:'Kustuta kogu riiul',resetT:'Kustuta kõik',resetHint:'Kustutab selles seadmes kõik raamatud kõigist aastatest, kõik päeviku read ja märgid.',resetQ:(b,d,y)=>`Kustub ${b} raamatut, ${d} lugemispäeva ja ${y} ${y===1?'aasta':'aasta'} riiulid.`,resetType:w=>`Kinnitamiseks kirjuta ${w}`,resetWord:'KUSTUTA',yes:'Kustuta kõik',no:'Jäta alles',undoMsg:'Riiul on kustutatud.',undoBtn:'Võta tagasi',undoX:'Selge',
+  example:'Demo: Säde riiul. Proovi kõike, midagi ei salvestata.',clearEx:'Telli oma päevik',foot:'Bookcase Diary 1.0.0 demo · Silent Tools',
+  readDays:'lugemispäeva',monthBest:'pikim seeria',monthBooks:'raamatut läbi',tapDay:'Puuduta päeva, et märkida, mis raamatut lugesid.',dayQ:d=>`Mida sa lugesid ${d}?`,dayOther:'Muu raamat / ei mäleta',dayDone:'Valmis',dayNote:'päeviku rida kirjas',
+  wd:['P','E','T','K','N','R','L'],weekStart:1,locale:'et-EE',
+  prompts:{start:['Kes on peategelane?','Kus see lugu toimub?','Miks sa selle raamatu valisid?','Millest see raamat sinu arvates räägib?','Mida kaanepilt sulle ütleb?','Milline tegelane on seni kõige toredam?','Mis kõigepealt juhtus?','Kas see raamat meenutab mõnda teist raamatut?'],
+   mid:['Mis oli täna kõige naljakam koht?','Mis sinu arvates edasi juhtub?','Kes oli täna kõige toredam tegelane?','Mis sind üllatas?','Mida sina teeksid, kui oleksid raamatus?','Milline sõna või lause sulle meeldis?','Kellega raamatust tahaksid sõber olla?','Mida sa tänastes lehekülgedes muudaksid?','Kas täna oli põnev, naljakas või kurb?','Kirjelda sõnadega pilti, mis su peas oli.'],
+   any:['Mis sulle täna kõige rohkem meeldis?','Kus sa selles loos olla tahaksid?','Mida sa autorilt küsiksid?','Kellele sa selle raamatu kingiksid?','Mis häält tänased leheküljed teeksid?','Pane tänastele lehekülgedele oma pealkiri.','Mida mõni tegelane täna õppis?','Mis pani sind edasi lugema?','Milline koht sobiks filmi?','Üks sõna tänase lugemise kohta:']},
+  G:{week:['Loe sel nädalal {n} päeval','päeva'],month:['Loe sel kuul läbi {n} raamatut','raamatut'],challenge:['Loe {d} läbi {n} raamatut','raamatut'],streak:['Loe {n} päeva järjest','päeva'],lines:['Kirjuta sel nädalal {n} päeviku rida','rida'],authors:['Loe sel aastal {n} eri autori raamatuid','autorit'],pages:['Loe sel aastal {n} lehekülge','lehekülge']},
+  B:{book1:'Esimene raamat',book3:'3 raamatut',book10:'10 raamatut',days30:'30 lugemispäeva',days100:'100 lugemispäeva',run7:'7 päeva järjest',line1:'Esimene päeviku rida',line20:'20 päeviku rida',auth5:'5 autorit',thick:'Paks raamat',weekend:'Nädalavahetuse lugeja',jar:'Täis purk'},
+  F:{run:n=>`Sinu pikim seeria on ${n} päeva järjest.`,author:(a,n)=>`Sinu lemmikautor on ${a}: ${n} raamatut.`,thick:(t,n)=>`Sinu paksuim läbiloetud raamat on „${t}“, ${n} lehekülge.`,fast:(t,n)=>`„${t}“ said läbi ainult ${n} päevaga.`,wday:d=>`Kõige sagedamini loed ${d}.`,lines:(t,n)=>`Kõige rohkem kirjutasid raamatust „${t}“: ${n} rida.`,stack:cm=>`Sinu läbiloetud raamatud üksteise peale laotuna oleksid umbes ${cm} cm kõrged.`,month:(a,b)=>`Sel kuul oled lugenud ${a} päeval. Eelmisel kuul ${b} päeval.`,avg:n=>`Ühe raamatuga kulub sul keskmiselt umbes ${n} päeva.`,first:t=>`Sinu selle aasta esimene läbiloetud raamat oli „${t}“.`,daysY:n=>`Sel aastal oled lugenud ${n} päeval.`},
+  days:['pühapäeviti','esmaspäeviti','teisipäeviti','kolmapäeviti','neljapäeviti','reedeti','laupäeviti'],
+  cmp:[[12,'pikem kui linnaliinibuss'],[28,'pikem kui korvpalliväljak'],[105,'pikem kui jalgpalliväljak'],[314,'kõrgem kui Tallinna teletorn'],[330,'kõrgem kui Eiffeli torn'],[828,'kõrgem kui maailma kõrgeim hoone'],[5000,'pikem kui 5 kilomeetrit']]}};
+
+/* ---------- storage ---------- */
+const KEY='bookcase.v1';
+const pad=n=>String(n).padStart(2,'0');const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const toD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);};
+const addDays=(s,n)=>{const d=toD(s);d.setDate(d.getDate()+n);return ds(d);};
+const today=()=>ds(new Date());const YEAR=()=>today().slice(0,4);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function sample(){
+  const t=today(),y0=+YEAR()-1,B={},L={};
+  const mk=(id,title,author,pages,status,c,p,start,fin,face)=>{B[id]={id,title,author,pages,status,spine:{c,p},added:start,finished:fin,face};};
+  mk('a1','Sipsik','Eno Raud',96,'done',0,'band',y0+'-01-10',y0+'-02-02',0);
+  mk('a2','The Gruffalo','Julia Donaldson',32,'done',2,'dots',y0+'-03-01',y0+'-03-03',1);
+  mk('a3','Nukitsamees','Oskar Luts',120,'done',3,'stripes',y0+'-04-02',y0+'-05-20',1);
+  mk('a4','Matilda','Roald Dahl',240,'done',4,'stripes',y0+'-06-10',y0+'-07-15',0);
+  mk('a5','Lotte','Janno Põldma',140,'done',6,'plain',y0+'-08-01',y0+'-08-28',0);
+  mk('a6','Momo','Michael Ende',300,'done',1,'checks',y0+'-09-15',y0+'-12-01',2);
+  mk('b1','The Wild Robot','Peter Brown',288,'done',1,'dots',addDays(t,-60),addDays(t,-21),0);
+  mk('b2','Charlie and the Chocolate Factory','Roald Dahl',190,'done',7,'band',addDays(t,-120),addDays(t,-80),0);
+  mk('b3','Karlsson katuselt','Astrid Lindgren',170,'done',5,'checks',addDays(t,-150),addDays(t,-125),1);
+  mk('b4','Kröll','Andrus Kivirähk',112,'done',3,'plain',addDays(t,-200),addDays(t,-170),1);
+  mk('b5','Pippi Longstocking','Astrid Lindgren',160,'reading',0,'stripes',addDays(t,-20),null,null);
+  mk('b6','The Hobbit','J. R. R. Tolkien',310,'want',6,'band',addDays(t,-5),null,null);
+  mk('b7','Dog Man','Dav Pilkey',230,'want',2,'checks',addDays(t,-3),null,null);
+  for(const b of Object.values(B))if(b.finished&&b.finished.slice(0,4)==String(y0)){let d=b.added,i=0;while(d<=b.finished){if((+d.slice(8)*7+b.id.charCodeAt(1)*3)%10<6||d===b.finished){L[d]=L[d]||{};L[d][b.id]={n:''};}d=addDays(d,1);if(++i>200)break;}}
+  const ET=/^et\b/i.test(navigator.language||'');
+  const notes=ET?['Pipi tõstis hobuse üles! Nii tugev.','Pannkoogid laes olid nii naljakad.','Ma tahan ka sellist ahvi nagu härra Nilsson.','Tommi ja Annika on õnnelikud, et neil on Pipi.']:['Pippi lifted the horse! So strong.','The pancakes on the ceiling were funny.','I want a monkey like Mr. Nilsson.','Tommy and Annika are lucky.'];
+  for(let i=1;i<=20;i++){if(i%6===0)continue;const d=addDays(t,-i);L[d]={b5:{n:i%4===1?notes[(i/4|0)%4]:'',star:i===1||i===9}};}
+  const rob=ET?{53:'Roz ärkas üksi saarel, kus on ainult loomad.',46:'Väike hanepoeg oli nii naljakas, kui ta lendama õppis!',39:'Torm oli hirmus, aga Roz päästis kõik.',31:'Ma arvan, et robotitel võivad ka tunded olla.',23:'Lõpp tegi natuke kurvaks.'}:{53:'Roz woke up alone on an island full of animals.',46:'The little gosling was so funny learning to fly!',39:'The storm was scary but Roz saved everyone.',31:'I think robots can have feelings too.',23:'The ending made me a bit sad.'};
+  for(let i=22;i<=60;i++){if(i%5===0||i%7===0)continue;L[addDays(t,-i)]={b1:rob[i]?{n:rob[i],star:i!==23}:{n:''}};}
+  return {schema:1,example:true,settings:{name:'Säde',goals:{week:{on:true,n:5},challenge:{on:true,n:10,d:YEAR()+'-12-31'},lines:{on:true,n:3}}},books:B,logs:L};
+}
+const fresh=()=>({schema:1,settings:{},books:{},logs:{},badges:{}});
+const FIRST_RUN='sample';
+function load(){return FIRST_RUN==='sample'?sample():fresh();}
+let DB=load();
+function save(){}
+const L=()=>{const s=DB.settings.lang;if(s&&T[s])return s;return /^et\b/i.test(navigator.language||'')?'et':'en';};
+const w=()=>T[L()];
+
+/* ---------- counting ---------- */
+const readOn=d=>!!DB.logs[d]&&Object.keys(DB.logs[d]).length>0;
+function streakAt(s){let n=0;while(readOn(s)){n++;s=addDays(s,-1);}return n;}
+const current=()=>readOn(today())?streakAt(today()):streakAt(addDays(today(),-1));
+function bestRun(keys){let best=0,run=0,prev=null;for(const k of keys.sort()){run=prev&&addDays(prev,1)===k?run+1:1;best=Math.max(best,run);prev=k;}return best;}
+const bookDays=id=>Object.keys(DB.logs).filter(d=>DB.logs[d][id]).sort();
+const firstDay=b=>bookDays(b.id)[0]||b.added;
+const dayCount=(a,b)=>Math.round((toD(b)-toD(a))/864e5)+1;
+const fmtD=s=>toD(s).toLocaleDateString(w().locale,{day:'numeric',month:'short'});
+const weekStart=()=>{const d=new Date(),off=(d.getDay()-w().weekStart+7)%7;return addDays(today(),-off);};
+const hsh=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))|0;return Math.abs(h);};
+function linesSince(from){let n=0;for(const d of Object.keys(DB.logs))if(d>=from)for(const v of Object.values(DB.logs[d]))if(v&&v.n&&v.n.trim())n++;return n;}
+
+/* ---------- spines ---------- */
+const SPC=['#D9534A','#3A79C3','#E7A93A','#34406E','#8A5CC4','#D9608F','#1F8FA6','#E7803F'];
+const PATS={plain:'none',stripes:'repeating-linear-gradient(45deg,rgba(255,255,255,.28) 0 4px,transparent 4px 10px)',dots:'radial-gradient(circle,rgba(255,255,255,.5) 1.6px,transparent 2.2px) 0 0/9px 9px',band:'linear-gradient(to bottom,transparent 0 calc(100% - 34px),rgba(255,255,255,.45) calc(100% - 34px) calc(100% - 26px),transparent calc(100% - 26px))',checks:'repeating-linear-gradient(0deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px),repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 6px,transparent 6px 12px)'};
+const FACES=['😍','🙂','😐','😴'];
+function spineStyle(b){const sp=b.spine||{c:hsh(b.id)%8,p:'plain'};const pg=+b.pages||0;
+  const wdt=Math.round(pg?Math.min(54,Math.max(24,18+pg/9)):30),h=108+hsh(b.title)%26;
+  return `--c:${SPC[sp.c%8]};--pat:${PATS[sp.p]||'none'};--w:${wdt}px;--h:${h}px`;}
+const ttl=t=>t.length>22?t.slice(0,21)+'…':t;
+
+/* ---------- state ---------- */
+const S={tab:'shelf',year:null,sheet:null,mode:'',msg:'',month:null,form:null,confirm:false,unlocked:false,justAdded:null,removeQ:false};
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const FINCHECK='<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 21 C11 24 14 28 16 32 C20 22 26 13 35 6" fill="none" stroke="#2F9B5A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const PENCHECK='<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 21 C11 24 14 28 16 32 C20 22 26 13 35 6" fill="none" stroke="#2E3A6B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ---------- goals ---------- */
+const GKEYS=['week','month','challenge','streak','lines','authors','pages'];
+function goalProgress(k,g){const t0=today(),y=YEAR(),books=Object.values(DB.books);
+  if(k==='week'){const ws=weekStart();let n=0;for(let i=0;i<7;i++){const d=addDays(ws,i);if(d<=t0&&readOn(d))n++;}return n;}
+  if(k==='month'){const m=t0.slice(0,7);return books.filter(b=>b.finished&&b.finished.startsWith(m)).length;}
+  if(k==='challenge'){const from=g.from||y+'-01-01';return books.filter(b=>b.finished&&b.finished>=from&&b.finished<=(g.d||'9999')).length;}
+  if(k==='streak')return current();
+  if(k==='lines')return linesSince(weekStart());
+  if(k==='authors')return new Set(books.filter(b=>b.status!=='want'&&b.author&&(b.finished||'9').slice(0,4)>=y).map(b=>b.author.trim().toLowerCase())).size;
+  if(k==='pages')return books.filter(b=>b.finished&&b.finished.startsWith(y)).reduce((s,b)=>s+(+b.pages||0),0);
+  return 0;}
+const ETM=['jaanuariks','veebruariks','märtsiks','aprilliks','maiks','juuniks','juuliks','augustiks','septembriks','oktoobriks','novembriks','detsembriks'];
+function goalDate(s){if(!s)return '';const d=toD(s);return L()==='et'?`${d.getDate()}. ${ETM[d.getMonth()]}`:d.toLocaleDateString('en-US',{month:'long',day:'numeric'});}
+function goalLabel(k,g){const tx=w().G[k][0];return tx.replace('{n}',g.n).replace('{d}',goalDate(g.d));}
+function dayColor(d){const ids=Object.keys(DB.logs[d]||{});const b=ids.map(i=>DB.books[i]).find(Boolean);return b?SPC[(b.spine||{c:0}).c%8]:'#B9AFA4';}
+function goalBalls(k,g){const t0=today(),y=YEAR(),books=Object.values(DB.books),col=b=>SPC[(b.spine||{c:0}).c%8];
+  if(k==='week'){const ws=weekStart(),a=[];for(let i=0;i<7;i++){const d=addDays(ws,i);if(d<=t0&&readOn(d))a.push(dayColor(d));}return a;}
+  if(k==='streak'){const a=[];let d=readOn(t0)?t0:addDays(t0,-1);while(readOn(d)){a.unshift(dayColor(d));d=addDays(d,-1);}return a;}
+  if(k==='month'){const m=t0.slice(0,7);return books.filter(b=>b.finished&&b.finished.startsWith(m)).sort((a,b)=>a.finished.localeCompare(b.finished)).map(col);}
+  if(k==='challenge'){const from=g.from||y+'-01-01';return books.filter(b=>b.finished&&b.finished>=from&&b.finished<=(g.d||'9999')).sort((a,b)=>a.finished.localeCompare(b.finished)).map(col);}
+  if(k==='lines'){const ws=weekStart(),a=[];for(const d of Object.keys(DB.logs).sort())if(d>=ws)for(const [id,v] of Object.entries(DB.logs[d]))if(v&&v.n&&v.n.trim())a.push(DB.books[id]?col(DB.books[id]):'#B9AFA4');return a;}
+  if(k==='authors'){const seen=new Map();for(const b of books.filter(b=>b.status!=='want'&&b.author).sort((a,b)=>(a.added||'').localeCompare(b.added||''))){const a=b.author.trim().toLowerCase();if(!seen.has(a))seen.set(a,col(b));}return [...seen.values()];}
+  if(k==='pages'){const n=Math.floor(goalProgress(k,g)/50);return Array(n).fill('#E7A93A');}
+  return [];}
+function jarSVG(balls,cap,isNew,scale){
+  /* the ball size never changes: the jar grows with the goal, so a full jar is exactly full */
+  const r=9,g=.8,per=Math.max(2,Math.min(7,Math.round(Math.sqrt(cap*.8)))),rows=Math.max(1,Math.ceil(cap/per)),full=balls.length>=cap,shown=balls.slice(0,cap);
+  const inW=per*(2*r+g)+r,inH=rows*r*1.74+r*.3+2,x0=4,x1=x0+inW+8,cx=(x0+x1)/2,nw=Math.max(15,inW*.33),top=20,sh=top+7,bt=sh+12,yb=bt+inH+4,W=x1+4,H=yb+3;
+  const f=v=>v.toFixed(1);
+  let o=`<path d="M${f(cx-nw)} ${top}H${f(cx+nw)}V${sh}Q${f(x1)} ${sh+2} ${f(x1)} ${bt}V${f(yb-10)}Q${f(x1)} ${f(yb)} ${f(x1-10)} ${f(yb)}H${f(x0+10)}Q${f(x0)} ${f(yb)} ${f(x0)} ${f(yb-10)}V${bt}Q${f(x0)} ${sh+2} ${f(cx-nw)} ${sh}Z" fill="rgba(255,255,255,.6)" stroke="#9C8F84" stroke-width="2.2"/>`;
+  o+=`<rect x="${f(cx-nw-3)}" y="${top-3}" width="${f(2*nw+6)}" height="5" rx="2.5" fill="none" stroke="#9C8F84" stroke-width="2"/>`;
+  shown.forEach((c,i)=>{const k=Math.floor(i/per),col=i%per,x=x0+4+r+col*(2*r+g)+(k%2?r:0),y=yb-2.5-r-k*r*1.74,last=isNew&&i===shown.length-1;
+    o+=`<g class="${last?'fall d':''}"><circle cx="${f(x)}" cy="${f(y)}" r="${r}" fill="${c}"/><circle cx="${f(x-r*.35)}" cy="${f(y-r*.38)}" r="${f(r*.32)}" fill="#fff" opacity=".6"/></g>`;});
+  o+=`<path d="M${f(x0+5)} ${bt+4}V${f(yb-12)}" stroke="#fff" stroke-width="3.5" fill="none" opacity=".75" stroke-linecap="round"/>`;
+  o+=full?`<rect x="${f(cx-nw-5)}" y="${top-12}" width="${f(2*nw+10)}" height="11" rx="4" fill="#E7A93A" stroke="#A87B1C" stroke-width="1.8"/>`
+         :`<rect x="${f(cx-nw-5)}" y="${top-17}" width="${f(2*nw+10)}" height="11" rx="4" fill="#CDBFB2" stroke="#8C7D70" stroke-width="1.8" transform="rotate(-12 ${f(cx-nw-5)} ${top-6})"/>`;
+  const sc=scale||1.25;
+  return `<svg viewBox="0 -2 ${f(W)} ${f(H+2)}" width="${Math.round(W*sc)}" height="${Math.round((H+2)*sc)}" aria-hidden="true" style="overflow:visible">${o}</svg>`;}
+function goalsCard(){const G=DB.settings.goals||{};const on=GKEYS.filter(k=>G[k]&&G[k].on&&+G[k].n>0);if(!on.length)return '';
+  return `<section class="card"><h2>${w().goals}</h2><div class="jars">${on.map(k=>{const g=G[k],p=goalProgress(k,g),bl=goalBalls(k,g),cap=k==='pages'?Math.max(1,Math.floor(+g.n/50)):+g.n,dn=p>=+g.n;
+    return `<div class="jar ${dn?'done':''}">${cap<=60?jarSVG(bl,cap,false):''}<b class="jl">${esc(goalLabel(k,g))}</b><span class="jn">${dn?w().goalDone:`${Math.min(p,+g.n)} / ${g.n}`}</span></div>`;}).join('')}</div><p class="hint">${w().jarHint}</p></section>`;}
+
+/* ---------- badges ---------- */
+const BADGES=[['book1','#D9534A','circle','book'],['book3','#E7803F','shield','stack'],['book10','#8A5CC4','star','n10'],['run7','#E8483A','hex','flame'],['days30','#1F8FA6','square','cal'],['days100','#34406E','burst','n100'],['line1','#3A79C3','circle','pencil'],['line20','#D9608F','square','page'],['auth5','#2F9B5A','oct','people'],['thick','#7A5236','shield','thick'],['weekend','#3A79C3','hex','sunmoon'],['jar','#E7A93A','burst','jar']];
+function badgeTest(k){const books=Object.values(DB.books),fin=books.filter(b=>b.finished),days=Object.keys(DB.logs).filter(readOn);let lines=0;for(const d of Object.keys(DB.logs))for(const v of Object.values(DB.logs[d]))if(v&&v.n&&v.n.trim())lines++;
+  switch(k){case 'book1':return fin.length>=1;case 'book3':return fin.length>=3;case 'book10':return fin.length>=10;case 'run7':return bestRun(days)>=7;case 'days30':return days.length>=30;case 'days100':return days.length>=100;
+  case 'line1':return lines>=1;case 'line20':return lines>=20;case 'auth5':return new Set(books.filter(b=>b.status!=='want'&&b.author).map(b=>b.author.trim().toLowerCase())).size>=5;case 'thick':return fin.some(b=>+b.pages>=200);
+  case 'weekend':return days.some(d=>toD(d).getDay()===6&&readOn(addDays(d,1)));
+  case 'jar':{const G=DB.settings.goals||{};return GKEYS.some(k=>G[k]&&G[k].on&&goalProgress(k,G[k])>=+G[k].n);}}return false;}
+function checkBadges(){DB.badges=DB.badges||{};const fresh=[];for(const [k] of BADGES)if(!DB.badges[k]&&badgeTest(k)){DB.badges[k]=today();fresh.push(k);}if(fresh.length){save();}return fresh;}
+function polyD(n,R,r,rot){const m=r?n*2:n,p=[];for(let i=0;i<m;i++){const a=rot+i*Math.PI*2/m,q=r&&i%2?r:R;p.push((40+q*Math.sin(a)).toFixed(1)+' '+(40-q*Math.cos(a)).toFixed(1));}return 'M'+p.join('L')+'Z';}
+const SHAPES={circle:'M40 3A37 37 0 1 1 39.9 3Z',shield:'M40 3L73 13V38C73 60 58 72 40 78C22 72 7 60 7 38V13Z',hex:polyD(6,39,0,0),oct:polyD(8,38,0,Math.PI/8),square:'M19 5H61Q75 5 75 19V61Q75 75 61 75H19Q5 75 5 61V19Q5 5 19 5Z',burst:polyD(12,39,33,0),star:polyD(5,41,24,0)};
+function pinIcon(ic,c){const I='#FFF7E6',num=(t,y,fs,col)=>`<text x="40" y="${y}" text-anchor="middle" font-family="Grandstander,'Baloo 2',sans-serif" font-weight="800" font-size="${fs}" fill="${col||I}">${t}</text>`;
+  switch(ic){
+  case 'book':return `<path d="M20 30Q30 25 40 31Q50 25 60 30V53Q50 48 40 54Q30 48 20 53Z" fill="${I}"/><path d="M40 31V54" stroke="${c}" stroke-width="2.4"/><path d="M25 36q6-2 11 1M25 42q6-2 11 1M44 37q6-3 11-1M44 43q6-3 11-1" stroke="${c}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/>`;
+  case 'stack':return `<rect x="22" y="48" width="36" height="8" rx="2" fill="${I}"/><rect x="26" y="39" width="31" height="8" rx="2" fill="${I}"/><rect x="21" y="30" width="34" height="8" rx="2" fill="${I}"/><path d="M27 48v8M32 39v8M26 30v8" stroke="${c}" stroke-width="2.2"/>`;
+  case 'n10':return num('10',49,24);
+  case 'n100':return num('100',47,19);
+  case 'flame':return `<path d="M40 19C45 27 55 32 55 44A15 15 0 0 1 25 44C25 37 29 33 32 29C33 34 35 36 38 36C36 30 37 24 40 19Z" fill="${I}"/>`+num('7',55,17,c);
+  case 'cal':return `<rect x="22" y="26" width="36" height="32" rx="4" fill="${I}"/><path d="M22 35V30q0-4 4-4h28q4 0 4 4v5z" fill="rgba(0,0,0,.28)"/><path d="M30 22v8M50 22v8" stroke="${I}" stroke-width="3.5" stroke-linecap="round"/>`+num('30',54,16,c);
+  case 'pencil':return `<path d="M24 60q4-5 8 0t8 0" stroke="${I}" stroke-width="2.5" fill="none" stroke-linecap="round"/><g transform="rotate(40 44 36)"><rect x="39" y="14" width="11" height="32" rx="2" fill="${I}"/><rect x="39" y="14" width="11" height="6" rx="2" fill="#F4A3A3"/><path d="M39 46h11l-5.5 10z" fill="#F3D9B1"/><path d="M43 53.5l1.5 2.5 1.5-2.5z" fill="#2C2622"/></g>`;
+  case 'page':return `<g transform="rotate(-6 40 40)"><rect x="25" y="19" width="30" height="40" rx="3" fill="${I}"/><path d="M30 27h20M30 33h20M30 39h14" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".6"/></g>`+num('20',55,15,c);
+  case 'people':return `<g fill="${I}" opacity=".75"><circle cx="33" cy="28" r="4.5"/><circle cx="47" cy="28" r="4.5"/><path d="M26 42a7 7 0 0 1 14 0zM40 42a7 7 0 0 1 14 0z"/></g><g fill="${I}" stroke="${c}" stroke-width="1.6"><circle cx="27" cy="39" r="5.5"/><circle cx="40" cy="37" r="5.5"/><circle cx="53" cy="39" r="5.5"/><path d="M18 56a9 9 0 0 1 18 0zM31 55a9 9 0 0 1 18 0zM44 56a9 9 0 0 1 18 0z"/></g>`;
+  case 'thick':return `<path d="M24 27l8-6h26l-8 6z" fill="#FFFFFF"/><path d="M50 27l8-6v31l-8 6z" fill="#F1E2C6"/><path d="M52.5 26v29M55.5 24v29" stroke="rgba(0,0,0,.15)" stroke-width="1"/><rect x="21" y="27" width="29" height="31" rx="2" fill="${I}"/><rect x="21" y="36" width="29" height="6" fill="${c}" opacity=".55"/>`;
+  case 'sunmoon':return `<circle cx="31" cy="35" r="7" fill="${I}"/><path d="M31 22v4M31 44v4M18 35h4M40 35h4M22 26l3 3M37 41l3 3M22 44l3-3M37 29l3-3" stroke="${I}" stroke-width="2.4" stroke-linecap="round"/><path d="M55 38a10 10 0 1 0 5 15a8 8 0 1 1-5-15z" fill="#FFE59A"/>`;
+  case 'jar':return `<rect x="30" y="18" width="20" height="6" rx="2" fill="#FBE08A" stroke="${I}" stroke-width="1.2"/><path d="M31 25h18v3q7 3 7 10v14q0 6-6 6H30q-6 0-6-6V38q0-7 7-10z" fill="rgba(255,255,255,.3)" stroke="${I}" stroke-width="2.4"/><g><circle cx="32" cy="52" r="4.3" fill="#D9534A"/><circle cx="40.5" cy="52" r="4.3" fill="#3A79C3"/><circle cx="49" cy="52" r="4.3" fill="#8A5CC4"/><circle cx="36.3" cy="44.6" r="4.3" fill="#FFF7E6"/><circle cx="44.8" cy="44.6" r="4.3" fill="#E8483A"/><circle cx="40.5" cy="37.2" r="4.3" fill="#1F8FA6"/></g>`;}
+  return '';}
+function pinSVG(k){const b=BADGES.find(x=>x[0]===k);if(!b)return '';const [,c,sh,ic]=b,d=SHAPES[sh],inner='transform="translate(40 40) scale(.8) translate(-40 -40)"';
+  return `<svg viewBox="0 0 80 80" aria-hidden="true"><defs><linearGradient id="rim" x1="0" y1="0" x2=".3" y2="1"><stop offset="0" stop-color="#FCE7A0"/><stop offset=".5" stop-color="#E4B341"/><stop offset="1" stop-color="#B9861F"/></linearGradient><linearGradient id="shine" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+  <path d="${d}" fill="rgba(0,0,0,.18)" transform="translate(0 2)"/><path d="${d}" fill="url(#rim)" stroke="#9A6E1A" stroke-width="1.4"/><path d="${d}" ${inner} fill="${c}" stroke="rgba(0,0,0,.28)" stroke-width="1.6"/>${pinIcon(ic,c)}<path d="${d}" ${inner} fill="url(#shine)"/></svg>`;}
+function badgesCard(){const got=DB.badges||{},n=BADGES.filter(([k])=>got[k]).length,nw=S.newBadges||[];S.newBadges=[];
+  return `<section class="card"><div class="bhead"><h2>${w().badges}</h2><span class="hint">${w().badgeHint(n,BADGES.length)}</span></div><div class="badges">${BADGES.map(([k])=>`<div class="bdg ${got[k]?'':'off'} ${nw.includes(k)?'new':''}">${pinSVG(k)}<span>${esc(w().B[k])}</span></div>`).join('')}</div></section>`;}
+function facts(){const F=w().F,books=Object.values(DB.books),fin=books.filter(b=>b.finished),days=Object.keys(DB.logs).filter(readOn),y=YEAR(),out=[];
+  const br=bestRun(days.slice());if(br>=2)out.push(F.run(br));
+  const au={};for(const b of fin)if(b.author){const a=b.author.trim();au[a]=(au[a]||0)+1;}const ta=Object.entries(au).sort((a,b)=>b[1]-a[1])[0];if(ta&&ta[1]>=2)out.push(F.author(ta[0],ta[1]));
+  const th=fin.filter(b=>+b.pages).sort((a,b)=>b.pages-a.pages)[0];if(th)out.push(F.thick(th.title,th.pages));
+  const fa=fin.map(b=>[b,dayCount(firstDay(b),b.finished)]).sort((a,b)=>a[1]-b[1])[0];if(fa)out.push(F.fast(fa[0].title,fa[1]));
+  if(days.length>=7){const c=[0,0,0,0,0,0,0];for(const d of days)c[toD(d).getDay()]++;out.push(F.wday(w().days[c.indexOf(Math.max(...c))]));}
+  const lc={};for(const d of Object.keys(DB.logs))for(const [id,v] of Object.entries(DB.logs[d]))if(v&&v.n&&v.n.trim()&&DB.books[id])lc[id]=(lc[id]||0)+1;const tl=Object.entries(lc).sort((a,b)=>b[1]-a[1])[0];if(tl&&tl[1]>=2)out.push(F.lines(DB.books[tl[0]].title,tl[1]));
+  const pg=fin.reduce((s,b)=>s+(+b.pages||0),0);if(pg)out.push(F.stack(Math.max(1,Math.round(fin.filter(b=>+b.pages).reduce((s,b)=>s+b.pages*0.009+0.4,0)))));
+  const m0=today().slice(0,7),pm=new Date();pm.setDate(1);pm.setMonth(pm.getMonth()-1);const m1=ds(pm).slice(0,7);out.push(F.month(days.filter(d=>d.startsWith(m0)).length,days.filter(d=>d.startsWith(m1)).length));
+  if(fin.length>=2)out.push(F.avg(Math.round(fin.reduce((s,b)=>s+dayCount(firstDay(b),b.finished),0)/fin.length)));
+  const fy=fin.filter(b=>b.finished.startsWith(y)).sort((a,b)=>a.finished.localeCompare(b.finished))[0];if(fy)out.push(F.first(fy.title));
+  out.push(F.daysY(days.filter(d=>d.startsWith(y)).length));return out;}
+function factCard(){const fs=facts();if(!fs.length)return '';if(S.fact==null)S.fact=hsh(today())%fs.length;const f=fs[S.fact%fs.length];
+  return `<section class="fact"><span class="hint">${w().didYou}</span><b>${esc(f)}</b><button class="btn small" data-act="fact" style="justify-self:start">${w().more} ›</button></section>`;}
+const POPQ=[];let popT=null;
+function pop(h){POPQ.push(h);if(!popT&&!document.querySelector('#pop .jpop'))nextPop();}
+function nextPop(){clearTimeout(popT);popT=null;const el=document.getElementById('pop'),h=POPQ.shift();if(!h){el.innerHTML='';return;}el.innerHTML=`<div class="jpop" data-pop="1" role="status">${h}</div>`;popT=setTimeout(nextPop,2700);}
+function jarPop(keys,fallback){const G=DB.settings.goals||{};let k=keys.find(x=>G[x]&&G[x].on&&+G[x].n>0),g=k?G[k]:null,lbl;
+  if(k)lbl=goalLabel(k,g);else if(fallback){k='week';g={n:7};lbl=w().thisWeek;}else return;
+  const cap=k==='pages'?Math.max(1,Math.floor(+g.n/50)):+g.n,p=goalProgress(k,g),dn=p>=+g.n;if(cap>60)return;
+  pop(`<div class="jcard">${jarSVG(goalBalls(k,g),cap,true,2)}<b class="jl">${esc(lbl)}</b><span class="jn">${dn?w().goalDone:`${Math.min(p,+g.n)} / ${g.n}`}</span></div>`);}
+function badgePop(k){pop(`<div class="jcard bpop"><span class="hint">${w().badgeNewT}</span>${pinSVG(k)}<b class="jl">${esc(w().B[k])}</b></div>`);}
+function toast(m){const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600);}
+function afterChange(){const fresh=checkBadges();if(fresh.length){S.newBadges=fresh;confetti();fresh.forEach(badgePop);if(!S.sheet&&!S.mode)render();}}
+function titleHTML(){const n=(DB.settings.name||'').trim(),nm=n?w().poss(n):w().mine;let k=0;
+  const letters=[...nm].map(ch=>ch===' '?' ':`<i style="color:${SPC[(k++)%8]}">${esc(ch)}</i>`).join('');
+  return `<span class="nm">${letters}</span><span class="kind">${w().kind}</span>`;}
+/* ---------- keeping the diary safe ---------- */
+const UA=navigator.userAgent||'';
+const isIOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isAndroid=/Android/i.test(UA);
+const isStandalone=navigator.standalone===true||!!(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+const needsA2HS=()=>(isIOS||isAndroid)&&!isStandalone&&!DB.settings.noA2HS&&!DB.example;
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});}catch(e){}
+const a2hsList=()=>`<ol>${(isIOS?w().a2hsIOS:w().a2hsAnd).map(x=>`<li>${x}</li>`).join('')}</ol>`;
+const BK_FORMAT='bookcase-diary-backup';
+const readDaysN=D=>Object.keys(D.logs||{}).filter(k=>D.logs[k]&&Object.keys(D.logs[k]).length).length;
+function backupJSON(){return JSON.stringify({format:BK_FORMAT,schema:1,exportedAt:new Date().toISOString(),data:DB});}
+function readBackupFile(text){let d;try{d=JSON.parse(text);}catch(e){throw new Error(w().bkBad);}
+  if(!d||d.format!==BK_FORMAT||!d.data||!d.data.books||!d.data.logs)throw new Error(w().bkBad);if(d.schema>1||d.data.schema>1)throw new Error(w().bkNewer);
+  return {data:d.data,exportedAt:d.exportedAt,books:Object.keys(d.data.books).length,days:readDaysN(d.data),name:(d.data.settings||{}).name||''};}
+function daysSinceBackup(){const b=DB.settings.lastBackupAt;return b?Math.floor((Date.now()-new Date(b).getTime())/864e5):null;}
+async function saveFile(name,data,mime){const file=new File([data],name,{type:mime});
+  if(navigator.canShare&&navigator.share&&/iPhone|iPad|Android/i.test(UA)){try{if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return 'saved';}}catch(e){if(e&&e.name==='AbortError')return 'declined';}}
+  const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);return 'saved';}
+const slug=t=>String(t).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+function a2hsBar(){if(!needsA2HS())return '';
+  return `<div class="notice"><b>${w().a2hsT}</b><p>${w().a2hsP(isIOS)}</p><details><summary>${w().a2hsHow}</summary>${a2hsList()}</details><button class="btn small" data-act="a2hs-ok" style="justify-self:start">${w().a2hsOk}</button></div>`;}
+function backupNudge(){if(DB.example||readDaysN(DB)<10)return '';const d=daysSinceBackup();if(d!==null&&d<=30)return '';
+  return `<div class="notice"><b>${w().nudgeT(d)}</b><p>${w().nudgeP}</p><button class="btn small primary" data-act="bk-go" style="justify-self:start">${w().nudgeBtn}</button></div>`;}
+function safeCard(){const bk=S.bk||{},nB=Object.keys(DB.books).length,nD=readDaysN(DB);
+  let h=`<section class="card" id="safe"><div class="lbl">${w().safeT}</div><p class="hint">${w().safeHint}</p><p class="hint">${w().lastBk(daysSinceBackup())} ${w().bkCounts(nB,nD)}</p>
+   <button class="btn primary" data-act="bk-save" style="justify-self:start" ${nB?'':'disabled'}>${w().bkSave}</button>`;
+  if(bk.msg)h+=`<p class="${bk.err?'msg':'hint'}" role="status">${esc(bk.msg)}</p>`;
+  if(bk.preview){const p=bk.preview;h+=`<div class="notice"><p>${w().bkPrev(esc(p.name),p.books,p.days,p.exportedAt?esc(new Date(p.exportedAt).toLocaleDateString(w().locale)):'')}</p>
+     ${bk.confirm?`<p><b>${esc(w().bkQ(nB,nD))}</b></p><div class="row"><button class="btn dangerbtn" data-act="bk-yes">${w().bkYes}</button><button class="btn" data-act="bk-no">${w().bkKeep}</button></div>`
+     :`<div class="row"><button class="btn primary" data-act="bk-replace">${w().bkYes}</button><button class="btn" data-act="bk-no">${w().cancel}</button></div>`}</div>`;}
+  else h+=`<label class="btn small" for="bk-file" style="justify-self:start;display:inline-flex;align-items:center;cursor:pointer">${w().bkOpen}</label><input id="bk-file" class="vh" type="file" accept=".json,application/json">`;
+  if((isIOS||isAndroid)&&!isStandalone)h+=`<details><summary>${w().a2hsT}</summary>${a2hsList()}</details>`;
+  return h+'</section>';}
+function welcome(){if(DB.example||Object.keys(DB.books).length)return '';
+  return `<section class="card welcome"><h2>${w().welT}</h2><p class="hint" style="font-size:0.9412rem">${w().welP}</p><label class="lbl" for="wname">${w().name}</label><input type="text" id="wname" value="${esc(DB.settings.name||'')}" placeholder="Säde" autocomplete="off"><button class="btn primary" data-act="add" style="justify-self:start">${w().welBtn}</button></section>`;}
+/* ---------- views ---------- */
+function todayBar(){const t0=today(),on=readOn(t0),cur=current(),ws=weekStart();
+  const bid=on?Object.keys(DB.logs[t0]).find(id=>DB.books[id]):null,bn=bid?DB.books[bid].title:'';
+  const week=[...Array(7)].map((_,i)=>{const d=addDays(ws,i);return `<div class="wd"><span class="dot ${readOn(d)?'on':''} ${d===t0?'now':''}"></span>${w().wd[(w().weekStart+i)%7]}</div>`;}).join('');
+  return `<section class="card todaybar"><span class="tick ${on?'on':''}">${on?CHECK:''}</span><div><b>${on?esc(w().todayDone(bn)):w().todayNot}</b><span class="hint">${cur?w().streak(cur):w().noStreak}</span><div class="week">${week}</div></div></section>`;}
+function shelfView(){
+  const y=YEAR(),books=Object.values(DB.books),years=[...new Set([y,...books.filter(b=>b.finished).map(b=>b.finished.slice(0,4))])].sort().reverse();
+  if(!S.year||!years.includes(S.year))S.year=y;const cur=S.year===y;
+  const rank={reading:0,want:1,done:2};
+  const list=books.filter(b=>cur?(b.status!=='done'||b.finished.startsWith(y)):(b.status==='done'&&b.finished.startsWith(S.year)))
+    .sort((a,b)=>(rank[a.status]-rank[b.status])||(a.status==='done'?a.finished.localeCompare(b.finished):(a.added||'').localeCompare(b.added||'')));
+  const done=list.filter(b=>b.status==='done').length;
+  const want=list.filter(b=>b.status==='want'),upright=list.filter(b=>b.status!=='want');
+  const stacks=[];for(let i=0;i<want.length;i+=4)stacks.push(want.slice(i,i+4));
+  const stackHTML=stacks.map(st=>`<div class="slot"><div class="stack">${st.slice().reverse().map(b=>{const sp=b.spine||{c:0,p:'plain'},pg=+b.pages||0;
+    return `<button class="lying ${S.justAdded===b.id?'new':''}" data-open="${b.id}" aria-label="${esc(b.title)}" style="--c:${SPC[sp.c%8]};--pat:${PATS[sp.p]||'none'};--lw:${84+hsh(b.title)%18}px;--lh:${Math.round(pg?Math.min(26,Math.max(16,12+pg/18)):20)}px">${esc(ttl(b.title))}</button>`;}).join('')}</div></div>`).join('');
+  const spines=upright.map(b=>`<div class="slot"><button class="spine ${b.status} ${b.status==='done'&&b.face!=null?'hasface':''} ${S.justAdded===b.id?'new':''}" style="${spineStyle(b)}" data-open="${b.id}" aria-label="${esc(b.title)}">${esc(ttl(b.title))}${b.status==='done'&&b.face!=null?`<span class="face">${FACES[b.face]}</span>`:''}</button></div>`).join('')
+    +stackHTML+(cur?`<div class="slot"><button class="addspine" data-act="add" aria-label="${w().addBook}">+</button></div>`:'');
+  S.justAdded=null;
+  return `${welcome()}${a2hsBar()}${backupNudge()}${S.undo?`<div class="ex" role="status"><span>${w().undoMsg}</span><span class="row"><button class="btn small" data-act="undo">${w().undoBtn}</button><button class="btn small" data-act="undo-x">${w().undoX}</button></span></div>`:''}${DB.example?`<div class="ex"><span>${w().example}</span><a class="btn small" href="https://www.etsy.com/shop/SilentTools" target="_blank" rel="noopener">${w().clearEx}</a></div>`:''}
+  ${years.length>1?`<div class="years" role="group">${years.map(yy=>`<button class="chip" data-year="${yy}" aria-pressed="${yy===S.year}">${yy}</button>`).join('')}</div>`:''}
+  <div class="case"><div class="case-top"><div class="plate"><b>${esc(w().caseOf(S.year))}</b><span>${esc(w().nBooks(done))}</span></div></div><div class="shelves">${spines}</div></div>
+  <button class="btn yearb" data-act="yearpage">🖼 ${esc(w().yearT(S.year))}</button>
+  ${cur?`<div class="legend"><span><i style="background:#E8483A;width:7px"></i>${w().legRead}</span><span><i style="background:#2F9B5A;width:8px;height:14px;clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)"></i>${w().legDone}</span><span><i style="background:#3A79C3;width:18px;height:7px"></i>${w().legWant}</span></div>`:`<p class="hint">${esc(w().pastYear(S.year))}</p>`}
+  ${cur?goalsCard():''}
+  ${cur?factCard():''}
+  ${cur?badgesCard():''}
+  ${statsCard(S.year)}`;
+}
+function statsCard(y){const books=Object.values(DB.books).filter(b=>b.finished&&b.finished.startsWith(y));
+  const days=Object.keys(DB.logs).filter(d=>d.startsWith(y)&&readOn(d)).length;let lines=0;for(const d of Object.keys(DB.logs))if(d.startsWith(y))for(const v of Object.values(DB.logs[d]))if(v&&v.n&&v.n.trim())lines++;
+  const pages=books.reduce((s,b)=>s+(+b.pages||0),0);let fact;
+  if(pages){const m=Math.round(pages*180*0.025);const c=[...w().cmp].reverse().find(x=>m>=x[0]);const ms=m>=1000?(Math.round(m/100)/10).toLocaleString(w().locale)+' km':m+' m';
+    fact=`<div class="fact"><span class="hint">${w().factT}</span><b>${esc(w().factB(ms,c?c[1]:''))}</b><span class="hint">${w().factHint}</span></div>`;}
+  else fact=`<div class="fact"><span class="hint">${w().factNone}</span></div>`;
+  return `<div class="nums"><div class="nb"><b>${days}</b><span>${w().stDays}</span></div><div class="nb"><b>${books.length}</b><span>${w().stBooks}</span></div><div class="nb"><b>${lines}</b><span>${w().stLines}</span></div></div>${fact}`;}
+function calView(){
+  const t0=today(),n=new Date();if(!S.month)S.month=[n.getFullYear(),n.getMonth()];
+  const [y,m]=S.month,first=new Date(y,m,1),dim=new Date(y,m+1,0).getDate(),lead=(first.getDay()-w().weekStart+7)%7;
+  const prefix=y+'-'+pad(m+1),inMonth=Object.keys(DB.logs).filter(k=>k.startsWith(prefix)&&readOn(k));
+  const finM=Object.values(DB.books).filter(b=>b.finished&&b.finished.startsWith(prefix)).length;
+  let cells=[...Array(7)].map((_,i)=>`<div class="gh">${w().wd[(w().weekStart+i)%7]}</div>`).join('')+[...Array(lead)].map(()=>'<span class="day blank"></span>').join('');
+  for(let d=1;d<=dim;d++){const k=prefix+'-'+pad(d),hasNote=readOn(k)&&Object.values(DB.logs[k]).some(v=>v&&v.n&&v.n.trim());cells+=`<button class="day ${readOn(k)?'on':''} ${hasNote?'hasnote':''} ${k===t0?'now':''}" ${readOn(k)?`style="background:${dayColor(k)};border-color:${dayColor(k)}"`:''} data-day="${k}" ${k>t0?'disabled':''} aria-pressed="${readOn(k)}" aria-label="${k}">${d}</button>`;}
+  const isNow=y===n.getFullYear()&&m===n.getMonth();
+  return `<section class="card"><div class="mhead"><button class="nav2" data-act="prev" aria-label="‹">‹</button><h2>${esc(first.toLocaleDateString(w().locale,{month:'long',year:'numeric'}))}</h2><button class="nav2" data-act="next" aria-label="›" ${isNow?'disabled':''}>›</button></div><div class="grid">${cells}</div><p class="hint">${w().tapDay}</p></section>
+  <div class="nums"><div class="nb"><b>${inMonth.length}</b><span>${w().readDays}</span></div><div class="nb"><b>${bestRun(inMonth)}</b><span>${w().monthBest}</span></div><div class="nb"><b>${finM}</b><span>${w().monthBooks}</span></div></div>`;}
+function settingsView(){
+  const G=DB.settings.goals||{};
+  let goals='';
+  if(S.unlocked)goals=`<section class="card gedit"><h2>${w().gTitle}</h2><p class="hint">${w().gHint}</p>${GKEYS.map(k=>{const g=G[k]||{on:false,n:k==='pages'?1000:k==='week'?5:k==='streak'?7:k==='authors'?5:k==='lines'?3:k==='challenge'?10:2,d:YEAR()+'-12-31'};
+    return `<div class="gi"><input type="checkbox" id="g-${k}" data-gk="${k}" ${g.on?'checked':''} aria-label="${esc(goalLabel(k,g))}"><div class="gf"><label for="g-${k}" style="flex:1 0 100%">${esc(w().G[k][0].replace('{n}','N').replace('{d}','…'))}</label><input type="number" min="1" max="9999" inputmode="numeric" data-gn="${k}" value="${esc(g.n)}" aria-label="N"><span class="hint">${w().G[k][1]}</span>${k==='challenge'?`<input type="date" data-gd="${k}" value="${esc(g.d||'')}" aria-label="date">`:''}</div></div>`;}).join('')}<button class="btn small" data-act="goals-off" style="justify-self:start">${w().goalsOff}</button></section>`;
+  return `<button class="btn small" data-act="close-set" style="justify-self:start">${w().back}</button><h2>${w().settings}</h2>
+  <section class="card"><label class="lbl" for="name">${w().name}</label><input type="text" id="name" value="${esc(DB.settings.name||'')}" placeholder="Säde" autocomplete="off"></section>
+  <section class="card"><div class="lbl">${w().lang}</div><div class="seg"><button data-lang="en" aria-pressed="${L()==='en'}">English</button><button data-lang="et" aria-pressed="${L()==='et'}">Eesti</button></div></section>
+  ${safeCard()}
+  <section class="card"><div class="lbl">${w().parents}</div><button class="btn" data-act="goals" style="justify-self:start" aria-expanded="${S.unlocked}">${S.unlocked?w().goalsHide:w().goalsBtn}</button></section>
+  ${goals}
+  <section class="card danger"><div class="lbl">${w().resetT}</div><p class="hint">${w().resetHint}</p>${S.confirm?(()=>{const bs=Object.values(DB.books),ys=new Set([YEAR(),...bs.filter(b=>b.finished).map(b=>b.finished.slice(0,4))]).size,dd=Object.keys(DB.logs).filter(readOn).length;
+    return `<p style="margin:0;font-weight:700">${esc(w().resetQ(bs.length,dd,ys))}</p><label class="lbl" for="rword">${esc(w().resetType(w().resetWord))}</label><input type="text" id="rword" autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="row"><button class="btn dangerbtn" data-act="reset-yes" id="rgo" disabled>${w().yes}</button><button class="btn" data-act="reset-no">${w().no}</button></div>`;})():`<button class="btn dangerbtn" data-act="reset" style="justify-self:start">${w().reset}</button>`}</section>`;}
+
+/* ---------- open book ---------- */
+function promptFor(id){const P=w().prompts,n=bookDays(id).filter(d=>d<today()).length,list=n<3?P.start.concat(P.any):P.mid.concat(P.any);return list[hsh(today()+id)%list.length];}
+function bookSheet(){
+  const b=DB.books[S.sheet];if(!b)return '';const t0=today(),lg=(DB.logs[t0]||{})[b.id],on=!!lg;
+  const n=bookDays(b.id).length,fd=firstDay(b),col=SPC[(b.spine||{c:0}).c%8];
+  const dateTxt=new Date().toLocaleDateString(w().locale,{weekday:'long',day:'numeric',month:'long'});
+  const meta=b.status==='done'?w().doneLine(fmtD(fd),fmtD(b.finished),dayCount(fd,b.finished)):b.status==='want'?w().wantLine:w().sinceD(fmtD(fd),n);
+  const past=bookDays(b.id).filter(d=>d!==t0&&DB.logs[d][b.id].n&&DB.logs[d][b.id].n.trim()).reverse();
+  const tbox=b.status!=='done'||on?`<button class="check ${on?'on':''}" data-act="readtoday" aria-pressed="${on}"><span class="bx">${PENCHECK}</span><span>${on?w().readTodayOn:w().readToday}</span></button>`:'';
+  const fbox=b.status==='want'?'':`<button class="check fin ${b.status==='done'?'on':''}" data-act="ribbon" aria-pressed="${b.status==='done'}"><span class="bx">${FINCHECK}</span><span>${b.status==='done'?w().finDone+(b.face!=null?' '+FACES[b.face]:''):w().finishBox}</span></button>`;
+  return `<div class="sheet"><button class="close" data-act="close">${w().close} ✕</button>
+   <div class="open" style="--c:${col}">
+     <div class="pg l"><div class="hand date">${esc(dateTxt)}</div><div class="hand btitle">${esc(b.title)}</div>${b.author?`<div class="hand bauthor">${esc(b.author)}</div>`:''}<div class="small">${esc(meta)}</div>
+       <div class="checks">${tbox}${fbox}</div></div>
+     <div class="pg r"><div class="hand prompt">${esc(promptFor(b.id))}</div><textarea class="note" id="note" placeholder="${w().notePh}" aria-label="${esc(promptFor(b.id))}" maxlength="400">${esc(lg&&lg.n||'')}</textarea><div class="srow"><button class="star tstar" data-star="${t0}" aria-pressed="${!!(lg&&lg.star)}"><b>${lg&&lg.star?'★':'☆'}</b> ${w().toMemo}</button><span class="saved" id="saved"></span></div></div>
+   </div>
+   <div class="acts">${b.status==='done'?`<button class="btn small memob" data-act="memo">🖼 ${w().memoBtn}</button>`:''}<button class="btn small" data-act="editbook">✎ ${w().editBtn}</button></div>
+   ${past.length?`<div class="past"><div class="ph"><h3>${w().pastPages}</h3><span class="pd">${w().starHint}</span></div>${past.map(d=>{const st=!!DB.logs[d][b.id].star;return `<div class="pi"><div><span class="pd">${esc(fmtD(d))}</span><br><span class="pl">${esc(DB.logs[d][b.id].n)}</span></div><button class="star" data-star="${d}" aria-pressed="${st}" aria-label="★"><b>${st?'★':'☆'}</b></button></div>`;}).join('')}</div>`:''}</div>`;
+}
+function ribbonSheet(){const b=DB.books[S.sheet];const f=S.form,fd=firstDay(b),end=b.finished||today();
+  return `<div class="sheet"><div class="paperbox"><div class="frame">
+   <div class="hand pbh">${w().ribbonT}</div>
+   <div class="prevspine"><div class="slot" style="height:auto"><span class="spine done rib" style="${spineStyle({...b,spine:{c:f.c,p:f.p}})};cursor:default">${esc(ttl(b.title))}${f.face!=null?`<span class="face">${FACES[f.face]}</span>`:''}</span></div>
+     <div style="min-width:0"><div class="hand btitle">${esc(b.title)}</div>${b.author?`<div class="hand bauthor">${esc(b.author)}</div>`:''}<div class="small">${esc(w().doneLine(fmtD(fd),fmtD(end),dayCount(fd,end)))}</div></div></div>
+   <div class="hand pq">${w().faceQ}</div><div class="sws">${FACES.map((fc,i)=>`<button class="faceb" data-face="${i}" aria-pressed="${f.face===i}">${fc}</button>`).join('')}</div>
+   <div class="row"><button class="btn ok" data-act="ribbon-yes">${w().putRibbon}</button><button class="btn" data-act="back-book">${w().cancel}</button></div></div></div></div>`;}
+function daySheet(){const k=S.day,lg=DB.logs[k]||{},bs=Object.values(DB.books);
+  let c=bs.filter(b=>b.status!=='want'&&(b.added||'0')<=k&&(!b.finished||b.finished>=k)||lg[b.id]);if(!c.length)c=bs.filter(b=>b.status!=='want');
+  c.sort((a,b)=>(a.status==='reading'?0:1)-(b.status==='reading'?0:1)||(b.finished||'').localeCompare(a.finished||''));
+  const D0=toD(k),dt=L()==='et'?`${D0.getDate()}. ${['jaanuaril','veebruaril','märtsil','aprillil','mail','juunil','juulil','augustil','septembril','oktoobril','novembril','detsembril'][D0.getMonth()]}`:D0.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const item=(id,title,col,sub)=>{const on=!!lg[id],locked=on&&(lg[id].n||'').trim();return `<button class="dayb" data-dbook="${id}" aria-pressed="${on}" ${locked?'disabled':''}><i style="background:${col}"></i><span><b>${esc(title)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="ck">${on?'✓':''}</span></button>`;};
+  return `<div class="sheet"><div class="panel"><h2>${esc(w().dayQ(dt))}</h2><div class="daylist">${c.map(b=>item(b.id,b.title,SPC[(b.spine||{c:0}).c%8],lg[b.id]&&(lg[b.id].n||'').trim()?'✎ '+w().dayNote:b.author||'')).join('')}${item('_',w().dayOther,'#B9AFA4','')}</div>
+   <button class="btn primary" data-act="day-done" style="justify-self:start">${w().dayDone}</button></div></div>`;}
+/* ---------- memory page (picture) ---------- */
+function memoLines(b){return bookDays(b.id).map(d=>[d,DB.logs[d][b.id]]).filter(([d,v])=>v&&v.star&&v.n&&v.n.trim()).map(([d,v])=>[d,v.n.trim()]);}
+function memoSheet(){const yr=S.memoYear,b=yr?null:DB.books[S.sheet],n=yr?1:memoLines(b).length;
+  return `<div class="sheet"><button class="close" data-act="memo-back">${w().back2}</button><div class="panel"><h2>${yr?esc(w().yearT(yr)):w().memoT}</h2><p class="hint">${yr?w().yearHint:n?w().memoHint:w().memoNone}</p>
+   <div class="memobox"><img id="memoimg" alt="${esc(yr?w().yearT(yr):w().memoT+': '+b.title)}" hidden><span class="hint" id="memowait">${w().making}</span></div>
+   <div class="row"><button class="btn primary" data-act="memo-share">${w().saveShare}</button><button class="btn" data-act="memo-print">${w().print}</button></div><p class="hint" id="memomsg" role="status"></p>
+   <p class="hint">${w().longPress}</p></div></div>`;}
+let MEMO=null;
+function drawSpine(x,b,sx,sy,sw,sh,fsz,ribbon){const sp=b.spine||{c:0,p:'plain'},col=SPC[sp.c%8],DISP='"Baloo 2", system-ui, sans-serif',k=sw/96;
+  x.save();x.translate(sx,sy);x.fillStyle='rgba(0,0,0,.15)';rr(x,6*k,8*k,sw,sh,6*k);x.fill();x.fillStyle=col;rr(x,0,0,sw,sh,6*k);x.fill();x.save();rr(x,0,0,sw,sh,6*k);x.clip();
+  if(sp.p==='stripes'){x.strokeStyle='rgba(255,255,255,.28)';x.lineWidth=12*k;for(let i=-sh;i<sw+sh;i+=30*k){x.beginPath();x.moveTo(i,0);x.lineTo(i+sh,sh);x.stroke();}}
+  if(sp.p==='dots'){x.fillStyle='rgba(255,255,255,.45)';for(let i=12*k;i<sw;i+=26*k)for(let j=12*k;j<sh;j+=26*k){x.beginPath();x.arc(i,j,4.5*k,0,7);x.fill();}}
+  if(sp.p==='band'){x.fillStyle='rgba(255,255,255,.45)';x.fillRect(0,sh-sh*.24,sw,sh*.055);}
+  if(sp.p==='checks'){const q=18*k;x.fillStyle='rgba(255,255,255,.18)';for(let i=0;i<sw;i+=q)x.fillRect(i,0,q/2,sh);for(let j=0;j<sh;j+=q)x.fillRect(0,j,sw,q/2);}
+  x.fillStyle='rgba(0,0,0,.16)';x.fillRect(sw-10*k,0,10*k,sh);x.fillStyle='rgba(255,255,255,.18)';x.fillRect(0,0,5*k,sh);
+  const rw=Math.max(9,26*k),rx=sw-rw-Math.max(4,12*k);
+  if(ribbon){x.fillStyle='#2F9B5A';x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=Math.max(1.5,3*k);x.beginPath();x.moveTo(rx,0);x.lineTo(rx+rw,0);x.lineTo(rx+rw,sh*.74);x.lineTo(rx+rw/2,sh*.74-rw*.55);x.lineTo(rx,sh*.74);x.closePath();x.fill();x.stroke();}
+  x.restore();const cxT=ribbon?(rx-2)/2+2:sw/2;x.save();x.translate(cxT,fsz*.6);x.rotate(Math.PI/2);x.font=`800 ${fsz}px ${DISP}`;x.fillStyle='#fff';x.shadowColor='rgba(0,0,0,.35)';x.shadowBlur=2;x.shadowOffsetY=2;
+  let st=b.title;const mx=sh-fsz*1.4;if(x.measureText(st).width>mx){while(x.measureText(st+'…').width>mx&&st.length>1)st=st.slice(0,-1);st=st.trimEnd()+'…';}x.textBaseline='middle';x.fillText(st,0,0);x.restore();x.restore();}
+function svgImg(svg){return new Promise(r=>{const im=new Image();im.onload=()=>r(im);im.onerror=()=>r(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" '));});}
+async function yearCanvas(y){
+  try{await Promise.all(['600 60px Caveat','700 60px Caveat','800 60px "Baloo 2"','800 60px Grandstander','600 30px Nunito','700 30px Nunito'].map(q=>document.fonts.load(q)));}catch(e){}
+  const W=1080,H=1528,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const INK='#2E3A6B',SOFT='#7A84A8',GREY='#8A7F72',HAND='Caveat, "Bradley Hand", cursive',DISP='"Baloo 2", system-ui, sans-serif',BODY='Nunito, system-ui, sans-serif';
+  x.fillStyle='#FBF6EA';x.fillRect(0,0,W,H);x.fillStyle='rgba(46,58,107,.07)';for(let i=36;i<W;i+=36)for(let j=36;j<H;j+=36){x.beginPath();x.arc(i,j,2,0,7);x.fill();}
+  x.strokeStyle=INK;x.lineWidth=5;rr(x,28,28,W-56,H-56,22);x.stroke();x.strokeStyle=SOFT;x.lineWidth=2;rr(x,42,42,W-84,H-84,16);x.stroke();
+  // header
+  const name=(DB.settings.name||'').trim(),nm=name?w().poss(name):'';let hx=92,hy=158;
+  if(nm){x.font='800 88px Grandstander, '+DISP;let k=0;[...nm].forEach(ch=>{if(ch!==' '){x.save();x.translate(hx,hy);x.rotate(k%2?.05:-.06);x.fillStyle='rgba(0,0,0,.12)';x.fillText(ch,0,5);x.fillStyle=SPC[k%8];x.fillText(ch,0,0);x.restore();k++;}hx+=x.measureText(ch).width+3;});hx+=22;}
+  x.font='700 68px '+HAND;x.fillStyle=INK;const head=w().yearHead(y,!!nm);if(hx+x.measureText(head).width>W-92){hx=92;hy+=76;}x.fillText(head,hx,hy);
+  // bookcase
+  const fin=Object.values(DB.books).filter(b=>b.finished&&b.finished.startsWith(y)).sort((a,b)=>a.finished.localeCompare(b.finished));
+  const cx0=80,cw=W-160,inner=cw-60,top=hy+46;let sc=1,rows=[],rowH;
+  const dims=b=>{const pg=+b.pages||0;return [Math.round((pg?Math.min(54,Math.max(24,18+pg/9)):30)*1.45),Math.round((108+hsh(b.title)%26)*1.5)];};
+  const maxR=fin.length<=7?1:fin.length<=18?2:3;for(sc of [2,1.7,1.45,1.25,1,.85,.72,.62,.54,.47,.41,.36]){rows=[[]];let wsum=0;for(const b of fin){const bw=dims(b)[0]*sc+4;if(wsum+bw>inner&&rows[rows.length-1].length){rows.push([]);wsum=0;}rows[rows.length-1].push(b);wsum+=bw;}if(rows.length<=maxR||(sc<=1&&rows.length<=3))break;}
+  rowH=Math.round(225*sc)+24;const caseH=rows.length*rowH+40;
+  x.fillStyle='#B07444';rr(x,cx0,top,cw,caseH,14);x.fill();x.fillStyle='#E9D8C2';x.fillRect(cx0+16,top+16,cw-32,caseH-32);
+  x.fillStyle='rgba(0,0,0,.08)';x.fillRect(cx0+16,top+16,cw-32,10);
+  rows.forEach((row,ri)=>{const base=top+20+(ri+1)*rowH;let bx=cx0+30;
+    row.forEach(b=>{const [bw,bh]=dims(b);drawSpine(x,b,bx,base-bh*sc,bw*sc,bh*sc,Math.max(11,Math.round(20*sc)),true);bx+=bw*sc+4;});
+    x.fillStyle='#B07444';x.fillRect(cx0+16,base,cw-32,14);x.fillStyle='#87552F';x.fillRect(cx0+16,base+14,cw-32,6);});
+  if(!fin.length){x.font='700 48px '+HAND;x.fillStyle='#87552F';x.textAlign='center';x.fillText(w().yearEmpty,W/2,top+rowH/2+20);x.textAlign='left';}
+  // numbers
+  const days=Object.keys(DB.logs).filter(d=>d.startsWith(y)&&readOn(d));let lines=0;for(const d of Object.keys(DB.logs))if(d.startsWith(y))for(const v of Object.values(DB.logs[d]))if(v&&v.n&&v.n.trim())lines++;
+  const pages=fin.reduce((t,b)=>t+(+b.pages||0),0),tiles=[[fin.length,w().stBooks],[days.length,w().stDays],[bestRun(days.slice()),w().monthBest],pages?[pages.toLocaleString(w().locale),w().yearPages]:[lines,w().stLines]];
+  let ny=top+caseH+40;const tw=(W-184-3*20)/4;
+  tiles.forEach(([n,l],i)=>{const tx=92+i*(tw+20);x.fillStyle='#F1E7D8';rr(x,tx,ny,tw,132,18);x.fill();x.textAlign='center';x.font='800 56px '+DISP;x.fillStyle='#C8553D';x.fillText(String(n),tx+tw/2,ny+70);x.font='600 24px '+BODY;x.fillStyle=GREY;wrap(x,l,tw-16).slice(0,2).forEach((t,j)=>x.fillText(t,tx+tw/2,ny+102+j*26));x.textAlign='left';});
+  ny+=132+44;
+  // badges earned this year
+  const got=BADGES.filter(([k])=>DB.badges&&DB.badges[k]&&DB.badges[k].startsWith(y)),bsz=78,bgap=10;let by=H-110-bsz;
+  if(got.length){const per=Math.min(got.length,11),tot=per*bsz+(per-1)*bgap;let bx=(W-tot)/2;const ims=await Promise.all(got.slice(0,11).map(([k])=>svgImg(pinSVG(k))));
+    x.font='700 30px '+DISP;x.fillStyle=SOFT;x.textAlign='center';x.fillText(w().yearBadges(got.length),W/2,by-18);x.textAlign='left';ims.forEach(im=>{if(im)x.drawImage(im,bx,by,bsz,bsz);bx+=bsz+bgap;});by-=70;}
+  // best lines: last starred line per book
+  const per={};for(const d of Object.keys(DB.logs).sort())if(d.startsWith(y))for(const [id,v] of Object.entries(DB.logs[d]))if(v&&v.star&&v.n&&v.n.trim()&&DB.books[id])per[id]=[d,v.n.trim(),DB.books[id]];
+  let Ls=Object.values(per).slice(-4);const avail=by-ny;
+  if(Ls.length&&avail>180){const cols=Ls.length>1?2:1,rws=Math.ceil(Ls.length/cols),gap=30,nw=(W-184-(cols-1)*gap)/cols,nh=Math.min(300,(avail-(rws-1)*gap)/rws),PAL=['#FFF1A8','#D7F2DF','#FBD9E5','#D8E8FA'];
+    if(nh<150)Ls=Ls.slice(0,cols);
+    Ls.slice(0,rws*cols).forEach(([d,t,b],i)=>{const cx=92+(i%cols)*(nw+gap),cy=ny+Math.floor(i/cols)*(nh+gap);let f=42,ln;do{x.font=`600 ${f}px ${HAND}`;ln=wrap(x,t,nw-56);f-=2;}while(ln.length*f*1.1+96>nh&&f>22);f+=2;
+      const h=Math.min(nh,ln.length*f*1.1+100);x.save();x.translate(cx+nw/2,cy+h/2);x.rotate((i%2?1:-1)*.014);x.translate(-nw/2,-h/2);x.fillStyle='rgba(0,0,0,.10)';x.fillRect(6,8,nw,h);x.fillStyle=PAL[i%4];x.fillRect(0,0,nw,h);
+      x.fillStyle='rgba(255,255,255,.55)';x.save();x.translate(nw/2,0);x.rotate(-.04);x.fillRect(-55,-13,110,26);x.restore();
+      x.fillStyle=INK;x.font=`600 ${f}px ${HAND}`;ln.forEach((l,j)=>x.fillText(l,28,30+f*.95+j*f*1.1));
+      x.font='700 22px '+BODY;x.fillStyle=GREY;let bt='— '+b.title;while(x.measureText(bt).width>nw-56&&bt.length>4)bt=bt.slice(0,-2);x.fillText(bt,28,h-22);x.restore();});}
+  else if(avail>120){const F=w().F,fs=[];{const au={};for(const b of fin)if(b.author){const q=b.author.trim();au[q]=(au[q]||0)+1;}const ta=Object.entries(au).sort((a,b)=>b[1]-a[1])[0];if(ta&&ta[1]>=2)fs.push(F.author(ta[0],ta[1]));const th=fin.filter(b=>+b.pages).sort((a,b)=>b.pages-a.pages)[0];if(th)fs.push(F.thick(th.title,th.pages));const fa=fin.map(b=>[b,dayCount(firstDay(b),b.finished)]).sort((a,b)=>a[1]-b[1])[0];if(fa)fs.push(F.fast(fa[0].title,fa[1]));}x.font='700 46px '+HAND;x.fillStyle=SOFT;x.textAlign='center';let fy=ny+60;for(const t of fs){for(const l of wrap(x,t,W-240)){if(fy>by-20)break;x.fillText(l,W/2,fy);fy+=54;}fy+=20;}x.textAlign='left';}
+  x.font='700 30px '+DISP;x.fillStyle=SOFT;x.textAlign='center';x.fillText('★ '+w().memoFoot+' ★',W/2,H-72);x.textAlign='left';
+  return cv;}
+function rr(x,a,b,c,d,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+c,b,a+c,b+d,r);x.arcTo(a+c,b+d,a,b+d,r);x.arcTo(a,b+d,a,b,r);x.arcTo(a,b,a+c,b,r);x.closePath();}
+function wrap(x,t,mw){const out=[];for(const para of String(t).split(/\n/)){let line='';for(const wd of para.split(/\s+/)){const tr=line?line+' '+wd:wd;if(x.measureText(tr).width<=mw||!line)line=tr;else{out.push(line);line=wd;}}if(line)out.push(line);}
+  return out.flatMap(l=>{if(x.measureText(l).width<=mw)return [l];const parts=[];let cur='';for(const ch of l){if(x.measureText(cur+ch).width>mw){parts.push(cur);cur=ch;}else cur+=ch;}if(cur)parts.push(cur);return parts;});}
+async function memoCanvas(b){
+  try{await Promise.all(['600 60px Caveat','700 60px Caveat','800 60px "Baloo 2"','800 60px Grandstander','600 30px Nunito','700 30px Nunito'].map(q=>document.fonts.load(q)));}catch(e){}
+  const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const INK='#2E3A6B',SOFT='#7A84A8',GREY='#8A7F72',sp=b.spine||{c:0,p:'plain'},col=SPC[sp.c%8],HAND='Caveat, "Bradley Hand", cursive',DISP='"Baloo 2", system-ui, sans-serif',BODY='Nunito, system-ui, sans-serif';
+  x.fillStyle='#FBF6EA';x.fillRect(0,0,W,H);
+  x.fillStyle='rgba(46,58,107,.07)';for(let i=36;i<W;i+=36)for(let j=36;j<H;j+=36){x.beginPath();x.arc(i,j,2,0,7);x.fill();}
+  x.strokeStyle=INK;x.lineWidth=5;rr(x,28,28,W-56,H-56,22);x.stroke();x.strokeStyle=SOFT;x.lineWidth=2;rr(x,42,42,W-84,H-84,16);x.stroke();
+  // header
+  const name=(DB.settings.name||'').trim();let hx=92,hy=160;
+  if(name){x.font='800 92px Grandstander, '+DISP;[...name].forEach((ch,i)=>{x.save();x.translate(hx,hy);x.rotate(i%2?.05:-.06);x.fillStyle='rgba(0,0,0,.12)';x.fillText(ch,0,5);x.fillStyle=SPC[i%8];x.fillText(ch,0,0);x.restore();hx+=x.measureText(ch).width+3;});hx+=22;}
+  x.font='700 70px '+HAND;x.fillStyle=INK;const head=name?w().memoHead:w().memoHeadNo;if(hx+x.measureText(head).width>W-92){hx=92;hy+=78;}x.fillText(head,hx,hy);
+  // spine
+  const pg=+b.pages||0,sw=Math.round(pg?Math.min(130,Math.max(76,50+pg/4)):96),sh=400,sx=96,sy=hy+60;
+  drawSpine(x,b,sx,sy,sw,sh,34,true);
+  // text column
+  const tx=sx+sw+56,tw=W-92-tx;let ty=sy+10,fs=76;x.fillStyle=INK;
+  let tl;do{x.font=`700 ${fs}px ${HAND}`;tl=wrap(x,b.title,tw);fs-=4;}while(tl.length>3&&fs>40);fs+=4;
+  tl.slice(0,4).forEach(l=>{ty+=fs*.95;x.fillText(l,tx,ty);});
+  if(b.author){x.font='600 50px '+HAND;x.fillStyle=SOFT;ty+=60;x.fillText(wrap(x,b.author,tw)[0],tx,ty);}
+  const fd=firstDay(b),end=b.finished||today(),nd=bookDays(b.id).length;
+  x.font='600 30px '+BODY;x.fillStyle=GREY;ty+=58;wrap(x,w().doneLine(fmtD(fd),fmtD(end),dayCount(fd,end)),tw).forEach((l,i)=>{if(i)ty+=40;x.fillText(l,tx,ty);});
+  ty+=44;x.fillText(w().memoDays(nd)+(pg?` · ${pg} ${w().pagesShort}`:''),tx,ty);
+  if(b.face!=null){ty+=96;x.font='80px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';x.fillText(FACES[b.face],tx,ty);x.font='700 58px '+HAND;x.fillStyle=INK;x.fillText(w().faceW[b.face],tx+104,ty-8);}
+  // notes
+  let L=memoLines(b);if(L.length>4){const k=L.length;L=[0,1,2,3].map(i=>L[Math.round(i*(k-1)/3)]);}
+  const top=Math.max(sy+sh,ty)+70,bot=H-150,PAL=['#FFF1A8','#D7F2DF','#FBD9E5','#D8E8FA'];
+  if(L.length){const two=L.length>2,cols=two?2:1,rows=Math.ceil(L.length/cols),gap=34,nw=(W-184-(cols-1)*gap)/cols,nh=(bot-top-(rows-1)*gap)/rows;
+    L.forEach(([d,t],i)=>{const cx=92+(i%cols)*(nw+gap),cy=top+Math.floor(i/cols)*(nh+gap);let f=48,lines;do{x.font=`600 ${f}px ${HAND}`;lines=wrap(x,t,nw-60);f-=2;}while(lines.length*f*1.12+80>nh&&f>24);f+=2;
+      const h=Math.min(nh,lines.length*f*1.12+86);x.save();x.translate(cx+nw/2,cy+h/2);x.rotate((i%2?1:-1)*(.012+.006*(i%3)));x.translate(-nw/2,-h/2);
+      x.fillStyle='rgba(0,0,0,.10)';x.fillRect(6,8,nw,h);x.fillStyle=PAL[i%4];x.fillRect(0,0,nw,h);
+      x.fillStyle='rgba(255,255,255,.55)';x.save();x.translate(nw/2,0);x.rotate(-.04);x.fillRect(-60,-14,120,28);x.restore();
+      x.fillStyle=INK;x.font=`600 ${f}px ${HAND}`;lines.forEach((l,j)=>x.fillText(l,30,34+f*.95+j*f*1.12));
+      x.font='600 24px '+BODY;x.fillStyle=GREY;x.textAlign='right';x.fillText(fmtD(d),nw-24,h-20);x.textAlign='left';x.restore();});}
+  else{x.font='700 64px '+HAND;x.fillStyle=SOFT;x.textAlign='center';wrap(x,w().F.fast(b.title,dayCount(fd,end)),W-240).slice(0,3).forEach((l,i)=>x.fillText(l,W/2,top+120+i*74));x.textAlign='left';}
+  // footer
+  x.font='700 30px '+DISP;x.fillStyle=SOFT;x.textAlign='center';x.fillText('★ '+w().memoFoot+' ★',W/2,H-82);x.textAlign='left';
+  return cv;}
+async function buildMemo(){const yr=S.memoYear,b=yr?null:DB.books[S.sheet];if(!yr&&!b)return;const cv=yr?await yearCanvas(yr):await memoCanvas(b);const url=cv.toDataURL('image/png');
+  const base=yr?((DB.settings.name||'reading').trim()+'-'+yr):b.title;MEMO={cv,url,name:(slug(base)||'page')+'.png'};
+  const im=document.getElementById('memoimg');if(!im)return;im.src=url;im.hidden=false;const wt=document.getElementById('memowait');if(wt)wt.remove();}
+async function shareMemo(){if(!MEMO)return;let r='';try{const bl=await new Promise(res=>MEMO.cv.toBlob(res,'image/png'));r=await saveFile(MEMO.name,bl,'image/png');}catch(e){r='fail';}
+  const m=document.getElementById('memomsg');if(m)m.textContent=r==='saved'?w().picSaved:r==='fail'?w().bkFail:'';}
+function formSheet(){const f=S.form,edit=!!f.id;
+  return `<div class="sheet"><div class="panel"><h2>${edit?w().editBtn:w().newBook}</h2>
+   <label for="f-title">${w().title}</label><input type="text" id="f-title" value="${esc(f.title)}" autocomplete="off">
+   <label for="f-author">${w().author}</label><input type="text" id="f-author" value="${esc(f.author)}" autocomplete="off">
+   <label for="f-pages">${w().pages}</label><input type="number" id="f-pages" min="1" max="5000" inputmode="numeric" value="${esc(f.pages)}">
+   ${edit?'':`<div class="lbl">${w().status}</div><div class="seg"><button data-st="reading" aria-pressed="${f.status==='reading'}">${w().stRead}</button><button data-st="want" aria-pressed="${f.status==='want'}">${w().stWant}</button></div>`}
+   <div class="lbl">${w().color}</div><div class="sws">${SPC.map((c,i)=>`<button class="swb" data-col="${i}" aria-pressed="${f.c===i}" style="background:${c}" aria-label="${i+1}"></button>`).join('')}</div>
+   <div class="lbl">${w().pattern}</div><div class="sws">${Object.keys(PATS).map(p=>`<button class="patb" data-pat="${p}" aria-pressed="${f.p===p}" style="background:${PATS[p]==='none'?'':PATS[p]+','}${SPC[f.c]}" aria-label="${p}"></button>`).join('')}</div>
+   ${S.msg?`<p class="msg" role="alert">${esc(S.msg)}</p>`:''}
+   <div class="row"><button class="btn primary" data-act="form-save">${edit?w().save:w().putShelf}</button><button class="btn" data-act="${edit?'back-book':'close'}">${w().cancel}</button></div>
+   ${edit?(S.removeQ?`<p class="hint">${w().removeQ}</p><div class="row"><button class="btn" data-act="remove-yes" style="border-color:#C2364B;color:#C2364B">${w().removeYes}</button><button class="btn" data-act="remove-no">${w().no}</button></div>`:`<button class="btn small" data-act="remove" style="justify-self:start">${w().removeBook}</button>`):''}</div></div>`;}
+
+/* ---------- render ---------- */
+function render(){
+  document.documentElement.lang=L();document.title=w().app;
+  document.getElementById('who').innerHTML=titleHTML();
+  const set=S.tab==='settings';document.getElementById('gear').hidden=set;const nav=document.getElementById('tabs');nav.hidden=set;
+  nav.innerHTML=[['shelf',w().shelf],['cal',w().cal]].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k?'aria-current="page"':''}>${l}</button>`).join('');
+  document.getElementById('view').innerHTML=set?settingsView():S.tab==='cal'?calView():shelfView();
+  document.getElementById('foot').innerHTML=`${esc(w().foot)} · <a href="../../terms.html">${w().terms}</a>`;
+  const sh=document.getElementById('sheet');
+  sh.innerHTML=S.sheet||S.mode==='add'||S.mode==='day'||S.mode==='memo'?`<div class="overlay" data-bg="1">${S.mode==='add'||S.mode==='edit'?formSheet():S.mode==='ribbon'?ribbonSheet():S.mode==='day'?daySheet():S.mode==='memo'?memoSheet():bookSheet()}</div>`:'';
+  document.body.style.overflow=sh.innerHTML?'hidden':'';
+}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cols=['#E7A93A','#2F9B5A','#D9534A','#3A79C3','#8A5CC4'];
+  const fx=document.getElementById('fx');fx.innerHTML=`<div class="confetti">${[...Array(28)].map((_,i)=>{const a=i/28*Math.PI*2,r=120+(i%5)*32;return `<i style="background:${cols[i%5]};--x:${Math.round(Math.cos(a)*r)}px;--y:${Math.round(Math.sin(a)*r)}px"></i>`;}).join('')}</div>`;setTimeout(()=>fx.innerHTML='',1200);}
+function closeSheet(){S.memoYear=null;if(S.mode==='day'){S.mode='';S.day=null;afterChange();render();return;}S.sheet=null;S.mode='';S.msg='';S.form=null;S.removeQ=false;render();}
+function readForm(){const f=S.form;const g=id=>document.getElementById(id);if(!f)return;if(g('f-title'))f.title=g('f-title').value;if(g('f-author'))f.author=g('f-author').value;if(g('f-pages'))f.pages=g('f-pages').value;}
+function saveForm(){readForm();const f=S.form,ti=f.title.replace(/\s+/g,' ').trim(),au=f.author.replace(/\s+/g,' ').trim(),pg=String(f.pages).trim();
+  if(!ti)S.msg=w().titleReq;else if(ti.length>80)S.msg=w().tooLong(80);else if(au.length>60)S.msg=w().tooLong(60);else if(pg&&(!/^\d+$/.test(pg)||+pg<1||+pg>5000))S.msg=w().pagesBad;else S.msg='';
+  if(S.msg){render();return;}
+  
+  if(f.id){const b=DB.books[f.id];b.title=ti;b.author=au;b.pages=pg?+pg:null;b.spine={c:f.c,p:f.p};save();S.mode='';S.form=null;render();return;}
+  const id=uid();DB.books[id]={id,title:ti,author:au,pages:pg?+pg:null,status:f.status,spine:{c:f.c,p:f.p},added:today(),finished:null,face:null};
+  S.justAdded=id;S.year=YEAR();save();closeSheet();}
+
+/* ---------- events ---------- */
+let saveT=null;
+document.addEventListener('click',e=>{
+  if(e.target.closest&&e.target.closest('[data-pop]')){nextPop();return;}
+  if(e.target.dataset&&e.target.dataset.bg){closeSheet();return;}
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset,a=d.act;
+  if(d.tab){S.tab=d.tab;render();window.scrollTo(0,0);return;}
+  if(a==='settings'){S.tab='settings';S.confirm=false;S.bk=null;S.unlocked=false;render();return;}
+  if(a==='goals'){S.unlocked=!S.unlocked;render();return;}
+  if(a==='goals-off'){const G=DB.settings.goals||{};for(const k of Object.keys(G))G[k].on=false;save();render();return;}
+  if(a==='undo'){try{const u=JSON.parse(window.__undo||'null');if(u&&u.books){DB=u;save();}localStorage.removeItem(KEY+'.undo');}catch(e){}S.undo=false;render();return;}
+  if(a==='undo-x'){S.undo=false;try{localStorage.removeItem(KEY+'.undo');}catch(e){}render();return;}
+  if(d.dbook){const k=S.day,id=d.dbook;DB.logs[k]=DB.logs[k]||{};if(DB.logs[k][id]){if(!(DB.logs[k][id].n||'').trim())delete DB.logs[k][id];}else DB.logs[k][id]={n:''};if(!Object.keys(DB.logs[k]).length)delete DB.logs[k];save();render();return;}
+  if(a==='day-done'){S.mode='';S.day=null;afterChange();render();return;}
+  if(a==='close-set'){S.tab='shelf';render();return;}
+  if(d.year){S.year=d.year;render();return;}
+  if(d.open){S.sheet=d.open;S.mode='';render();return;}
+  if(a==='close'){closeSheet();return;}
+  if(a==='add'){S.mode='add';S.sheet=null;const c=Object.keys(DB.books).length%8;S.form={id:null,title:'',author:'',pages:'',status:Object.values(DB.books).some(x=>x.status==='reading')?'want':'reading',c,p:'plain'};S.msg='';render();setTimeout(()=>{const i=document.getElementById('f-title');if(i)i.focus();},60);return;}
+  if(a==='editbook'){const bk=DB.books[S.sheet];S.mode='edit';S.removeQ=false;S.form={id:bk.id,title:bk.title,author:bk.author||'',pages:bk.pages||'',status:bk.status,c:(bk.spine||{c:0}).c,p:(bk.spine||{p:'plain'}).p};S.msg='';render();return;}
+  if(d.st){readForm();S.form.status=d.st;render();return;}
+  if(d.col){readForm();S.form.c=+d.col;render();return;}
+  if(d.pat){readForm();S.form.p=d.pat;render();return;}
+  if(a==='form-save'){saveForm();return;}
+  if(a==='back-book'){S.mode='';S.form=null;S.msg='';S.removeQ=false;render();return;}
+  if(a==='remove'){readForm();S.removeQ=true;render();return;}
+  if(a==='remove-no'){readForm();S.removeQ=false;render();return;}
+  if(a==='remove-yes'){const id=S.form.id;delete DB.books[id];for(const k of Object.keys(DB.logs)){delete DB.logs[k][id];if(!Object.keys(DB.logs[k]).length)delete DB.logs[k];}save();closeSheet();return;}
+  if(a==='readtoday'){const bk=DB.books[S.sheet],t0=today();DB.logs[t0]=DB.logs[t0]||{};
+    if(DB.logs[t0][bk.id]){const n=document.getElementById('note');if(n&&n.value.trim()){/* keep the line, keep the tick */return;}delete DB.logs[t0][bk.id];if(!Object.keys(DB.logs[t0]).length)delete DB.logs[t0];}
+    else{DB.logs[t0][bk.id]={n:(document.getElementById('note')||{}).value||''};if(bk.status==='want')bk.status='reading';var added=true;}
+    save();const keep=document.getElementById('note');const v=keep?keep.value:'';render();const n2=document.getElementById('note');if(n2&&v&&!n2.value)n2.value=v;if(added)jarPop(['week','streak'],true);afterChange();return;}
+  if(d.star){const id=S.sheet,k=d.star;DB.logs[k]=DB.logs[k]||{};let lg=DB.logs[k][id];
+    if(k===today()){const n=document.getElementById('note');const v=n?n.value.trim():'';if(!v&&!(lg&&lg.n))return;if(!lg){lg=DB.logs[k][id]={n:v};}else if(v)lg.n=n.value.slice(0,400);}
+    if(!lg)return;lg.star=!lg.star;save();b.setAttribute('aria-pressed',lg.star);b.querySelector('b').textContent=lg.star?'★':'☆';return;}
+  if(a==='memo'){S.mode='memo';S.memoYear=null;render();buildMemo();return;}
+  if(a==='yearpage'){S.mode='memo';S.memoYear=S.year;S.sheet=null;render();buildMemo();return;}
+  if(a==='memo-back'){if(S.memoYear){S.memoYear=null;closeSheet();return;}S.mode='';render();return;}
+  if(a==='memo-share'){shareMemo();return;}
+  if(a==='memo-print'){window.print();return;}
+  if(a==='a2hs-ok'){DB.settings.noA2HS=true;save();render();return;}
+  if(a==='bk-go'){S.tab='settings';S.bk=null;render();setTimeout(()=>{const e=document.getElementById('safe');if(e)e.scrollIntoView();},30);return;}
+  if(a==='bk-save'){(async()=>{try{const r=await saveFile(`${slug(DB.settings.name||'')?slug(DB.settings.name)+'-':''}bookcase-diary-backup-${today()}.json`,backupJSON(),'application/json');
+      if(r==='declined')S.bk={msg:w().bkNo};else{DB.settings.lastBackupAt=new Date().toISOString();save();S.bk={msg:w().bkDone};}}catch(e){S.bk={msg:w().bkFail,err:true};}render();})();return;}
+  if(a==='bk-replace'){S.bk.confirm=true;render();return;}
+  if(a==='bk-no'){S.bk=null;render();return;}
+  if(a==='bk-yes'){try{window.__undo=JSON.stringify(DB);}catch(e){}DB=Object.assign(fresh(),JSON.parse(JSON.stringify(S.bk.preview.data)));save();checkBadges();S.bk={msg:w().bkRestored};render();return;}
+  if(a==='fact'){S.fact=(S.fact||0)+1;render();return;}
+  if(a==='start'){const bk=DB.books[S.sheet];bk.status='reading';bk.added=today();save();render();return;}
+  if(a==='ribbon'){const bk=DB.books[S.sheet];S.mode='ribbon';S.form={c:(bk.spine||{c:0}).c,p:(bk.spine||{p:'plain'}).p,face:bk.face!=null?bk.face:null};render();return;}
+  if(d.face){S.form.face=+d.face;render();return;}
+  if(a==='ribbon-yes'){const bk=DB.books[S.sheet],first=bk.status!=='done';bk.face=S.form.face;if(first){bk.status='done';bk.finished=today();const t0=today();DB.logs[t0]=DB.logs[t0]||{};if(!DB.logs[t0][bk.id])DB.logs[t0][bk.id]={n:''};}
+    S.justAdded=bk.id;S.year=YEAR();save();S.tab='shelf';closeSheet();if(first){confetti();jarPop(['month','challenge'],false);}afterChange();window.scrollTo(0,0);return;}
+  if(d.day){S.day=d.day;S.mode='day';render();return;}
+  if(a==='prev'||a==='next'){let [y,m]=S.month;m+=a==='prev'?-1:1;if(m<0){m=11;y--;}if(m>11){m=0;y++;}S.month=[y,m];render();return;}
+  if(d.lang){DB.settings.lang=d.lang;save();render();return;}
+  if(a==='clear-ex'){DB={schema:1,settings:{lang:DB.settings.lang},books:{},logs:{}};save();S.tab='settings';render();setTimeout(()=>{const n=document.getElementById('name');if(n)n.focus();},60);return;}
+  if(a==='reset'){S.confirm=true;render();return;}if(a==='reset-no'){S.confirm=false;render();return;}
+  if(a==='reset-yes'){const i=document.getElementById('rword');if(!i||i.value.trim().toUpperCase()!==w().resetWord)return;try{window.__undo=JSON.stringify(DB);}catch(e){}DB={schema:1,settings:{lang:DB.settings.lang},books:{},logs:{}};save();S.confirm=false;S.unlocked=false;S.undo=true;S.tab='shelf';render();window.scrollTo(0,0);return;}
+});
+document.addEventListener('input',e=>{const t=e.target;
+  if(t.id==='rword'){const g=document.getElementById('rgo');if(g)g.disabled=t.value.trim().toUpperCase()!==w().resetWord;}
+  if(t.id==='note'){const bk=DB.books[S.sheet],t0=today();clearTimeout(saveT);saveT=setTimeout(()=>{DB.logs[t0]=DB.logs[t0]||{};const had=!!DB.logs[t0][bk.id];
+      if(t.value.trim()||had){DB.logs[t0][bk.id]=Object.assign(DB.logs[t0][bk.id]||{},{n:t.value.slice(0,400)});if(!had){if(bk.status==='want')bk.status='reading';const c=document.querySelector('.check');if(c){c.classList.add('on');c.setAttribute('aria-pressed','true');c.querySelector('span:last-child').textContent=w().readTodayOn;}}}
+      save();const fr=checkBadges();if(fr.length){S.newBadges=fr;confetti();fr.forEach(badgePop);}const s=document.getElementById('saved');if(s)s.textContent=w().saved+' ✓';},400);}
+  if(t.id==='wname'){const v=t.value.trim();if(v.length<=20){DB.settings.name=v;save();document.getElementById('who').innerHTML=titleHTML();}}
+  if(t.id==='name'){const v=t.value.trim();if(v.length<=20){DB.settings.name=v;save();document.getElementById('who').innerHTML=titleHTML();}}
+  if(t.dataset.gn||t.dataset.gd){const k=t.dataset.gn||t.dataset.gd,G=DB.settings.goals=DB.settings.goals||{};G[k]=G[k]||{on:false,n:1};if(t.dataset.gn)G[k].n=Math.max(1,Math.min(9999,parseInt(t.value)||1));else G[k].d=t.value;save();}
+});
+document.addEventListener('change',e=>{const t=e.target;
+  if(t.id==='bk-file'){const fl=t.files&&t.files[0];if(!fl)return;const rd=new FileReader();rd.onload=()=>{try{S.bk={preview:readBackupFile(String(rd.result))};}catch(er){S.bk={msg:er.message,err:true};}render();};rd.onerror=()=>{S.bk={msg:w().bkRead,err:true};render();};rd.readAsText(fl);return;}if(t.dataset.gk){const k=t.dataset.gk,G=DB.settings.goals=DB.settings.goals||{};const n=document.querySelector(`[data-gn="${k}"]`),dd=document.querySelector(`[data-gd="${k}"]`);
+  G[k]={on:t.checked,n:Math.max(1,parseInt(n&&n.value)||1),d:dd?dd.value:(G[k]||{}).d,from:(G[k]&&G[k].from)||today()};save();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.sheet||S.mode))closeSheet();});
+checkBadges();
+render();
+})();
+</script>
+
+</body>
+</html>
