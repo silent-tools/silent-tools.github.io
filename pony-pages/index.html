@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pony Pages</title>
+<meta name="description" content="A riding diary for young riders. Write down every ride, every horse and how it was feeling, win rosettes and make horse cards. No account, the diary stays on your device.">
+<meta name="theme-color" content="#FFF5F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1F1724" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pony Pages">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+html{font-size:17px;font:-apple-system-body;font-family:inherit}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;-webkit-text-size-adjust:100%}
+img{max-width:100%}
+[hidden]{display:none!important}
+.lock{margin-top:24px}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:60;pointer-events:none}
+
+</style>
+<link rel="stylesheet" href="../fonts.css">
+<style>
+/* Theme: Pink (blush paper, rose accent). Lavender and Meadow are set from script. */
+:root{
+  --bg:#FFF5F8; --surface:#FFFFFF; --ink:#3D2B48; --muted:#86708C; --line:#F6DDE8; --line-strong:#EBC3D5;
+  --accent:#D9558F; --accent-ink:#FFFFFF; --accent-soft:#FDE4EF; --accent-2:#B9A3E3;
+  --warn:#9A5B10; --warn-soft:#FFF0D6; --danger:#C2364B; --danger-soft:#FBE0E5; --ok:#2F8A63;
+  --f-display:"Fredoka","Arial Rounded MT Bold",system-ui,sans-serif;
+  --f-body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-hand:"Caveat","Bradley Hand",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1F1724; --surface:#2B2131; --ink:#F8EAF2; --muted:#BBA4BA; --line:#3B2E42; --line-strong:#574560;
+  --accent:#F28DB8; --accent-ink:#2A1B25; --accent-soft:#46293A; --accent-2:#9C86D6;
+  --warn:#F0BE6A; --warn-soft:#3A2C17; --danger:#F08A93; --danger-soft:#43222A; --ok:#7FD0A8;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#1F1724; --surface:#2B2131; --ink:#F8EAF2; --muted:#BBA4BA; --line:#3B2E42; --line-strong:#574560;
+  --accent:#F28DB8; --accent-ink:#2A1B25; --accent-soft:#46293A; --accent-2:#9C86D6;
+  --warn:#F0BE6A; --warn-soft:#3A2C17; --danger:#F08A93; --danger-soft:#43222A; --ok:#7FD0A8;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-body);font-size:0.9412rem;line-height:1.45;margin:0;min-height:100vh;
+  background-image:radial-gradient(circle at 12px 12px,var(--accent-soft) 2.5px,transparent 3px);background-size:44px 44px}
+button,input,textarea,select{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:0 130px;min-width:0}
+@media (min-width:900px){.app{max-width:760px}}
+header.top{display:flex;align-items:center;gap:10px;padding-block:14px 10px;flex-wrap:wrap}
+.logo{width:46px;height:46px;flex:none;border-radius:50%;box-shadow:0 2px 0 var(--line-strong)}
+.logo svg{display:block;width:100%;height:100%}
+.brand{flex:1;min-width:0}
+.brand h1{font-family:var(--f-display);font-weight:600;font-size:1.5882rem;margin:0;line-height:1.05;color:var(--accent)}
+.brand .who{font-family:var(--f-hand);font-weight:600;font-size:1.2353rem;color:var(--muted);line-height:1.1}
+.hdr-btn{border:0;background:var(--surface);border:1.5px solid var(--line-strong);border-radius:999px;padding:6px 12px;font-size:0.8235rem;cursor:pointer;min-height:38px}
+nav.tabs{flex:1 0 100%;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:4px}
+nav.tabs button{border:0;background:transparent;border-radius:16px;padding:8px 0;font-size:0.8529rem;color:var(--muted);cursor:pointer;min-width:0;font-family:var(--f-display);font-weight:500}
+nav.tabs button[aria-current="page"]{background:var(--accent);color:var(--accent-ink);font-weight:600}
+main{padding-block:10px 0;display:grid;gap:14px;grid-template-columns:minmax(0,1fr);min-width:0}
+main>*{min-width:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:1.3529rem;margin:4px 0 0;line-height:1.15}
+h3{font-family:var(--f-display);font-weight:600;font-size:1.0588rem;margin:0;line-height:1.2}
+.muted{color:var(--muted)}
+.hint{font-size:0.8235rem;color:var(--muted);margin:0}
+.lbl{font-family:var(--f-display);font-weight:600;font-size:0.8824rem;color:var(--ink);margin:0}
+.lbl small{font-family:var(--f-body);font-weight:400;color:var(--muted);font-size:0.7647rem}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:12px;min-width:0}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:9px 18px;cursor:pointer;font-size:0.8824rem;min-height:44px;font-family:var(--f-display);font-weight:500;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.small{padding:6px 13px;font-size:0.8235rem;min-height:36px}
+.btn:disabled{opacity:.5;cursor:default}
+label.btn{display:inline-flex;align-items:center}
+.msg{font-size:0.8824rem;color:var(--danger);margin:0;font-weight:500}
+.toast{font-size:0.8824rem;color:var(--ok);font-weight:600;margin:0}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+input[type=text],input[type=number],input[type=date],input[type=time],textarea,select{width:100%;border:1.5px solid var(--line-strong);border-radius:14px;padding:10px 12px;font-size:0.9412rem;background:var(--bg);min-width:0}
+textarea{min-height:120px;resize:vertical;line-height:1.5}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.field{display:grid;gap:6px;min-width:0}
+.count{font-size:0.7647rem;color:var(--muted);text-align:right}
+.count.over{color:var(--danger);font-weight:600}
+.empty{border:2px dashed var(--line-strong);border-radius:24px;padding:24px 16px;text-align:center;color:var(--muted);display:grid;gap:12px;justify-items:center;background:var(--surface)}
+.empty .pony{width:110px;height:110px;border-radius:50%;overflow:hidden;display:block}
+.empty .pony svg{width:100%;height:100%;display:block}
+.num{font-variant-numeric:tabular-nums}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1.5px solid var(--line-strong);background:var(--surface);border-radius:999px;padding:7px 14px;font-size:0.8824rem;cursor:pointer;min-height:40px;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.chip .sw{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:inline-block}
+.addrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+
+/* horse picker */
+.hpick{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 8px;scroll-snap-type:x proximity}
+.hp{flex:none;width:88px;border:2px solid transparent;background:transparent;border-radius:20px;padding:6px 4px;cursor:pointer;display:grid;justify-items:center;gap:4px;scroll-snap-align:start}
+.hp .av{width:70px;height:70px}
+.hp span{font-size:0.8235rem;max-width:84px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hp[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.hp.new .av{border:2px dashed var(--line-strong);border-radius:50%;display:grid;place-items:center;font-size:1.7647rem;color:var(--accent)}
+.av{border-radius:50%;overflow:hidden;background:var(--accent-soft);flex:none;display:block}
+.av img,.av svg{width:100%;height:100%;object-fit:cover;display:block}
+
+/* moods */
+.moods{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.mood{border:2px solid var(--line);background:var(--surface);border-radius:18px;padding:8px 4px;display:grid;justify-items:center;gap:2px;cursor:pointer;font-size:0.8235rem}
+.mood svg{width:44px;height:44px}
+.mood[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.mface{display:inline-block;vertical-align:middle}
+.mface svg{width:100%;height:100%;display:block}
+
+/* duration */
+.durs{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.durs input{width:96px}
+
+/* ride list */
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.sbox{background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:10px;text-align:center}
+.sbox b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.4118rem;color:var(--accent);line-height:1.1}
+.sbox span{font-size:0.7647rem;color:var(--muted)}
+.month{font-family:var(--f-hand);font-weight:600;font-size:1.5294rem;color:var(--muted);margin:6px 4px -4px}
+.rides{display:grid;gap:10px}
+.ride{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:start;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:12px;cursor:pointer;color:inherit}
+.ride .av{width:64px;height:64px}
+.ride .t{display:flex;align-items:center;gap:6px;font-family:var(--f-display);font-weight:600;font-size:1.1176rem;line-height:1.2;flex-wrap:wrap}
+.ride .t .mface{width:24px;height:24px}
+.ride .m{font-size:0.8235rem;color:var(--muted)}
+.ride .x{font-size:0.8824rem;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.ride .ph{grid-column:1/-1;width:100%;height:150px;border-radius:16px;object-fit:cover;display:block}
+.tagrow{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.tag{font-size:0.7353rem;border-radius:999px;padding:2px 9px;background:var(--accent-soft);color:var(--ink)}
+
+/* ride detail and horse detail */
+.back{border:0;background:none;color:var(--accent);font-family:var(--f-display);font-weight:600;font-size:0.9412rem;cursor:pointer;padding:4px 0;min-height:40px;text-align:left}
+.hero{width:100%;aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:var(--accent-soft);display:block}
+.hero img,.hero svg{width:100%;height:100%;object-fit:cover;display:block}
+.facts{display:grid;gap:8px}
+.fact{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;font-size:0.9118rem;align-items:baseline}
+.fact span:first-child{color:var(--muted);font-size:0.8235rem}
+.story{white-space:pre-wrap;overflow-wrap:anywhere;font-size:1.0rem;line-height:1.55;font-family:var(--f-body)}
+.htitle{display:flex;align-items:center;gap:12px}
+.htitle .av{width:56px;height:56px}
+.htitle h2{margin:0}
+.moodbar{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:8px;align-items:center;font-size:0.8235rem}
+.moodbar .mface{width:30px;height:30px}
+.bar{height:12px;border-radius:999px;background:var(--accent-soft);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:999px}
+
+/* horses grid */
+.hgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:640px){.hgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.hcard{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:10px;display:grid;gap:6px;text-align:center;cursor:pointer;color:inherit}
+.hcard .pic{width:100%;aspect-ratio:1;border-radius:18px;overflow:hidden;background:var(--accent-soft)}
+.hcard .pic img,.hcard .pic svg{width:100%;height:100%;object-fit:cover;display:block}
+.hcard b{font-family:var(--f-display);font-weight:600;font-size:1.0588rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hcard span{font-size:0.7941rem;color:var(--muted)}
+.hcard.add{border:2px dashed var(--line-strong);background:transparent;place-content:center;min-height:180px;font-family:var(--f-display);font-weight:600;color:var(--accent);font-size:1.0rem}
+.photo-edit{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.photo-edit .av{width:84px;height:84px}
+
+/* stats */
+.big3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:640px){.big3{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.chart{width:100%;height:auto;display:block}
+.chart .b{fill:var(--accent)}
+.chart .b0{fill:var(--line)}
+.chart text{font-family:var(--f-body);font-size:0.5882rem;fill:var(--muted)}
+.chart .v{font-family:var(--f-display);font-weight:600;fill:var(--ink);font-size:0.5882rem}
+.top{display:grid;gap:8px}
+.toprow{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:0.8824rem}
+.toprow .av{width:36px;height:36px}
+.toprow .n{font-family:var(--f-display);font-weight:600;color:var(--accent)}
+.toprow .ic{width:36px;height:36px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;font-family:var(--f-display);font-weight:600;color:var(--accent)}
+.yrs{display:flex;gap:6px;flex-wrap:wrap}
+
+/* keepsakes */
+.rosettes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (min-width:640px){.rosettes{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.ros{display:grid;justify-items:center;gap:2px;text-align:center;font-size:0.7647rem;line-height:1.25}
+.ros svg{width:78px;height:96px}
+.ros b{font-family:var(--f-display);font-weight:600;font-size:0.8235rem}
+.ros.locked svg{filter:grayscale(1);opacity:.35}
+.ros.locked b{color:var(--muted)}
+.prog{width:70px;height:6px;border-radius:999px;background:var(--line);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent)}
+.kgrid{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+.kcard{flex:none;width:170px;display:grid;gap:6px;scroll-snap-align:start;justify-items:center}
+.kimg{width:100%;border-radius:12px;box-shadow:0 3px 10px rgba(80,30,60,.18);background:var(--accent-soft);display:block}
+.kimg.ph{aspect-ratio:750/1050}
+.poster{width:min(100%,320px);margin:0 auto;border-radius:16px;box-shadow:0 4px 14px rgba(80,30,60,.2);display:block;background:var(--accent-soft)}
+.poster.ph{aspect-ratio:1080/1920}
+
+/* fab */
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:40;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-family:var(--f-display);font-weight:600;font-size:1.0588rem;padding:14px 26px;box-shadow:0 6px 18px rgba(150,40,90,.35);cursor:pointer;min-height:52px;white-space:nowrap}
+
+/* celebration */
+.party{position:fixed;inset:0;z-index:90;background:rgba(40,20,40,.55);display:grid;place-items:center;padding:20px}
+.party .box{background:var(--surface);border-radius:28px;padding:22px 20px;text-align:center;max-width:340px;width:100%;display:grid;gap:8px;justify-items:center;position:relative;overflow:hidden}
+.party .box svg.r{width:130px;height:160px;animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.party h2{margin:0;color:var(--accent)}
+.party .cf{position:absolute;top:-12px;width:10px;height:14px;border-radius:3px;animation:fall 2.4s linear forwards}
+@keyframes pop{from{transform:scale(.2) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes fall{to{transform:translateY(520px) rotate(540deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.party .box svg.r,.party .cf{animation:none}.party .cf{display:none}}
+
+.foot{font-size:0.7353rem;color:var(--muted);margin-top:22px}
+.foot a{color:var(--accent)}
+.notice{border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:18px;padding:12px 14px;display:grid;gap:6px}
+.notice p{margin:0;font-size:0.8529rem}
+.a2hs{border:2px solid var(--danger);background:var(--danger-soft);border-radius:20px;padding:12px 14px;display:grid;gap:8px}
+.a2hs .rtag{color:var(--danger);font-weight:700;font-size:0.7353rem;letter-spacing:.06em;text-transform:uppercase}
+.a2hs h2{margin:0}
+.a2hs b.t{color:var(--danger);font-size:0.8824rem}
+.a2hs p{margin:0;font-size:0.8824rem;line-height:1.45}
+.a2hs ol{margin:0;padding-left:22px;display:grid;gap:6px;font-size:0.8824rem}
+.a2hs details summary,.card details summary{cursor:pointer;font-weight:600;color:var(--danger);font-size:0.8824rem;padding:4px 0}
+.card details summary{color:var(--accent)}
+.a2hs.gate p,.a2hs.gate ol{font-size:0.9412rem}
+.tsizes,.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.themes{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tsizes button,.themes button{border:1.5px solid var(--line-strong);background:var(--surface);border-radius:14px;padding:10px 6px;cursor:pointer;color:inherit}
+.tsizes button[aria-pressed="true"],.themes button[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);font-weight:600}
+.themes button{display:grid;gap:5px;justify-items:center;font-size:0.8235rem}
+.sw3{display:flex;gap:3px}.sw3 i{width:14px;height:14px;border-radius:50%;display:block;outline:1px solid rgba(127,127,127,.25)}
+.opt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center}
+.opt span{font-size:0.8235rem;color:var(--muted)}
+@media (max-width:380px){.opt{grid-template-columns:1fr}.fact{grid-template-columns:1fr;gap:0}}
+#measure{position:absolute;left:-10000px;top:0;visibility:hidden}
+#print{display:none}
+.sheet{background:#fff;box-sizing:border-box;display:flex;align-items:center;justify-content:center;overflow:hidden;color-scheme:light;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet .cards{display:grid;grid-template-columns:repeat(3,63.5mm);gap:0}
+.sheet .cards img{width:63.5mm;height:88.9mm;display:block;outline:.25mm dashed #ddd;outline-offset:-.125mm}
+.sheet img.pst{height:92%;width:auto;display:block}
+@media print{
+  html,body{background:#fff!important;background-image:none!important}
+  :root{padding:0!important}
+  body>*:not(#print){display:none!important}
+  #print{display:block!important}
+  #print .sheet{break-after:page;page-break-after:always}
+  #print .sheet:last-of-type{break-after:auto;page-break-after:auto}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="logo" id="logo" aria-hidden="true"></span>
+    <div class="brand"><h1>Pony Pages</h1><div class="who" id="who"></div></div>
+    <button class="hdr-btn" id="setbtn" data-act="open-settings">Settings</button>
+    <nav class="tabs" id="tabs" aria-label="Views"></nav>
+  </header>
+  <main id="view"></main>
+  <p class="foot">Pony Pages 1.0.0 · made by Silent Tools · the diary stays on this device · <a href="../terms.html">Terms and privacy</a></p>
+</div>
+<div id="fabhost"></div>
+<div id="overlay"></div>
+<div id="print"></div>
+
+<script>
+(function(){
+/* ---------- storage ---------- */
+const KEY='pony.v1';
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const now=()=>new Date().toISOString();
+function fresh(){return {schema:1,settings:{},horses:{},rides:{},awards:{}};}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){const d=JSON.parse(raw);if(d&&d.schema===1&&d.rides&&d.horses)return Object.assign(fresh(),d);}}catch(e){}return fresh();}
+let DB=load(),storageOk=true;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB));storageOk=true;}catch(e){storageOk=false;}}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const tidy=s=>String(s||'').replace(/\s+/g,' ').trim();
+const norm=s=>tidy(s).toLowerCase();
+
+/* ---------- photos: kept in the browser's database, small JPEGs as text ---------- */
+const IDB_NAME='pony-pages';
+let PHOTOS={},photosReady=false,photoErr=false;
+function idbOpen(){return new Promise((res,rej)=>{if(!IDB_NAME||!window.indexedDB)return rej(new Error('none'));let r;try{r=indexedDB.open(IDB_NAME,1);}catch(e){return rej(e);}r.onupgradeneeded=()=>r.result.createObjectStore('photos');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function idbDo(mode,fn){const db=await idbOpen();return new Promise((res,rej)=>{const tx=db.transaction('photos',mode);fn(tx.objectStore('photos'));tx.oncomplete=()=>{db.close();res(true);};tx.onerror=tx.onabort=()=>{db.close();rej(tx.error||new Error('tx'));};});}
+async function photoLoadAll(){
+  if(IDB_NAME){try{const db=await idbOpen();await new Promise((res,rej)=>{const tx=db.transaction('photos','readonly'),rq=tx.objectStore('photos').openCursor();rq.onsuccess=()=>{const c=rq.result;if(c){PHOTOS[c.key]=c.value;c.continue();}};tx.oncomplete=()=>{db.close();res();};tx.onerror=()=>{db.close();rej(tx.error);};});}catch(e){photoErr=true;}}
+  photosReady=true;render();
+}
+async function photoPut(id,url){PHOTOS[id]=url;if(!IDB_NAME)return true;try{await idbDo('readwrite',st=>st.put(url,id));return true;}catch(e){photoErr=true;return false;}}
+async function photoDel(id){if(!id)return;delete PHOTOS[id];if(!IDB_NAME)return;try{await idbDo('readwrite',st=>st.delete(id));}catch(e){}}
+async function photoClear(){PHOTOS={};if(!IDB_NAME)return;try{await idbDo('readwrite',st=>st.clear());}catch(e){}}
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('img'));i.src=src;});}
+async function shrinkPhoto(file,max){
+  const url=URL.createObjectURL(file);
+  try{
+    const img=await loadImg(url);let w=img.naturalWidth,h=img.naturalHeight;if(!w||!h)throw new Error('size');
+    const k=Math.min(1,(max||1200)/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);
+    const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);
+    return c.toDataURL('image/jpeg',.82);
+  }finally{URL.revokeObjectURL(url);}
+}
+
+/* ---------- drawings: pony portraits, mood faces, rosettes ---------- */
+const COATS={
+  chestnut:{label:'Chestnut',body:'#C9773F',mane:'#8A4520',muzzle:'#E6A47C'},
+  bay:{label:'Bay',body:'#8C5A34',mane:'#2F2420',muzzle:'#B88B63'},
+  grey:{label:'Grey',body:'#D3D3DB',mane:'#8E8EA2',muzzle:'#ECECF1'},
+  black:{label:'Black',body:'#3B3238',mane:'#1C171B',muzzle:'#5F545B'},
+  palomino:{label:'Palomino',body:'#E9C47C',mane:'#FFF3D6',muzzle:'#F4DEB2'},
+  white:{label:'White',body:'#F6F2EE',mane:'#E3D8CE',muzzle:'#FFFFFF'},
+  dun:{label:'Dun',body:'#D2AF7E',mane:'#5A4532',muzzle:'#E7CEA7'},
+  pinto:{label:'Pinto',body:'#FFFFFF',mane:'#6E4128',muzzle:'#FFF6F0',patch:'#7B4A2C'}
+};
+const PONY_BG=['#FDE3EE','#E9E1FA','#DDF3EA','#FFF0CF','#DCEEFC'];
+let svgN=0;
+function ponySVG(coat,bg,blaze){
+  const c=COATS[coat]||COATS.chestnut,dark=coat==='black'||coat==='bay',id='pc'+(++svgN);
+  const mane=[[72,27,8],[76,37,8.5],[79,47,9],[81,57,9],[83,67,9],[85,77,9],[87,87,9],[89,97,9],[90,107,9]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c.mane}"/>`).join('');
+  const patches=c.patch?`<circle cx="58" cy="84" r="9" fill="${c.patch}"/><circle cx="45" cy="99" r="7" fill="${c.patch}"/>`:'';
+  const nose=dark?'#2A1F22':'#6B4A3A';
+  return `<svg viewBox="0 0 100 100" width="600" height="600" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="${id}"><rect width="100" height="100"/></clipPath></defs><g clip-path="url(#${id})"><rect width="100" height="100" fill="${bg||'#FDE3EE'}"/><g transform="translate(-3 9) scale(.93)"><path d="M30 112 C31 84 38 66 50 55 L74 48 C79 66 84 88 90 112 Z" fill="${c.body}"/>${patches}${mane}<g transform="rotate(40 50 42)"><path d="M55 19 L60 3 L67 20 Z" fill="${c.body}"/><path d="M58 17 L60.5 8 L64 18 Z" fill="#F5A3C0"/><rect x="36" y="14" width="30" height="50" rx="15" fill="${c.body}"/>${blaze?'<rect x="47.5" y="20" width="6" height="34" rx="3" fill="#FFFFFF" opacity=".95"/>':''}<ellipse cx="51" cy="57" rx="15.5" ry="10.5" fill="${c.muzzle}"/><ellipse cx="45" cy="58" rx="2" ry="2.8" fill="${nose}" opacity=".75"/><path d="M50 64 q4 3 8 0" stroke="${nose}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/><circle cx="59" cy="44" r="4" fill="#F58BB0" opacity=".45"/><circle cx="47" cy="31" r="4.6" fill="#2B1E26"/><circle cx="45.6" cy="29.4" r="1.6" fill="#fff"/><path d="M42.5 28 l-3 -2.5 M43.5 26 l-2 -3.2 M45.5 25.2 l-0.8 -3.6" stroke="#2B1E26" stroke-width="1.1" stroke-linecap="round"/><circle cx="46" cy="17" r="5.2" fill="${c.mane}"/><circle cx="41" cy="20.5" r="4.6" fill="${c.mane}"/><circle cx="51.5" cy="15.5" r="4.6" fill="${c.mane}"/></g></g></g></svg>`;
+}
+const svgUrl=s=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s);
+const MOODS=[
+  ['happy','Happy','#FFD66B'],['calm','Calm','#A8E3CF'],['sleepy','Sleepy','#CDBEF2'],
+  ['cheeky','Cheeky','#FFB3CF'],['grumpy','Grumpy','#FFB27A'],['nervous','Nervous','#A9D3F5']];
+const moodOf=k=>MOODS.find(m=>m[0]===k);
+function moodSVG(k){
+  const m=moodOf(k);if(!m)return '';const f=m[2],ink='#3D2B48';
+  const eyes={happy:'<circle cx="17" cy="21" r="2.6"/><circle cx="31" cy="21" r="2.6"/>',
+    calm:'<path d="M13.5 22 q3.5 3 7 0 M27.5 22 q3.5 3 7 0" fill="none" stroke-width="2.2" stroke-linecap="round"/>',
+    sleepy:'<path d="M13.5 22 h7 M27.5 22 h7" stroke-width="2.2" stroke-linecap="round"/>',
+    cheeky:'<circle cx="17" cy="21" r="2.6"/><path d="M27.5 21.5 q3.5 -3 7 0" fill="none" stroke-width="2.2" stroke-linecap="round"/>',
+    grumpy:'<circle cx="17" cy="22.5" r="2.4"/><circle cx="31" cy="22.5" r="2.4"/><path d="M12.5 16 l7 3 M35.5 16 l-7 3" stroke-width="2.2" stroke-linecap="round"/>',
+    nervous:'<circle cx="17" cy="21" r="3"/><circle cx="31" cy="21" r="3"/><circle cx="17.8" cy="20.2" r="1" fill="#fff"/><circle cx="31.8" cy="20.2" r="1" fill="#fff"/>'}[k];
+  const mouth={happy:'<path d="M15 29 q9 9 18 0" fill="none" stroke-width="2.4" stroke-linecap="round"/>',
+    calm:'<path d="M18 31 q6 4 12 0" fill="none" stroke-width="2.2" stroke-linecap="round"/>',
+    sleepy:'<ellipse cx="24" cy="32" rx="3" ry="2.4" fill="none" stroke-width="2"/><text x="35" y="13" font-size="9" font-family="Arial" font-weight="700" fill="'+ink+'" stroke="none">z</text><text x="40" y="8" font-size="6" font-family="Arial" font-weight="700" fill="'+ink+'" stroke="none">z</text>',
+    cheeky:'<path d="M16 29 q8 7 16 0" fill="none" stroke-width="2.4" stroke-linecap="round"/><path d="M24 32 q0 6 4 6 q4 0 3 -6" fill="#F06A93" stroke="none"/>',
+    grumpy:'<path d="M17 33 q7 -6 14 0" fill="none" stroke-width="2.4" stroke-linecap="round"/>',
+    nervous:'<path d="M16 32 q2 -2 4 0 t4 0 t4 0 t4 0" fill="none" stroke-width="2.2" stroke-linecap="round"/>'}[k];
+  const blush=k==='happy'||k==='cheeky'?'<circle cx="12" cy="28" r="3" fill="#F58BB0" opacity=".55" stroke="none"/><circle cx="36" cy="28" r="3" fill="#F58BB0" opacity=".55" stroke="none"/>':'';
+  return `<svg viewBox="0 0 48 48" width="96" height="96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="${f}" stroke="${ink}" stroke-opacity=".18" stroke-width="1.5"/>${blush}<g fill="${ink}" stroke="${ink}">${eyes}${mouth}</g></svg>`;
+}
+const face=(k,px)=>k&&moodOf(k)?`<span class="mface" style="width:${px||24}px;height:${px||24}px">${moodSVG(k)}</span>`:'';
+function rosetteSVG(color,label){
+  const petals=[...Array(18)].map((_,i)=>{const a=i*Math.PI*2/18;return `<circle cx="${(40+26*Math.cos(a)).toFixed(1)}" cy="${(38+26*Math.sin(a)).toFixed(1)}" r="9" fill="${color}"/>`;}).join('');
+  const fs=label.length<=2?20:label.length<=4?14:label.length<=6?10.5:8.5;
+  return `<svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M26 56 L16 98 L27 90 L33 99 L40 60 Z" fill="${color}" opacity=".85"/><path d="M54 56 L64 98 L53 90 L47 99 L40 60 Z" fill="${color}" opacity=".85"/>${petals}<circle cx="40" cy="38" r="26" fill="${color}"/><circle cx="40" cy="38" r="21" fill="#fff" opacity=".9"/><circle cx="40" cy="38" r="17.5" fill="none" stroke="${color}" stroke-width="1.6" stroke-dasharray="2.5 2"/><text x="40" y="${38+fs*0.36}" text-anchor="middle" font-family="Fredoka,Arial Rounded MT Bold,Arial,sans-serif" font-weight="600" font-size="${fs}" fill="#3D2B48">${esc(label)}</text></svg>`;
+}
+
+/* ---------- dates and numbers ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const dstr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayStr=()=>dstr(new Date());
+const toDate=s=>{const [y,m,d]=String(s).split('-').map(Number);return new Date(y,(m||1)-1,d||1);};
+const validDate=s=>/^\d{4}-\d{2}-\d{2}$/.test(s)&&!isNaN(toDate(s));
+const fmtDay=s=>toDate(s).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+const fmtLong=s=>toDate(s).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const fmtShort=s=>toDate(s).toLocaleDateString('en-US',{month:'short',year:'numeric'});
+const fmtMonth=(y,m)=>new Date(y,m,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function fmtTime(t){if(!/^\d{1,2}:\d{2}$/.test(t||''))return '';const [h,m]=t.split(':').map(Number);return new Date(2000,0,1,h,m).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});}
+function fmtDur(m){m=Math.round(+m||0);if(m<60)return m+' min';const h=Math.floor(m/60),r=m%60;return h+' h'+(r?' '+r+' min':'');}
+const hoursTxt=m=>{const h=(+m||0)/60;return h<10?(Math.round(h*10)/10).toString():Math.round(h).toString();};
+const plural=(n,w,p)=>n+' '+(n===1?w:(p||w+'s'));
+const LIMITS={did:24,name:30,place:40,person:30,breed:40,loves:60,about:500,text:3000,rider:20,minutes:600};
+
+/* ---------- data helpers ---------- */
+const rides=()=>Object.values(DB.rides).sort((a,b)=>(b.date+(b.time||'99:99')).localeCompare(a.date+(a.time||'99:99'))||String(b.createdAt).localeCompare(String(a.createdAt)));
+const horseOf=r=>DB.horses[r.horseId]||null;
+const horseName=r=>(horseOf(r)||{}).name||r.horseName||'A horse';
+const ridesOf=hid=>rides().filter(r=>r.horseId===hid);
+const sumMin=list=>list.reduce((s,r)=>s+(+r.minutes||0),0);
+function horses(){const last={};for(const r of rides())if(!last[r.horseId])last[r.horseId]=r.date;return Object.values(DB.horses).sort((a,b)=>(last[b.id]||'').localeCompare(last[a.id]||'')||a.name.localeCompare(b.name));}
+function counts(list,get){const m=new Map();for(const r of list){for(const v of [].concat(get(r)||[])){const k=norm(v);if(!k)continue;const e=m.get(k)||{v:tidy(v),n:0,last:''};e.n++;if(r.date>e.last){e.last=r.date;e.v=tidy(v);}m.set(k,e);}}return [...m.values()].sort((a,b)=>b.n-a.n||b.last.localeCompare(a.last)||a.v.localeCompare(b.v));}
+const known=f=>counts(rides(),r=>f==='buddies'?r.buddies:r[f]).map(x=>x.v);
+function horseSrc(h){if(!h)return svgUrl(ponySVG('chestnut',PONY_BG[0]));if(h.photo&&PHOTOS[h.photo])return PHOTOS[h.photo];return svgUrl(ponySVG(h.coat,PONY_BG[(h.bgi||0)%PONY_BG.length],h.blaze));}
+const av=(h,cls)=>`<span class="av ${cls||''}"><img src="${horseSrc(h)}" alt=""></span>`;
+
+const riderName=()=>tidy(DB.settings.rider||'');
+const possessive=n=>n?(/s$/i.test(n)?n+'’':n+'’s'):'';
+
+/* ---------- rosettes ---------- */
+function weekKey(s){const d=toDate(s),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return dstr(d);}
+function bestWeekRun(list){const ks=[...new Set(list.map(r=>weekKey(r.date)))].sort();let best=0,run=0,prev=null;for(const k of ks){if(prev){const p=toDate(prev);p.setDate(p.getDate()+7);run=dstr(p)===k?run+1:1;}else run=1;best=Math.max(best,run);prev=k;}return best;}
+const AWARDS=[
+  ['first','First ride','1st','#E0609A',L=>[L.length,1]],
+  ['r5','5 rides','5','#4A7BD8',L=>[L.length,5]],['r10','10 rides','10','#4A7BD8',L=>[L.length,10]],['r25','25 rides','25','#4A7BD8',L=>[L.length,25]],['r50','50 rides','50','#4A7BD8',L=>[L.length,50]],['r100','100 rides','100','#4A7BD8',L=>[L.length,100]],
+  ['h1','1 hour riding','1 h','#D84A5E',L=>[sumMin(L),60]],['h5','5 hours riding','5 h','#D84A5E',L=>[sumMin(L),300]],['h10','10 hours riding','10 h','#D84A5E',L=>[sumMin(L),600]],['h25','25 hours riding','25 h','#D84A5E',L=>[sumMin(L),1500]],['h50','50 hours riding','50 h','#D84A5E',L=>[sumMin(L),3000]],
+  ['x3','3 different horses','3 ×','#E2A92B',L=>[new Set(L.map(r=>r.horseId)).size,3]],['x5','5 different horses','5 ×','#E2A92B',L=>[new Set(L.map(r=>r.horseId)).size,5]],
+  ['places3','3 different places','3 ⌂','#3FA77A',L=>[new Set(L.map(r=>norm(r.place)).filter(Boolean)).size,3]],['photo','First ride photo','PHOTO','#3FA77A',L=>[L.some(r=>r.photo)?1:0,1]],['story10','Wrote 10 stories','10 ✎','#3FA77A',L=>[L.filter(r=>tidy(r.text)).length,10]],
+  ['friend','Rode with a friend','FRIEND','#C85BB0',L=>[L.some(r=>(r.buddies||[]).length)?1:0,1]],
+  ['w4','4 weeks in a row','4 WKS','#8E6FD8',L=>[bestWeekRun(L),4]],
+  ['long','A 90-minute ride','90 MIN','#EE8A3C',L=>[Math.max(0,...L.map(r=>+r.minutes||0)),90]],
+  ['moods','Saw all 6 moods','MOODS','#25A3A1',L=>[new Set(L.map(r=>r.mood).filter(Boolean)).size,6]]
+];
+function checkAwards(silent){
+  const L=rides(),fresh=[];DB.awards=DB.awards||{};
+  const asc=L.slice().reverse();
+  for(const [k,,,,fn] of AWARDS){const [c,g]=fn(L);if(c>=g&&!DB.awards[k]){let when=todayStr();for(let i=0;i<asc.length;i++){const [c2,g2]=fn(asc.slice(0,i+1));if(c2>=g2){when=asc[i].date;break;}}DB.awards[k]=when;fresh.push(k);}}
+  if(fresh.length){save();if(!silent)celebrate(fresh);}
+  return fresh;
+}
+function celebrate(keys){
+  const a=AWARDS.find(x=>x[0]===keys[0]);if(!a)return;
+  const colors=['#E0609A','#FFD66B','#8E6FD8','#3FA77A','#4A7BD8','#EE8A3C'];
+  const conf=[...Array(26)].map((_,i)=>`<i class="cf" style="left:${(i*37)%100}%;background:${colors[i%colors.length]};animation-delay:${(i%7)*.12}s"></i>`).join('');
+  document.getElementById('overlay').innerHTML=`<div class="party" role="dialog" aria-modal="true" aria-label="New rosette"><div class="box">${conf}<svg class="r" viewBox="0 0 80 100">${rosetteSVG(a[3],a[2]).replace(/^<svg[^>]*>|<\/svg>$/g,'')}</svg><h2>You won a rosette!</h2><p class="lbl">${esc(a[1])}</p>${keys.length>1?`<p class="hint">And ${keys.length-1} more. See them all under Keepsakes.</p>`:''}<button class="btn primary" data-act="party-x">Yay!</button></div></div>`;
+  const b=document.querySelector('.party .btn');if(b)b.focus();
+}
+
+/* ---------- state ---------- */
+const S={tab:'rides',screen:'',rideId:null,horseId:null,form:null,hform:null,statsYear:'all',msg:'',toast:'',keepYear:null,bk:{},confirm:null,paper:null};
+const isWide=()=>!!(window.matchMedia&&matchMedia('(min-width:900px)').matches);
+
+/* ---------- header ---------- */
+function renderTop(){
+  document.getElementById('logo').innerHTML=ponySVG('palomino','var(--accent-soft)',true);
+  const n=riderName();document.getElementById('who').textContent=n?possessive(n)+' riding diary':'My riding diary';
+  document.getElementById('tabs').innerHTML=[['rides','Diary'],['horses','Horses'],['stats','Stats'],['keep','Keepsakes']].map(([k,l])=>`<button data-tab="${k}" ${S.tab===k&&!S.screen?'aria-current="page"':''}>${l}</button>`).join('');
+}
+
+/* ---------- Diary ---------- */
+function rideCard(r){
+  const h=horseOf(r),meta=[fmtDay(r.date),fmtTime(r.time),r.minutes?fmtDur(r.minutes):''].filter(Boolean).join(' · ');
+  const where=[r.place,r.trainer?'with '+r.trainer:''].filter(Boolean).join(' · ');
+  const tags=[...(r.buddies||[]).map(b=>'👭 '+b),...(r.did||[])];
+  return `<button class="ride" data-ride="${r.id}">${h?av(h):`<span class="av"><img src="${horseSrc(null)}" alt=""></span>`}<span><span class="t">${esc(horseName(r))} ${face(r.mood,24)}</span><span class="m">${esc(meta)}</span>${where?`<span class="m" style="display:block">${esc(where)}</span>`:''}${r.text?`<span class="x">${esc(r.text)}</span>`:''}${tags.length?`<span class="tagrow">${tags.slice(0,5).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</span>`:''}</span>${r.photo&&PHOTOS[r.photo]?`<img class="ph" src="${PHOTOS[r.photo]}" alt="">`:''}</button>`;
+}
+function ridesView(){
+  const L=rides();
+  if(!L.length)return `<div class="empty"><span class="pony">${ponySVG('chestnut','#FDE4EF',true)}</span><h2 style="margin:0">Your first ride goes here</h2><p class="hint">Tap <b>New ride</b> after riding. Write who you rode, how long, and how your horse felt.</p><button class="btn primary" data-act="new-ride">New ride</button></div>`;
+  const y=String(new Date().getFullYear()),Y=L.filter(r=>r.date.startsWith(y));
+  let h=`<div class="summary"><div class="sbox"><b class="num">${Y.length}</b><span>rides in ${y}</span></div><div class="sbox"><b class="num">${hoursTxt(sumMin(Y))}</b><span>hours in ${y}</span></div><div class="sbox"><b class="num">${Object.keys(DB.awards||{}).length}</b><span>rosettes</span></div></div>`;
+  let cur='';
+  h+=`<div class="rides">`;
+  for(const r of L){const m=r.date.slice(0,7);if(m!==cur){cur=m;const d=toDate(r.date);h+=`<div class="month">${esc(fmtMonth(d.getFullYear(),d.getMonth()))}</div>`;}h+=rideCard(r);}
+  return h+`</div>`;
+}
+function rideDetail(){
+  const r=DB.rides[S.rideId];if(!r){S.screen='';return ridesView();}
+  const h=horseOf(r),pic=r.photo&&PHOTOS[r.photo]?r.photo&&PHOTOS[r.photo]:horseSrc(h);
+  const m=moodOf(r.mood);
+  const rows=[['When',[fmtLong(r.date),fmtTime(r.time)].filter(Boolean).join(', ')],['How long',r.minutes?fmtDur(r.minutes):''],['Where',r.place],['Trainer',r.trainer],['Rode with',(r.buddies||[]).join(', ')],['We did',(r.did||[]).join(', ')]].filter(x=>x[1]);
+  return `<button class="back" data-act="back">‹ Back</button>
+    <span class="hero"><img src="${pic}" alt=""></span>
+    <div class="htitle">${av(h)}<div><h2>${esc(horseName(r))}</h2>${m?`<span class="hint" style="display:flex;align-items:center;gap:6px">${face(r.mood,26)} ${esc(m[1])}</span>`:''}</div></div>
+    <section class="card facts">${rows.map(([a,b])=>`<div class="fact"><span>${a}</span><span>${esc(b)}</span></div>`).join('')}</section>
+    ${r.text?`<section class="card"><div class="story">${esc(r.text)}</div></section>`:''}
+    ${S.confirm==='ride'?`<div class="notice"><b>Delete this ride?</b><p>It can’t be brought back.</p><div class="btns"><button class="btn danger" data-act="ride-del-yes">Delete ride</button><button class="btn" data-act="confirm-no">Keep it</button></div></div>`:`<div class="btns"><button class="btn primary" data-act="ride-edit">Edit</button><button class="btn danger" data-act="ride-del">Delete</button></div>`}`;
+}
+
+/* ---------- ride form ---------- */
+function newForm(r,horseId){
+  if(r)return {id:r.id,date:r.date,time:r.time||'',minutes:r.minutes||'',horseId:r.horseId,mood:r.mood||'',place:r.place||'',trainer:r.trainer||'',buddies:[...(r.buddies||[])],did:[...(r.did||[])],text:r.text||'',photo:r.photo||null,photoData:null,photoGone:false};
+  const last=rides()[0];
+  return {id:null,date:todayStr(),time:'',minutes:last?last.minutes:'',horseId:horseId||(last&&DB.horses[last.horseId]?last.horseId:''),mood:'',place:last?last.place||'':'',trainer:last?last.trainer||'':'',buddies:[],did:[],text:'',photo:null,photoData:null,photoGone:false};
+}
+function pickList(field,label,values,cur,multi){
+  const sel=multi?cur.map(norm):[norm(cur)];
+  const all=[...new Map([...values,...(multi?cur:(cur?[cur]:[]))].map(v=>[norm(v),v])).values()];
+  return `<div class="field"><span class="lbl">${label}</span>
+    ${all.length?`<div class="chips">${all.map(v=>`<button type="button" class="chip" data-pick="${field}" data-v="${esc(v)}" aria-pressed="${sel.includes(norm(v))}">${esc(v)}</button>`).join('')}</div>`:''}
+    <div class="addrow"><input type="text" id="new-${field}" placeholder="${multi?'Add a name':'Type a new one'}" aria-label="${label}: add new" autocomplete="off"><button type="button" class="btn small" data-addpick="${field}">Add</button></div></div>`;
+}
+function rideForm(){
+  const f=S.form,hs=horses(),editing=!!f.id;
+  const curMin=String(f.minutes||'');
+  const photo=f.photoData||(f.photo&&!f.photoGone&&PHOTOS[f.photo])||'';
+  const tl=f.text.length;
+  return `<button class="back" data-act="form-cancel">‹ Cancel</button><h2>${editing?'Edit ride':'New ride'}</h2>
+  <section class="card">
+    <div class="field"><span class="lbl">Which horse?</span>
+      <div class="hpick" role="group" aria-label="Horse">${hs.map(h=>`<button type="button" class="hp" data-fh="${h.id}" aria-pressed="${f.horseId===h.id}">${av(h)}<span>${esc(h.name)}</span></button>`).join('')}<button type="button" class="hp new" data-act="form-newhorse"><span class="av">+</span><span>New horse</span></button></div></div>
+    <div class="row2"><label class="field"><span class="lbl">Date</span><input type="date" id="f-date" value="${esc(f.date)}"></label><label class="field"><span class="lbl">Time <small>if you like</small></span><input type="time" id="f-time" value="${esc(f.time)}"></label></div>
+    <div class="field"><span class="lbl">How long?</span><div class="durs" role="group" aria-label="Minutes">${[15,30,45,60,90].map(m=>`<button type="button" class="chip" data-min="${m}" aria-pressed="${curMin===String(m)}">${m<60?m+' min':fmtDur(m)}</button>`).join('')}<input type="number" id="f-min" inputmode="numeric" min="1" max="600" placeholder="min" aria-label="Minutes" value="${esc(curMin)}"></div></div>
+  </section>
+  <section class="card"><div class="field"><span class="lbl">How was your horse feeling?</span><div class="moods" role="group" aria-label="Horse mood">${MOODS.map(([k,l])=>`<button type="button" class="mood" data-mood="${k}" aria-pressed="${f.mood===k}">${moodSVG(k)}<span>${l}</span></button>`).join('')}</div></div></section>
+  <section class="card">
+    ${pickList('place','Where did you ride?',known('place'),f.place,false)}
+    ${pickList('trainer','Who was your trainer?',known('trainer'),f.trainer,false)}
+    ${pickList('buddies','Who did you ride with?',known('buddies'),f.buddies,true)}
+    <div class="field"><span class="lbl">What did you do?</span><p class="hint">Write it in your own words. Next time it’s a button.</p><div class="chips">${[...new Map([...counts(rides(),r=>r.did).map(x=>x.v),...f.did].map(d=>[norm(d),d])).values()].map(d=>`<button type="button" class="chip" data-did="${esc(d)}" aria-pressed="${f.did.includes(d)}">${esc(d)}</button>`).join('')}</div>
+      <div class="addrow"><input type="text" id="new-did" placeholder="Like: brushing my pony" aria-label="What did you do: add" autocomplete="off"><button type="button" class="btn small" data-addpick="did">Add</button></div></div>
+  </section>
+  <section class="card">
+    <label class="field"><span class="lbl">How did it go?</span><textarea id="f-text" placeholder="Today Biscuit was so fast at the trot! I fed him two carrots after.">${esc(f.text)}</textarea></label>
+    <div class="count ${tl>LIMITS.text?'over':''}" id="f-count">${tl} / ${LIMITS.text}</div>
+    <div class="field"><span class="lbl">A photo from today <small>if you like</small></span>
+      ${photo?`<img src="${photo}" alt="" style="width:100%;max-height:260px;object-fit:cover;border-radius:16px;display:block">`:''}
+      <div class="btns"><label class="btn small" for="f-photo">${photo?'Change photo':'Add a photo'}</label><input id="f-photo" class="vh" type="file" accept="image/*">${photo?'<button type="button" class="btn small" data-act="form-photo-x">Remove photo</button>':''}</div></div>
+  </section>
+  ${S.msg?`<p class="msg" role="alert">${esc(S.msg)}</p>`:''}
+  <div class="btns"><button class="btn primary" data-act="form-save">${editing?'Save changes':'Save ride'}</button><button class="btn" data-act="form-cancel">Cancel</button></div>`;
+}
+function readForm(){
+  const f=S.form;if(!f)return;const g=id=>document.getElementById(id);
+  if(g('f-date'))f.date=g('f-date').value;if(g('f-time'))f.time=g('f-time').value;if(g('f-min'))f.minutes=g('f-min').value;if(g('f-text'))f.text=g('f-text').value;
+}
+function addPick(field){
+  readForm();const i=document.getElementById('new-'+field),v=tidy(i&&i.value);if(!v){if(i)i.focus();return;}
+  const lim=field==='place'?LIMITS.place:field==='did'?LIMITS.did:LIMITS.person;
+  if(v.length>lim){S.msg=`That name is too long. Use up to ${lim} letters.`;render();return;}
+  S.msg='';const f=S.form;
+  if(field==='buddies'){if(!f.buddies.some(b=>norm(b)===norm(v)))f.buddies.push(v);}
+  else if(field==='did'){const k=counts(rides(),r=>r.did).map(x=>x.v).find(x=>norm(x)===norm(v))||v;if(!f.did.some(x=>norm(x)===norm(k)))f.did.push(k);}
+  else f[field]=v;
+  render();const n=document.getElementById('new-'+field);if(n&&(field==='buddies'||field==='did'))n.focus();
+}
+async function saveRide(){
+  readForm();const f=S.form;
+  const min=f.minutes===''?0:+f.minutes;
+  if(!f.horseId||!DB.horses[f.horseId])S.msg='Pick the horse you rode. Tap “New horse” if it’s not there yet.';
+  else if(!validDate(f.date))S.msg='Pick the date of the ride.';
+  else if(f.minutes!==''&&(!Number.isFinite(min)||min<1||Math.round(min)!==min))S.msg='How long was the ride? Type whole minutes, like 45.';
+  else if(min>LIMITS.minutes)S.msg=`A ride can be up to ${LIMITS.minutes} minutes (10 hours). Check the number.`;
+  else if(f.text.length>LIMITS.text)S.msg=`The story is ${f.text.length} letters long. Keep it under ${LIMITS.text}.`;
+  else S.msg='';
+  if(S.msg){render();const m=document.querySelector('.msg');if(m)m.scrollIntoView({block:'center'});return;}
+  const t=now(),id=f.id||uid(),old=DB.rides[id];
+  let photo=old?old.photo:null;
+  if(f.photoData){const pid=uid();const ok=await photoPut(pid,f.photoData);if(!ok){S.msg='The photo could not be saved on this device. The ride is saved without it.';}else{if(photo)await photoDel(photo);photo=pid;}}
+  else if(f.photoGone&&photo){await photoDel(photo);photo=null;}
+  DB.rides[id]={id,date:f.date,time:f.time||'',minutes:min||0,horseId:f.horseId,horseName:DB.horses[f.horseId].name,mood:f.mood||'',place:tidy(f.place),trainer:tidy(f.trainer),buddies:f.buddies.map(tidy).filter(Boolean),did:[...f.did],text:f.text.replace(/\s+$/,''),photo,createdAt:old?old.createdAt:t,updatedAt:t};
+  save();const keepMsg=S.msg;S.form=null;S.screen=old?'ride':'';S.rideId=id;S.tab='rides';S.toast=keepMsg||(old?'':'Ride saved.');S.msg=keepMsg?'':'';
+  const won=checkAwards(true);render();window.scrollTo(0,0);if(won.length)celebrate(won);
+}
+
+/* ---------- horses ---------- */
+function horsesView(){
+  const hs=horses();
+  if(!hs.length)return `<div class="empty"><span class="pony">${ponySVG('grey','#E9E1FA',false)}</span><h2 style="margin:0">Add your first horse</h2><p class="hint">Every horse or pony you ride gets a page with its photo, your rides together and how it was feeling.</p><button class="btn primary" data-act="horse-new">Add a horse</button></div>`;
+  return `<div class="hgrid">${hs.map(h=>{const L=ridesOf(h.id);return `<button class="hcard" data-horse="${h.id}"><span class="pic"><img src="${horseSrc(h)}" alt=""></span><b>${esc(h.name)}</b><span>${plural(L.length,'ride')}${L.length?' · '+fmtDur(sumMin(L)):''}</span></button>`;}).join('')}<button class="hcard add" data-act="horse-new">+ Add a horse</button></div>`;
+}
+function horseDetail(){
+  const h=DB.horses[S.horseId];if(!h){S.screen='';return horsesView();}
+  const L=ridesOf(h.id),tally=counts(L,r=>r.mood).filter(x=>moodOf(x.v)),max=Math.max(1,...tally.map(x=>x.n));
+  const first=L.length?L[L.length-1].date:'',last=L.length?L[0].date:'';
+  const rows=[['Coat',(COATS[h.coat]||{}).label||''],['Kind',h.breed],['Loves',h.loves],['Rides',L.length?plural(L.length,'ride')+' · '+fmtDur(sumMin(L)):'No rides yet'],['First ride',first?fmtLong(first):''],['Last ride',last&&last!==first?fmtLong(last):'']].filter(x=>x[1]);
+  return `<button class="back" data-act="back">‹ All horses</button>
+    <span class="hero"><img src="${horseSrc(h)}" alt=""></span>
+    <h2>${esc(h.name)}</h2>
+    <section class="card facts">${rows.map(([a,b])=>`<div class="fact"><span>${a}</span><span>${esc(b)}</span></div>`).join('')}${h.about?`<div class="story" style="font-size:0.9118rem">${esc(h.about)}</div>`:''}</section>
+    ${tally.length?`<section class="card"><h3>How ${esc(h.name)} was feeling</h3>${tally.map(x=>`<div class="moodbar">${face(x.v,30)}<span class="bar" aria-hidden="true"><i style="width:${Math.round(x.n/max*100)}%"></i></span><span>${esc(moodOf(x.v)[1])} · ${x.n}</span></div>`).join('')}</section>`:''}
+    <div class="btns"><button class="btn primary" data-act="ride-with" data-id="${h.id}">New ride with ${esc(h.name)}</button><button class="btn" data-act="horse-edit" data-id="${h.id}">Edit</button></div>
+    <section class="card"><h3>${esc(h.name)}’s horse card</h3><img class="kimg ph" style="max-width:280px;margin:0 auto" data-render="card|${h.id}" alt="Horse card for ${esc(h.name)}"><div class="btns" style="justify-content:center"><button class="btn small" data-act="save-card" data-id="${h.id}">Save picture</button><button class="btn small" data-tab="keep">All keepsakes</button></div></section>
+    ${L.length?`<h3 style="margin-top:6px">Rides together</h3><div class="rides">${L.map(rideCard).join('')}</div>`:''}`;
+}
+function newHForm(h,returnTo){return h?{id:h.id,name:h.name,coat:h.coat||'chestnut',blaze:!!h.blaze,breed:h.breed||'',loves:h.loves||'',about:h.about||'',photo:h.photo||null,photoData:null,photoGone:false,returnTo}:{id:null,name:'',coat:'chestnut',blaze:false,breed:'',loves:'',about:'',photo:null,photoData:null,photoGone:false,returnTo};}
+function horseForm(){
+  const f=S.hform,editing=!!f.id;
+  const photo=f.photoData||(f.photo&&!f.photoGone&&PHOTOS[f.photo])||'';
+  const prev=photo||svgUrl(ponySVG(f.coat,PONY_BG[0],f.blaze));
+  const n=f.id?ridesOf(f.id).length:0;
+  return `<button class="back" data-act="hform-cancel">‹ Cancel</button><h2>${editing?'Edit '+esc(f.name||'horse'):'New horse'}</h2>
+  <section class="card">
+    <label class="field"><span class="lbl">Name</span><input type="text" id="h-name" value="${esc(f.name)}" placeholder="Biscuit" autocomplete="off"></label>
+    <div class="field"><span class="lbl">Photo <small>if you have one</small></span><div class="photo-edit"><span class="av"><img src="${prev}" alt=""></span><div class="btns"><label class="btn small" for="h-photo">${photo?'Change photo':'Add a photo'}</label><input id="h-photo" class="vh" type="file" accept="image/*">${photo?'<button type="button" class="btn small" data-act="hform-photo-x">Remove</button>':''}</div></div>
+    ${photo?'':'<p class="hint">No photo? We draw a pony in your horse’s colors.</p>'}</div>
+    <div class="field"><span class="lbl">Coat color</span><div class="chips">${Object.entries(COATS).map(([k,c])=>`<button type="button" class="chip" data-coat="${k}" aria-pressed="${f.coat===k}"><span class="sw" style="background:${c.body}"></span>${c.label}</button>`).join('')}</div>
+      <div class="chips"><button type="button" class="chip" data-act="hform-blaze" aria-pressed="${f.blaze}">White stripe on the face</button></div></div>
+    <label class="field"><span class="lbl">Kind of horse <small>if you know</small></span><input type="text" id="h-breed" value="${esc(f.breed)}" placeholder="Welsh pony" autocomplete="off"></label>
+    <label class="field"><span class="lbl">Loves</span><input type="text" id="h-loves" value="${esc(f.loves)}" placeholder="Apples and neck scratches" autocomplete="off"></label>
+    <label class="field"><span class="lbl">About ${esc(f.name||'this horse')}</span><textarea id="h-about" style="min-height:90px" placeholder="Gets a bit silly on windy days.">${esc(f.about)}</textarea></label>
+  </section>
+  ${S.msg?`<p class="msg" role="alert">${esc(S.msg)}</p>`:''}
+  ${S.confirm==='horse'?`<div class="notice"><b>Delete ${esc(f.name)}?</b><p>${n?`Your ${plural(n,'ride')} with ${esc(f.name)} stay in the diary with the name, but the photo and horse page are removed.`:'This can’t be undone.'}</p><div class="btns"><button class="btn danger" data-act="horse-del-yes">Delete horse</button><button class="btn" data-act="confirm-no">Keep</button></div></div>`:
+  `<div class="btns"><button class="btn primary" data-act="hform-save">${editing?'Save':'Add horse'}</button><button class="btn" data-act="hform-cancel">Cancel</button>${editing?'<button class="btn danger" data-act="horse-del">Delete horse</button>':''}</div>`}`;
+}
+function readHForm(){const f=S.hform;if(!f)return;const g=id=>document.getElementById(id);if(g('h-name'))f.name=g('h-name').value;if(g('h-breed'))f.breed=g('h-breed').value;if(g('h-loves'))f.loves=g('h-loves').value;if(g('h-about'))f.about=g('h-about').value;}
+async function saveHorse(){
+  readHForm();const f=S.hform,name=tidy(f.name);
+  const clash=Object.values(DB.horses).find(h=>h.id!==f.id&&norm(h.name)===norm(name));
+  if(!name)S.msg='What is the horse’s name?';
+  else if(name.length>LIMITS.name)S.msg=`The name is ${name.length} letters. Use up to ${LIMITS.name}.`;
+  else if(clash)S.msg=`You already have a horse called ${clash.name}. Add a little extra, like “${name} 2”.`;
+  else if(tidy(f.breed).length>LIMITS.breed)S.msg=`“Kind of horse” can be up to ${LIMITS.breed} letters.`;
+  else if(tidy(f.loves).length>LIMITS.loves)S.msg=`“Loves” can be up to ${LIMITS.loves} letters.`;
+  else if(f.about.length>LIMITS.about)S.msg=`“About” is ${f.about.length} letters. Keep it under ${LIMITS.about}.`;
+  else S.msg='';
+  if(S.msg){render();return;}
+  const id=f.id||uid(),old=DB.horses[id];let photo=old?old.photo:null,warn='';
+  if(f.photoData){const pid=uid();if(await photoPut(pid,f.photoData)){if(photo)await photoDel(photo);photo=pid;}else warn='The photo could not be saved on this device.';}
+  else if(f.photoGone&&photo){await photoDel(photo);photo=null;}
+  const n=Object.keys(DB.horses).length;
+  DB.horses[id]={id,name,coat:f.coat,blaze:!!f.blaze,breed:tidy(f.breed),loves:tidy(f.loves),about:f.about.replace(/\s+$/,''),photo,bgi:old?old.bgi:n,no:old?old.no:(Math.max(0,...Object.values(DB.horses).map(h=>h.no||0))+1),createdAt:old?old.createdAt:now()};
+  if(old&&old.name!==name)Object.values(DB.rides).forEach(r=>{if(r.horseId===id)r.horseName=name;});
+  save();
+  if(f.returnTo==='ride'&&S.form){S.form.horseId=id;S.hform=null;S.screen='form';S.toast=warn;render();return;}
+  S.hform=null;S.screen='horse';S.horseId=id;S.toast=warn;render();window.scrollTo(0,0);
+}
+async function deleteHorse(id){const h=DB.horses[id];if(!h)return;Object.values(DB.rides).forEach(r=>{if(r.horseId===id)r.horseName=h.name;});if(h.photo)await photoDel(h.photo);delete DB.horses[id];save();}
+
+/* ---------- stats ---------- */
+function statsView(){
+  const all=rides();
+  if(!all.length)return `<div class="empty"><span class="pony">${ponySVG('dun','#DDF3EA',false)}</span><h2 style="margin:0">Stats grow with every ride</h2><p class="hint">After a few rides you’ll see your hours, your favorite horse and how your horses were feeling.</p></div>`;
+  const years=[...new Set(all.map(r=>r.date.slice(0,4)))].sort().reverse();
+  if(S.statsYear!=='all'&&!years.includes(S.statsYear))S.statsYear='all';
+  const L=S.statsYear==='all'?all:all.filter(r=>r.date.startsWith(S.statsYear));
+  const H=counts(L,r=>r.horseId).map(x=>({h:DB.horses[x.v],n:x.n,name:x.v})).filter(x=>x.h);
+  const P=counts(L,r=>r.place),T=counts(L,r=>r.trainer),B=counts(L,r=>r.buddies),D=counts(L,r=>r.did),M=counts(L,r=>r.mood).filter(x=>moodOf(x.v));
+  const longest=L.reduce((a,r)=>(+r.minutes||0)>(+(a&&a.minutes)||0)?r:a,null);
+  // months
+  let months=[];
+  if(S.statsYear==='all'){const d=new Date();d.setDate(1);for(let i=11;i>=0;i--){const x=new Date(d.getFullYear(),d.getMonth()-i,1);months.push([x.getFullYear(),x.getMonth()]);}}
+  else for(let m=0;m<12;m++)months.push([+S.statsYear,m]);
+  const mc=months.map(([y,m])=>L.filter(r=>r.date.startsWith(y+'-'+pad(m+1))).length),mx=Math.max(1,...mc);
+  const W=360,Hh=130,bw=W/12;
+  const chart=`<svg class="chart" viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Rides each month">${mc.map((n,i)=>{const h=n?Math.max(6,n/mx*88):3,x=i*bw+5,y=104-h;return `<rect class="${n?'b':'b0'}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(bw-10).toFixed(1)}" height="${h.toFixed(1)}" rx="5"/>${n?`<text class="v" x="${(x+(bw-10)/2).toFixed(1)}" y="${(y-4).toFixed(1)}" text-anchor="middle">${n}</text>`:''}<text x="${(x+(bw-10)/2).toFixed(1)}" y="122" text-anchor="middle">${MON[months[i][1]]}</text>`;}).join('')}</svg>`;
+  const top=(title,list,icon)=>list.length?`<section class="card"><h3>${title}</h3><div class="top">${list.slice(0,5).map(x=>`<div class="toprow">${icon(x)}<span>${esc(x.v||x.name)}</span><span class="n num">${x.n}</span></div>`).join('')}</div></section>`:'';
+  const ini=x=>`<span class="ic">${esc((x.v||'?').trim()[0].toUpperCase())}</span>`;
+  return `<div class="yrs" role="group" aria-label="Which years">${['all',...years].map(y=>`<button class="chip" data-year="${y}" aria-pressed="${S.statsYear===y}">${y==='all'?'All time':y}</button>`).join('')}</div>
+  <div class="big3"><div class="sbox"><b class="num">${L.length}</b><span>rides</span></div><div class="sbox"><b class="num">${hoursTxt(sumMin(L))}</b><span>hours riding</span></div><div class="sbox"><b class="num">${new Set(L.map(r=>r.horseId)).size}</b><span>horses</span></div><div class="sbox"><b class="num">${longest&&longest.minutes?fmtDur(longest.minutes):'–'}</b><span>longest ride</span></div></div>
+  <section class="card"><h3>Rides each month</h3>${chart}</section>
+  ${H.length?`<section class="card"><h3>Horses</h3><div class="top">${H.slice(0,5).map(x=>`<div class="toprow">${av(x.h)}<span>${esc(x.h.name)}</span><span class="n num">${x.n}</span></div>`).join('')}</div></section>`:''}
+  ${M.length?`<section class="card"><h3>How the horses were feeling</h3>${M.map(x=>`<div class="moodbar">${face(x.v,30)}<span class="bar" aria-hidden="true"><i style="width:${Math.round(x.n/Math.max(...M.map(y=>y.n))*100)}%"></i></span><span>${esc(moodOf(x.v)[1])} · ${x.n}</span></div>`).join('')}</section>`:''}
+  ${top('Places',P,ini)}${top('Trainers',T,ini)}${top('Riding friends',B,ini)}${top('What you did most',D,ini)}`;
+}
+
+/* ---------- keepsakes: rosettes, horse cards, riding year poster ---------- */
+async function fontsReady(){try{await Promise.all(['600 40px Fredoka','500 20px Jost','600 30px Caveat'].map(f=>document.fonts.load(f)));}catch(e){}}
+function rr(x,cx,cy,w,h,r){x.beginPath();x.moveTo(cx+r,cy);x.arcTo(cx+w,cy,cx+w,cy+h,r);x.arcTo(cx+w,cy+h,cx,cy+h,r);x.arcTo(cx,cy+h,cx,cy,r);x.arcTo(cx,cy,cx+w,cy,r);x.closePath();}
+function cover(x,img,dx,dy,dw,dh){const s=Math.max(dw/img.width,dh/img.height),sw=dw/s,sh=dh/s;x.drawImage(img,(img.width-sw)/2,(img.height-sh)/2,sw,sh,dx,dy,dw,dh);}
+function fitFont(x,text,weight,family,max,width){let s=max;do{x.font=`${weight} ${s}px ${family}`;if(x.measureText(text).width<=width)break;s-=2;}while(s>14);return s;}
+function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+const PAL=()=>{const t=THEMES[DB.settings.theme]||THEMES.pink;return t.print;};
+async function drawHorseCard(h){
+  await fontsReady();const W=750,H=1050,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');const P=PAL();
+  const L=ridesOf(h.id),mood=counts(L,r=>r.mood).filter(m=>moodOf(m.v))[0],did=counts(L,r=>r.did)[0];
+  const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,P.a);g.addColorStop(1,P.b);rr(x,0,0,W,H,46);x.fillStyle=g;x.fill();
+  rr(x,26,26,W-52,H-52,32);x.fillStyle='#FFFFFF';x.fill();
+  x.fillStyle=P.ink;x.textAlign='center';x.textBaseline='alphabetic';
+  x.font='600 22px Jost';x.fillStyle=P.accent;x.fillText('PONY PAGES · NO. '+(h.no||1),W/2,78);
+  fitFont(x,h.name,600,'Fredoka',76,W-120);x.fillStyle=P.ink;x.fillText(h.name,W/2,152);
+  const img=await loadImg(horseSrc(h)),real=!!(h.photo&&PHOTOS[h.photo]);x.save();rr(x,60,178,W-120,450,30);x.clip();x.fillStyle=real?P.soft:PONY_BG[(h.bgi||0)%PONY_BG.length];x.fillRect(60,178,W-120,450);if(real)cover(x,img,60,178,W-120,450);else x.drawImage(img,W/2-225,178,450,450);x.restore();
+  rr(x,60,178,W-120,450,30);x.lineWidth=6;x.strokeStyle=P.accent;x.stroke();
+  const sub=[(COATS[h.coat]||{}).label,h.breed].filter(Boolean).join(' · ');
+  if(sub){x.font='500 26px Jost';const tw=x.measureText(sub).width+40;rr(x,W/2-tw/2,606,tw,46,23);x.fillStyle=P.accent;x.fill();x.fillStyle='#fff';x.fillText(sub,W/2,638);}
+  const boxes=[['RIDES',String(L.length)],['TIME',L.length?fmtDur(sumMin(L)):'–'],['SINCE',L.length?fmtShort(L[L.length-1].date):'–'],['BEST AT',did?did.v:'–']];
+  boxes.forEach(([k,v],i)=>{const bx=60+(i%2)*320,by=680+Math.floor(i/2)*120;rr(x,bx,by,310,104,22);x.fillStyle=P.soft;x.fill();x.fillStyle=P.accent;x.font='600 20px Jost';x.textAlign='left';x.fillText(k,bx+22,by+36);x.fillStyle=P.ink;fitFont(x,v,600,'Fredoka',40,270);x.fillText(v,bx+22,by+82);});
+  x.textAlign='center';
+  if(mood){const mi=await loadImg(svgUrl(moodSVG(mood.v)));x.drawImage(mi,70,930,64,64);x.textAlign='left';x.fillStyle=P.ink;x.font='600 30px Fredoka';x.fillText('Usually '+moodOf(mood.v)[1].toLowerCase(),148,973);}
+  if(h.loves){x.textAlign='right';x.fillStyle=P.accent;fitFont(x,'Loves '+h.loves,600,'Caveat',40,mood?330:600);x.fillText('Loves '+h.loves,W-70,973);}
+  const rn=riderName();if(rn){x.textAlign='center';x.fillStyle=P.muted;x.font='500 20px Jost';x.fillText('Ridden by '+rn,W/2,1018);}
+  return c;
+}
+async function drawPoster(year){
+  await fontsReady();const W=1080,H=1920,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');const P=PAL();
+  const L=rides().filter(r=>r.date.startsWith(year));
+  const g=x.createLinearGradient(0,0,0,H);g.addColorStop(0,P.a);g.addColorStop(1,P.b);x.fillStyle=g;x.fillRect(0,0,W,H);
+  const dots=['#FFFFFF','#FFD66B',P.accent];for(let i=0;i<70;i++){x.globalAlpha=.35;x.fillStyle=dots[i%3];x.beginPath();x.arc((i*263)%W,(i*577)%H,6+(i%4)*3,0,7);x.fill();}x.globalAlpha=1;
+  x.textAlign='center';x.fillStyle=P.ink;const rn=riderName();
+  x.font='600 64px Caveat';x.fillText(rn?possessive(rn):'My',W/2,150);
+  fitFont(x,'Riding Year',600,'Fredoka',130,W-120);x.fillText('Riding Year',W/2,280);
+  x.font='600 96px Fredoka';x.fillStyle=P.accent;x.fillText(year,W/2,390);
+  const big=[[String(L.length),L.length===1?'ride':'rides'],[hoursTxt(sumMin(L)),'hours'],[String(new Set(L.map(r=>r.horseId)).size),'horses']];
+  big.forEach(([n,l],i)=>{const cx=200+i*340,cy=560;x.fillStyle='#FFFFFF';x.beginPath();x.arc(cx,cy,140,0,7);x.fill();x.fillStyle=P.accent;fitFont(x,n,600,'Fredoka',110,230);x.fillText(n,cx,cy+28);x.fillStyle=P.ink;x.font='500 36px Jost';x.fillText(l,cx,cy+82);});
+  const fav=counts(L,r=>r.horseId).map(v=>DB.horses[v.v]?{h:DB.horses[v.v],n:v.n}:null).filter(Boolean)[0];
+  rr(x,70,760,W-140,360,40);x.fillStyle='rgba(255,255,255,.88)';x.fill();
+  if(fav){const im=await loadImg(horseSrc(fav.h));x.save();x.beginPath();x.arc(250,940,140,0,7);x.clip();cover(x,im,110,800,280,280);x.restore();x.lineWidth=10;x.strokeStyle=P.accent;x.beginPath();x.arc(250,940,140,0,7);x.stroke();
+    x.textAlign='left';x.fillStyle=P.accent;x.font='600 34px Jost';x.fillText('FAVORITE HORSE',430,870);x.fillStyle=P.ink;fitFont(x,fav.h.name,600,'Fredoka',90,560);x.fillText(fav.h.name,430,965);x.font='500 36px Jost';x.fillStyle=P.muted;x.fillText(plural(fav.n,'ride')+' together',430,1025);}
+  else{x.font='500 40px Jost';x.fillStyle=P.muted;x.fillText('No rides this year yet',W/2,950);}
+  const mood=counts(L,r=>r.mood).filter(m=>moodOf(m.v))[0],place=counts(L,r=>r.place)[0],buddy=counts(L,r=>r.buddies)[0],did=counts(L,r=>r.did)[0];
+  const lines=[place?['Favorite place',place.v]:null,buddy?['Rode most with',buddy.v]:null,did?['Did most',did.v]:null].filter(Boolean);
+  x.textAlign='left';let y=1200;
+  if(mood){const mi=await loadImg(svgUrl(moodSVG(mood.v)));x.drawImage(mi,90,y-70,100,100);x.fillStyle=P.ink;x.font='600 52px Fredoka';x.fillText('Horses were mostly '+moodOf(mood.v)[1].toLowerCase(),210,y);y+=90;}
+  for(const [k,v] of lines){x.fillStyle=P.accent;x.font='600 32px Jost';x.fillText(k.toUpperCase(),90,y);x.fillStyle=P.ink;fitFont(x,v,600,'Fredoka',52,900);x.fillText(v,90,y+56);y+=110;}
+  const mc=[...Array(12)].map((_,m)=>L.filter(r=>r.date.slice(5,7)===pad(m+1)).length),mx=Math.max(1,...mc),by=1760,bh=170;
+  mc.forEach((n,m)=>{const bx=90+m*77,h=n?Math.max(10,n/mx*bh):6;rr(x,bx,by-h,56,h,12);x.fillStyle=n?P.accent:'rgba(255,255,255,.7)';x.fill();x.fillStyle=P.ink;x.font='500 24px Jost';x.textAlign='center';x.fillText(MON[m][0],bx+28,by+36);});
+  const aw=Object.entries(DB.awards||{}).filter(([k,d])=>d.startsWith(year)).length;
+  x.textAlign='center';x.fillStyle=P.ink;x.font='600 34px Fredoka';x.fillText(aw?`+ ${plural(aw,'rosette')} won this year`:'Made with Pony Pages',W/2,1870);
+  return c;
+}
+const IMG_CACHE={};
+function keepSig(kind,id){return kind+':'+id+':'+(DB.settings.theme||'')+':'+riderName()+':'+JSON.stringify(id&&DB.horses[id]||'')+':'+Object.keys(DB.rides).length+':'+Object.values(DB.rides).map(r=>r.updatedAt).sort().pop()+':'+(PHOTOS[(DB.horses[id]||{}).photo]||'').length;}
+async function imgFor(kind,id){const k=keepSig(kind,id);if(IMG_CACHE[k])return IMG_CACHE[k];const c=kind==='card'?await drawHorseCard(DB.horses[id]):await drawPoster(id);const u=c.toDataURL('image/png');IMG_CACHE[k]=u;return u;}
+function fillImages(){document.querySelectorAll('[data-render]').forEach(async el=>{const [kind,id]=el.dataset.render.split('|');try{const u=await imgFor(kind,id);if(el.isConnected){el.src=u;el.classList.remove('ph');}}catch(e){}});}
+function keepView(){
+  const L=rides(),hs=horses(),aw=DB.awards||{};
+  const ros=AWARDS.map(([k,l,t,col,fn])=>{const won=aw[k],[c,g]=fn(L),p=Math.min(1,c/g);return `<div class="ros ${won?'':'locked'}">${rosetteSVG(col,t)}<b>${esc(l)}</b>${won?`<span class="hint">${esc(toDate(won).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}))}</span>`:`<span class="prog" aria-label="${Math.round(p*100)} percent"><i style="width:${Math.round(p*100)}%"></i></span>`}</div>`;}).join('');
+  const years=[...new Set(L.map(r=>r.date.slice(0,4)))].sort().reverse();
+  const yr=S.keepYear&&years.includes(S.keepYear)?S.keepYear:(years[0]||String(new Date().getFullYear()));
+  let h=`<section class="card"><h2 style="margin:0">Rosettes</h2><p class="hint">Won for rides, hours and firsts. ${Object.keys(aw).length} of ${AWARDS.length} so far.</p><div class="rosettes">${ros}</div></section>`;
+  h+=`<section class="card"><h2 style="margin:0">Horse cards</h2><p class="hint">A collector’s card for every horse, with its photo, your rides together and its usual mood. Save it as a picture or print them.</p>`;
+  if(!hs.length)h+=`<p class="hint">Add a horse first.</p>`;
+  else h+=`<div class="kgrid">${hs.map(x=>`<div class="kcard"><img class="kimg ph" data-render="card|${x.id}" alt="Horse card for ${esc(x.name)}"><button class="btn small" data-act="save-card" data-id="${x.id}">Save picture</button></div>`).join('')}</div><div class="btns"><button class="btn primary" data-act="print-cards">Print all cards</button><span class="hint">9 cards a page, trading-card size.</span></div>`;
+  h+=`</section>`;
+  h+=`<section class="card"><h2 style="margin:0">My riding year</h2><p class="hint">Your year on one page: rides, hours, favorite horse and more. Perfect to share with grandma or put on the wall.</p>
+    ${years.length>1?`<div class="yrs">${years.map(y=>`<button class="chip" data-kyear="${y}" aria-pressed="${y===yr}">${y}</button>`).join('')}</div>`:''}
+    ${L.length?`<img class="poster ph" data-render="poster|${yr}" alt="Riding year ${yr}"><div class="btns"><button class="btn primary" data-act="save-poster" data-id="${yr}">Save picture</button><button class="btn" data-act="print-poster" data-id="${yr}">Print</button></div>`:'<p class="hint">Your year appears here after your first ride.</p>'}</section>`;
+  if(S.toast)h=`<p class="toast" role="status">${esc(S.toast)}</p>`+h;
+  return h;
+}
+const paperKey=()=>DB.settings.paper||(/^en-(US|CA)$/i.test(navigator.language||'')?'letter':'a4');
+const PAPER={letter:{w:215.9,h:279.4,label:'Letter'},a4:{w:210,h:297,label:'A4'}};
+async function printImgs(kind,arg){
+  const p=PAPER[paperKey()]||PAPER.letter,pr=document.getElementById('print');let html='';
+  if(kind==='cards'){const hs=horses(),urls=[];for(const h of hs)urls.push(await imgFor('card',h.id));for(let i=0;i<urls.length;i+=9)html+=`<div class="sheet" style="width:${p.w}mm;height:${p.h}mm"><div class="cards">${urls.slice(i,i+9).map(u=>`<img src="${u}" alt="">`).join('')}</div></div>`;}
+  else{const u=await imgFor('poster',arg);html=`<div class="sheet" style="width:${p.w}mm;height:${p.h}mm"><img class="pst" src="${u}" alt=""></div>`;}
+  pr.innerHTML=`<style>@page{size:${p.w}mm ${p.h}mm;margin:0}</style>`+html;
+  await Promise.all([...pr.querySelectorAll('img')].map(i=>i.decode?i.decode().catch(()=>{}):0));
+  try{window.print();}catch(e){}
+}
+window.addEventListener('afterprint',()=>{const pr=document.getElementById('print');if(pr)pr.innerHTML='';});
+async function saveFile(name,data,mime){
+  const file=new File([data],name,{type:mime});
+  if(navigator.canShare&&navigator.share&&/iPhone|iPad|Android/i.test(navigator.userAgent||'')){
+    try{if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:name});return 'saved';}}catch(e){if(e&&e.name==='AbortError')return 'declined';}
+  }
+  const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+  return 'saved';
+}
+const slug=s=>String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+async function savePicture(kind,id){
+  try{const u=await imgFor(kind,id),b=await (await fetch(u)).blob();
+    const name=kind==='card'?`${slug(DB.horses[id].name)||'horse'}-card.png`:`${slug(riderName())?slug(riderName())+'-':''}riding-year-${id}.png`;
+    const r=await saveFile(name,b,'image/png');S.toast=r==='declined'?'':'Picture saved.';}
+  catch(e){S.toast='';S.msg='The picture could not be made. Try again.';}
+  render();
+}
+
+/* ---------- backup ---------- */
+const BK_FORMAT='pony-pages-backup';
+function backupJSON(){
+  const used=new Set([...Object.values(DB.horses).map(h=>h.photo),...Object.values(DB.rides).map(r=>r.photo)].filter(Boolean));
+  const ph={};for(const id of used)if(PHOTOS[id])ph[id]=PHOTOS[id];
+  return JSON.stringify({format:BK_FORMAT,schema:1,exportedAt:new Date().toISOString(),data:DB,photos:ph});
+}
+function readBackupFile(text){
+  let d;try{d=JSON.parse(text);}catch(e){throw new Error('This file isn’t a Pony Pages backup. Choose the .json backup file.');}
+  if(!d||d.format!==BK_FORMAT||!d.data||!d.data.rides||!d.data.horses)throw new Error('This file isn’t a Pony Pages backup. Choose the .json backup file.');
+  if(d.schema>1)throw new Error('This backup was made by a newer version of Pony Pages. Update the diary first.');
+  const R=Object.keys(d.data.rides),Hs=Object.keys(d.data.horses);
+  return {data:d.data,photos:d.photos||{},exportedAt:d.exportedAt,rides:R.length,horses:Hs.length,newRides:R.filter(k=>!DB.rides[k]).length,newHorses:Hs.filter(k=>!DB.horses[k]).length,rider:(d.data.settings||{}).rider||''};
+}
+async function replaceWithBackup(p){await photoClear();DB=Object.assign(fresh(),JSON.parse(JSON.stringify(p.data)));for(const [k,v] of Object.entries(p.photos))await photoPut(k,v);save();}
+async function addFromBackup(p){let n=0;for(const [k,h] of Object.entries(p.data.horses))if(!DB.horses[k]){DB.horses[k]=h;if(h.photo&&p.photos[h.photo])await photoPut(h.photo,p.photos[h.photo]);}
+  for(const [k,r] of Object.entries(p.data.rides))if(!DB.rides[k]){DB.rides[k]=r;n++;if(r.photo&&p.photos[r.photo])await photoPut(r.photo,p.photos[r.photo]);}
+  save();checkAwards(true);return n;}
+function daysSinceBackup(){const b=DB.settings.lastBackupAt;return b?Math.floor((Date.now()-new Date(b).getTime())/864e5):null;}
+
+/* ---------- look: text size and theme ---------- */
+const VERSION='1.0.0';
+const TEXT_SIZES=[['auto','Automatic',null],['m','Normal',17],['l','Large',20],['xl','Extra large',23]];
+const THEMES={
+  pink:{label:'Pink',sw:['#FFF5F8','#D9558F','#B9A3E3'],print:{a:'#F9B9D3',b:'#D9C8F5',accent:'#D9558F',soft:'#FDE4EF',ink:'#3D2B48',muted:'#86708C'}},
+  lavender:{label:'Lavender',sw:['#F7F4FF','#7E5FD0','#F5A3C0'],print:{a:'#CDBDF6',b:'#F8C9DD',accent:'#7E5FD0',soft:'#EEE8FF',ink:'#33294A',muted:'#7C7092'},
+    light:{bg:'#F7F4FF',surface:'#FFFFFF',ink:'#33294A',muted:'#7C7092',line:'#E7E0FA',['line-strong']:'#CFC3F2',accent:'#7E5FD0',['accent-ink']:'#FFFFFF',['accent-soft']:'#EEE8FF',['accent-2']:'#F5A3C0'},
+    dark:{bg:'#1B1726',surface:'#262035',ink:'#EEE9FA',muted:'#B3A8CC',line:'#352D48',['line-strong']:'#4E4466',accent:'#B9A3F5',['accent-ink']:'#1E1830',['accent-soft']:'#352B52',['accent-2']:'#E58AB0'}},
+  meadow:{label:'Meadow',sw:['#F2FBF6','#2E9370','#FFD27A'],print:{a:'#A8E3CC',b:'#FFE3A6',accent:'#2E9370',soft:'#DFF4EA',ink:'#24372F',muted:'#66807A'},
+    light:{bg:'#F2FBF6',surface:'#FFFFFF',ink:'#24372F',muted:'#66807A',line:'#D7EFE3',['line-strong']:'#B4DECA',accent:'#2E9370',['accent-ink']:'#FFFFFF',['accent-soft']:'#DFF4EA',['accent-2']:'#FFD27A'},
+    dark:{bg:'#14201B',surface:'#1D2C26',ink:'#E6F4EC',muted:'#A2BFB3',line:'#2A3E36',['line-strong']:'#3F5A4E',accent:'#6FD3AA',['accent-ink']:'#10221A',['accent-soft']:'#24443A',['accent-2']:'#E8C06A'}}
+};
+const TOKENS=['bg','surface','ink','muted','line','line-strong','accent','accent-ink','accent-soft','accent-2'];
+function hostDark(){const t=document.documentElement.getAttribute('data-theme');if(t)return t==='dark';return !!(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches);}
+function applyLook(){
+  const st=document.documentElement.style,set=DB.settings||{};
+  const ts=TEXT_SIZES.find(x=>x[0]===(set.textSize||'auto'))||TEXT_SIZES[0];
+  st.fontSize=ts[2]?ts[2]+'px':'';
+  TOKENS.forEach(k=>st.removeProperty('--'+k));st.removeProperty('color-scheme');
+  const th=THEMES[set.theme]||THEMES.pink;
+  if(th.light){const t=hostDark()?th.dark:th.light;TOKENS.forEach(k=>st.setProperty('--'+k,t[k]));st.colorScheme=hostDark()?'dark':'light';}
+}
+if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{applyLook();});
+new MutationObserver(applyLook).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* ---------- keeping the diary safe on a phone ---------- */
+const UA=navigator.userAgent||'';
+const isIOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const isAndroid=/Android/i.test(UA);
+const isStandalone=navigator.standalone===true||!!(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+const needsA2HS=()=>(isIOS||isAndroid)&&!isStandalone&&!(DB.settings||{}).noA2HSWarn;
+const hasCode=()=>typeof ACCESS_HASH!=='undefined';
+function a2hsList(){
+  if(isIOS)return `<ol><li>Tap <b>⋯</b> at the bottom right, then <b>Share</b>. On older iPhones, tap the Share icon <b>⬆︎</b> at the bottom instead.</li><li>Scroll down and tap <b>Add to Home Screen</b>.</li><li>Tap <b>Add</b>.</li></ol>`;
+  return `<ol><li>Tap <b>⋮</b> at the top right.</li><li>Tap <b>Add to Home screen</b> or <b>Install app</b>.</li><li>Tap <b>Add</b> or <b>Install</b>.</li></ol>`;
+}
+function a2hsGate(){
+  return `<section class="a2hs gate" role="alert"><div class="rtag">! Grown-ups, before you start</div><h2>Add the diary to the Home Screen</h2>
+    <p>The diary is open in a browser tab right now. Phones can erase what a website stores${isIOS?', and Safari does it after 7 days without a visit':' when it isn’t visited for a while'}. An icon on the Home Screen keeps the rides and photos safe.</p>
+    ${a2hsList()}
+    <p>${isIOS?`Then close this tab and open the diary from the new icon.${hasCode()?' Enter your access code there once more.':''} Use only the icon from then on, because it keeps its own diary, separate from this tab.`:'Then open the diary from the new icon.'}</p>
+    <div class="btns"><button class="btn small" data-act="a2hs-later">I’ll do it later</button></div></section>`;
+}
+function a2hsBar(){
+  if(!needsA2HS())return '';
+  const n=Object.keys(DB.rides).length,how=`<details><summary>How to add it</summary>${a2hsList()}</details>`;
+  if(!n)return `<div class="a2hs" role="alert"><b class="t">Not on the Home Screen yet</b><p>Diaries kept in a browser tab can be erased by the phone${isIOS?'. Safari does it after 7 days without a visit':''}. Add Pony Pages to the Home Screen${isIOS?' and use it from there':''}.</p>${how}</div>`;
+  if(isIOS)return `<div class="a2hs" role="alert"><b class="t">Your ${plural(n,'ride')} are only in this Safari tab</b><p>Safari can erase them after 7 days without a visit. To keep them safe:</p><ol><li>Save a backup file in Settings.</li><li>Add Pony Pages to the Home Screen.</li><li>Open the new icon${hasCode()?', enter your code':''} and open the backup file in Settings.</li></ol><div class="btns"><button class="btn primary small" data-act="open-settings">Go to backup</button></div>${how}</div>`;
+  return `<div class="a2hs" role="alert"><b class="t">Your diary is in a browser tab</b><p>Phones can erase what a website stores when it isn’t visited for a while. Add Pony Pages to the Home Screen to keep your ${plural(n,'ride')} safe.</p>${how}</div>`;
+}
+function backupNudge(){
+  const n=Object.keys(DB.rides).length;if(n<5)return '';
+  const d=daysSinceBackup();if(d!==null&&d<=21)return '';
+  return `<div class="notice"><b>${d===null?'No backup yet':`Last backup was ${d} days ago`}</b><p>Grown-ups: a backup file is the only way to get the diary and photos back if this phone is lost or replaced.</p><div class="btns"><button class="btn primary small" data-act="open-settings">Save a backup</button></div></div>`;
+}
+
+/* ---------- settings ---------- */
+function settingsView(){
+  const set=DB.settings||{},th=THEMES[set.theme]?set.theme:'pink',d=daysSinceBackup(),bk=S.bk||{},pk=paperKey();
+  const nR=Object.keys(DB.rides).length,nH=Object.keys(DB.horses).length;
+  let h=`<button class="back" data-act="close-settings">‹ Back to the diary</button><h2>Settings</h2>
+  <section class="card"><label class="field"><span class="lbl">Rider’s name</span><input type="text" id="s-rider" value="${esc(set.rider||'')}" placeholder="Mia" autocomplete="off"></label><p class="hint">Shown at the top and on the horse cards and the riding year.</p>${S.msg&&S.msgFor==='rider'?`<p class="msg">${esc(S.msg)}</p>`:''}</section>
+  <section class="card"><div class="lbl">Colors</div><div class="themes">${Object.entries(THEMES).map(([k,t])=>`<button type="button" data-theme-pick="${k}" aria-pressed="${th===k}"><span class="sw3">${t.sw.map(c=>`<i style="background:${c}"></i>`).join('')}</span>${t.label}</button>`).join('')}</div></section>
+  <section class="card"><div class="lbl">Text size</div><div class="tsizes" role="group" aria-label="Text size">${TEXT_SIZES.map(([k,l])=>`<button type="button" data-tsize="${k}" aria-pressed="${(set.textSize||'auto')===k}">${l}</button>`).join('')}</div><p class="hint">Automatic follows the phone’s text size where the browser allows it.</p></section>
+  <section class="card"><div class="lbl">Paper for printing</div><div class="tsizes" role="group" aria-label="Paper size">${Object.entries(PAPER).map(([k,p])=>`<button type="button" data-paper="${k}" aria-pressed="${pk===k}">${p.label}</button>`).join('')}</div></section>
+  <section class="card"><h3>Backup file <small class="muted" style="font-family:var(--f-body);font-weight:400;font-size:13px">for grown-ups</small></h3>
+    <p style="margin:0;font-size:15px">The diary lives only on this device. A backup file keeps all rides and photos safe, and moves the diary to a new phone or tablet.</p>
+    <p class="hint">Last backup: <b>${d===null?'never':d===0?'today':d===1?'yesterday':d+' days ago'}</b>. ${nR} rides, ${nH} horses.</p>
+    <div class="btns"><button class="btn primary" data-act="bk-save" ${nR||nH?'':'disabled'}>Save a backup file</button></div>
+    ${bk.msg?`<p class="${bk.err?'msg':'toast'}" role="status">${esc(bk.msg)}</p>`:''}`;
+  if(bk.preview){const p=bk.preview;
+    h+=`<div class="notice"><p>This backup${p.rider?` of <b>${esc(possessive(p.rider))}</b> diary`:''} has <b>${p.rides}</b> rides and <b>${p.horses}</b> horses${p.exportedAt?`, saved ${esc(new Date(p.exportedAt).toLocaleDateString('en-US'))}`:''}.</p>
+      ${bk.confirm?`<p><b>Replace the whole diary?</b> The ${nR} rides and ${nH} horses on this device are replaced by the backup.</p><div class="btns"><button class="btn danger" data-act="bk-replace-yes">Replace diary</button><button class="btn" data-act="bk-replace-no">Keep my diary</button></div>`
+      :`<div class="opt"><button class="btn primary small" data-act="bk-replace">Replace diary</button><span>Use the diary exactly as it is in the file. For a new phone.</span></div>
+      <div class="opt"><button class="btn small" data-act="bk-add" ${p.newRides||p.newHorses?'':'disabled'}>Add ${plural(p.newRides,'ride')}</button><span>${p.newRides||p.newHorses?'Adds the rides and horses this device doesn’t have yet.':'This device already has everything in the file.'}</span></div>
+      <div class="btns"><button class="btn small" data-act="bk-cancel">Cancel</button></div>`}</div>`;
+  } else h+=`<div class="btns"><label class="btn small" for="bk-file">Open a backup file</label><input id="bk-file" class="vh" type="file" accept=".json,application/json"></div>`;
+  h+=`</section>
+  <section class="card"><div class="lbl">Keep the diary safe</div><p class="hint" style="font-size:0.8529rem">No account, no server: the diary and photos stay on this device. Add it to the Home Screen, and save a backup file now and then.</p>${isIOS||isAndroid?`<details><summary>How to add it to the Home Screen</summary>${a2hsList()}</details>`:''}${photoErr?'<p class="msg">This browser won’t keep photos. Turn off private browsing, or use Safari or Chrome.</p>':''}</section>
+  <section class="card"><div class="lbl">About</div>
+    <p class="hint" style="font-size:0.8235rem">Pony Pages ${VERSION}, made by Silent Tools. No account, no tracking, no ads. The diary is stored only in this browser on this device.</p>
+    <p class="hint" style="font-size:0.8235rem">It’s yours to use for as long as it works in your browser, with no expiry. I look after it actively for at least 12 months after your purchase, and usually much longer. <a href="../terms.html" target="_blank" rel="noopener">Terms and privacy</a></p>
+    ${S.confirm==='reset'?`<div class="notice"><b>Delete the whole diary?</b><p>All ${nR} rides, ${nH} horses and their photos on this device. This can’t be undone.</p><div class="btns"><button class="btn danger" data-act="reset-yes">Delete everything</button><button class="btn" data-act="confirm-no">Keep it</button></div></div>`:`<div class="btns"><button class="btn small" data-act="reset">Start over</button></div>`}</section>`;
+  return h;
+}
+
+/* ---------- access code ---------- */
+const ACCESS_HASH='4d4db6c5b0a3f89a24fe1c5ea5422c6c309e652754e6385ec7b4ce1c76cd26db';
+let unlocked=false;try{unlocked=localStorage.getItem('pp.access')==='1';}catch(e){}
+S.locked=!unlocked;S.lockMsg='';S.lockBusy=false;
+async function sha256hex(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+async function tryUnlock(raw){
+  const c=String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(!c){S.lockMsg='Enter the access code from your purchase.';render();return;}
+  S.lockBusy=true;render();
+  let ok=false;try{ok=(await sha256hex(c))===ACCESS_HASH;}catch(e){S.lockBusy=false;S.lockMsg='This browser can’t check the code. Open the link in Safari or Chrome.';render();return;}
+  S.lockBusy=false;
+  if(!ok){S.lockMsg='That code doesn’t match. Check it in the PDF from your purchase. Letters and numbers only, spaces don’t matter.';render();return;}
+  try{localStorage.setItem('pp.access','1');}catch(e){}
+  S.locked=false;S.lockMsg='';render();
+}
+function lockView(){
+  return `<section class="card lock">
+    <h2 style="margin:0">Welcome to Pony Pages</h2>
+    <p style="margin:0">Grown-ups: enter the access code from the PDF you received with your purchase. You only need to do this once on each device.</p>
+    <form id="unlock-form" class="addrow" autocomplete="off">
+      <input id="unlock-code" type="text" autocapitalize="characters" spellcheck="false" placeholder="Access code" aria-label="Access code">
+      <button class="btn primary" type="submit" ${S.lockBusy?'disabled':''}>${S.lockBusy?'Checking…':'Unlock'}</button>
+    </form>
+    ${S.lockMsg?`<p class="msg" role="alert">${esc(S.lockMsg)}</p>`:''}
+  </section>`;
+}
+document.addEventListener('submit',ev=>{if(ev.target.id==='unlock-form'){ev.preventDefault();tryUnlock(document.getElementById('unlock-code').value);}});
+
+/* ---------- render ---------- */
+function render(){
+  applyLook();renderTop();
+  const v=document.getElementById('view'),fab=document.getElementById('fabhost');
+  if(S.locked){document.getElementById('tabs').hidden=true;document.getElementById('setbtn').hidden=true;v.innerHTML=lockView();fab.innerHTML='';return;}
+  document.getElementById('tabs').hidden=false;
+  document.getElementById('setbtn').hidden=S.screen==='settings';
+  if(needsA2HS()&&!Object.keys(DB.rides).length&&!Object.keys(DB.horses).length&&!S.a2hsLater&&!(DB.settings||{}).a2hsSeen&&!S.screen){v.innerHTML=a2hsGate();fab.innerHTML='';return;}
+  let html='';
+  if(S.screen==='settings')html=settingsView();
+  else if(S.screen==='form'&&S.form)html=rideForm();
+  else if(S.screen==='hform'&&S.hform)html=horseForm();
+  else if(S.screen==='ride')html=rideDetail();
+  else if(S.screen==='horse')html=horseDetail();
+  else{
+    const top=a2hsBar()+(S.tab==='rides'?backupNudge():'')+(S.toast&&S.tab!=='keep'?`<p class="toast" role="status">${esc(S.toast)}</p>`:'')+(S.msg&&S.tab==='keep'?`<p class="msg">${esc(S.msg)}</p>`:'');
+    html=top+(S.tab==='horses'?horsesView():S.tab==='stats'?statsView():S.tab==='keep'?keepView():ridesView());
+  }
+  if(!storageOk)html='<p class="msg">This browser would not save the diary. Turn off private browsing.</p>'+html;
+  v.innerHTML=html;
+  const showFab=!S.screen&&(Object.keys(DB.rides).length||Object.keys(DB.horses).length);
+  fab.innerHTML=showFab?'<button class="fab" data-act="new-ride">+ New ride</button>':'';
+  if(S.tab==='keep'||S.screen==='horse')fillImages();
+}
+const view=document.getElementById('view');
+function go(screen){S.screen=screen;S.msg='';S.confirm=null;render();window.scrollTo(0,0);}
+function startRide(hid){S.form=newForm(null,hid);S.toast='';if(!Object.keys(DB.horses).length){S.hform=newHForm(null,'ride');go('hform');return;}go('form');}
+async function onPhoto(input,target){
+  const f=input.files&&input.files[0];if(!f)return;
+  try{const d=await shrinkPhoto(f,1200);target.photoData=d;target.photoGone=false;S.msg='';}
+  catch(e){S.msg='This photo couldn’t be opened. Try another photo, or a JPG or PNG.';}
+  render();
+}
+document.body.addEventListener('click',async ev=>{
+  const b=ev.target.closest('button');if(!b)return;const d=b.dataset,a=d.act;
+  if(d.tab){S.tab=d.tab;S.screen='';S.toast='';S.msg='';S.confirm=null;render();window.scrollTo(0,0);return;}
+  if(a==='party-x'){document.getElementById('overlay').innerHTML='';return;}
+  if(a==='open-settings'){S.bk={};go('settings');return;}
+  if(a==='close-settings'){S.screen='';S.msg='';render();window.scrollTo(0,0);return;}
+  if(a==='a2hs-later'){S.a2hsLater=true;DB.settings.a2hsSeen=true;save();render();return;}
+  if(a==='new-ride'){startRide();return;}
+  if(d.ride){S.rideId=d.ride;S.toast='';go('ride');return;}
+  if(d.horse){S.horseId=d.horse;S.toast='';go('horse');return;}
+  if(a==='back'){S.screen='';S.confirm=null;S.toast='';render();window.scrollTo(0,0);return;}
+  if(a==='confirm-no'){S.confirm=null;render();return;}
+  /* ride form */
+  if(S.screen==='form'&&S.form){const f=S.form;
+    if(d.fh){readForm();f.horseId=d.fh;S.msg='';render();return;}
+    if(d.min){readForm();f.minutes=d.min;render();return;}
+    if(d.mood){readForm();f.mood=f.mood===d.mood?'':d.mood;render();return;}
+    if(d.pick){readForm();const v=d.v;if(d.pick==='buddies'){const i=f.buddies.findIndex(x=>norm(x)===norm(v));i>=0?f.buddies.splice(i,1):f.buddies.push(v);}else f[d.pick]=norm(f[d.pick])===norm(v)?'':v;render();return;}
+    if(d.addpick){addPick(d.addpick);return;}
+    if(d.did){readForm();const i=f.did.indexOf(d.did);i>=0?f.did.splice(i,1):f.did.push(d.did);render();return;}
+    if(a==='form-newhorse'){readForm();S.hform=newHForm(null,'ride');go('hform');return;}
+    if(a==='form-photo-x'){readForm();f.photoData=null;f.photoGone=true;render();return;}
+    if(a==='form-save'){b.disabled=true;await saveRide();return;}
+    if(a==='form-cancel'){S.form=null;S.msg='';S.screen=f.id?'ride':'';render();window.scrollTo(0,0);return;}
+  }
+  /* horse form */
+  if(S.screen==='hform'&&S.hform){const f=S.hform;
+    if(d.coat){readHForm();f.coat=d.coat;render();return;}
+    if(a==='hform-blaze'){readHForm();f.blaze=!f.blaze;render();return;}
+    if(a==='hform-photo-x'){readHForm();f.photoData=null;f.photoGone=true;render();return;}
+    if(a==='hform-save'){b.disabled=true;await saveHorse();return;}
+    if(a==='horse-del'){readHForm();S.confirm='horse';render();return;}
+    if(a==='horse-del-yes'){await deleteHorse(f.id);S.hform=null;S.confirm=null;S.screen='';S.tab='horses';S.toast='Horse deleted.';render();return;}
+    if(a==='hform-cancel'){const r=f.returnTo;S.hform=null;S.msg='';S.confirm=null;S.screen=r==='ride'&&S.form?'form':(f.id?'horse':'');render();window.scrollTo(0,0);return;}
+  }
+  if(a==='ride-edit'){S.form=newForm(DB.rides[S.rideId]);go('form');return;}
+  if(a==='ride-del'){S.confirm='ride';render();return;}
+  if(a==='ride-del-yes'){const r=DB.rides[S.rideId];if(r){if(r.photo)await photoDel(r.photo);delete DB.rides[S.rideId];save();}S.confirm=null;S.screen='';S.toast='Ride deleted.';render();return;}
+  if(a==='horse-new'){S.hform=newHForm(null,'');go('hform');return;}
+  if(a==='horse-edit'){S.hform=newHForm(DB.horses[d.id],'');go('hform');return;}
+  if(a==='ride-with'){startRide(d.id);return;}
+  if(a==='horse-card'){S.tab='keep';S.screen='';render();window.scrollTo(0,0);return;}
+  if(d.year){S.statsYear=d.year;render();return;}
+  if(d.kyear){S.keepYear=d.kyear;render();return;}
+  if(a==='save-card'){savePicture('card',d.id);return;}
+  if(a==='save-poster'){savePicture('poster',d.id);return;}
+  if(a==='print-cards'){printImgs('cards');return;}
+  if(a==='print-poster'){printImgs('poster',d.id);return;}
+  if(d.themePick){DB.settings.theme=d.themePick;save();render();return;}
+  if(d.tsize){DB.settings.textSize=d.tsize;save();render();return;}
+  if(d.paper){DB.settings.paper=d.paper;save();render();return;}
+  if(a==='bk-save'){try{const r=await saveFile(`${slug(riderName())?slug(riderName())+'-':''}pony-pages-backup-${todayStr()}.json`,backupJSON(),'application/json');if(r==='declined')S.bk={msg:'Nothing was saved.'};else{DB.settings.lastBackupAt=new Date().toISOString();save();S.bk={msg:'Backup file is ready. Keep it somewhere safe, like iCloud Drive, Google Drive or your email.'};}}catch(e){S.bk={msg:'The file could not be saved. Try again.',err:true};}render();return;}
+  if(a==='bk-cancel'){S.bk={};render();return;}
+  if(a==='bk-replace'){S.bk.confirm=true;render();return;}
+  if(a==='bk-replace-no'){S.bk.confirm=false;render();return;}
+  if(a==='bk-replace-yes'){await replaceWithBackup(S.bk.preview);S.bk={msg:'Done. The diary now matches the backup file.'};render();return;}
+  if(a==='bk-add'){const n=await addFromBackup(S.bk.preview);S.bk={msg:`Added ${plural(n,'ride')}.`};render();return;}
+  if(a==='reset'){S.confirm='reset';render();return;}
+  if(a==='reset-yes'){await photoClear();const keep={theme:DB.settings.theme,textSize:DB.settings.textSize,a2hsSeen:DB.settings.a2hsSeen};DB=fresh();DB.settings=keep;save();S.confirm=null;S.screen='';S.tab='rides';render();return;}
+});
+view.addEventListener('input',ev=>{
+  const t=ev.target;
+  if(t.id==='f-text'&&S.form){S.form.text=t.value;const c=document.getElementById('f-count');if(c){c.textContent=t.value.length+' / '+LIMITS.text;c.classList.toggle('over',t.value.length>LIMITS.text);}}
+  if(t.id==='f-min'&&S.form){S.form.minutes=t.value;document.querySelectorAll('[data-min]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.min===t.value)));}
+  if(t.id==='s-rider'){const v=tidy(t.value);if(v.length>LIMITS.rider){S.msg=`Use up to ${LIMITS.rider} letters.`;S.msgFor='rider';}else{S.msg='';DB.settings.rider=v;save();renderTop();}
+    const m=t.closest('.card').querySelector('.msg');if(S.msg&&!m)t.closest('.card').insertAdjacentHTML('beforeend',`<p class="msg">${esc(S.msg)}</p>`);else if(!S.msg&&m)m.remove();}
+});
+view.addEventListener('keydown',ev=>{const t=ev.target;if(t.id&&t.id.startsWith('new-')&&ev.key==='Enter'){ev.preventDefault();addPick(t.id.slice(4));}});
+view.addEventListener('change',ev=>{
+  const t=ev.target;
+  if(t.id==='f-photo'&&S.form){readForm();onPhoto(t,S.form);return;}
+  if(t.id==='h-photo'&&S.hform){readHForm();onPhoto(t,S.hform);return;}
+  if(t.id==='bk-file'){const f=t.files&&t.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{S.bk={preview:readBackupFile(String(rd.result))};}catch(e){S.bk={msg:e.message,err:true};}render();};rd.onerror=()=>{S.bk={msg:'The file could not be read. Try choosing it again.',err:true};render();};rd.readAsText(f);return;}
+});
+
+/* test hooks for the dev build only */
+checkAwards(true);save();render();photoLoadAll();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(S.tab==='keep')render();});
+})();
+</script>
+
+</body>
+</html>
