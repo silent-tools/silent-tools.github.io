@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pony Pages · Gift card</title>
+<meta name="description" content="Make a printable gift card for a Pony Pages riding diary.">
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon-192.png">
+<style>
+:root{--bg:#FFF5F8;--surface:#FFFFFF;--ink:#3D2B48;--muted:#86708C;--line:#F6DDE8;--line-strong:#EBC3D5;--accent:#D9558F;--soft:#FDE4EF;--lav:#E9E1FA}
+@media (prefers-color-scheme:dark){:root{--bg:#1F1724;--surface:#2B2131;--ink:#F8EAF2;--muted:#BBA4BA;--line:#3B2E42;--line-strong:#574560;--accent:#F28DB8;--soft:#46293A}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Jost,system-ui,sans-serif;font-size:17px;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px;display:grid;gap:18px}
+h1{font-family:Fredoka,sans-serif;font-weight:600;font-size:34px;line-height:1.05;margin:0}
+.k{font-family:Fredoka;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.lede{margin:0;color:var(--muted)}
+.form{background:var(--surface);border:1.5px solid var(--line);border-radius:22px;padding:16px;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+label{display:grid;gap:4px;font-family:Fredoka;font-weight:600;font-size:15px}
+label small{font-family:Jost;font-weight:400;color:var(--muted)}
+input,select{font:inherit;font-family:Jost,system-ui,sans-serif;font-weight:400;color:inherit;width:100%;border:1.5px solid var(--line-strong);border-radius:14px;padding:10px 12px;background:var(--bg);min-width:0}
+.coats{display:flex;flex-wrap:wrap;gap:8px}
+.coats button{width:40px;height:40px;border-radius:50%;border:3px solid transparent;cursor:pointer;padding:0}
+.coats button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--surface)}
+.msg{color:#C2364B;font-weight:600;margin:0}
+.ok{color:#2E9370;font-weight:600;margin:0}
+.btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-family:Fredoka;font-weight:600;border:1.5px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:10px 20px;min-height:46px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+.hint{font-size:14.5px;color:var(--muted);margin:0}
+.stage{overflow:hidden;border-radius:10px;box-shadow:0 14px 34px rgba(120,40,80,.18)}
+.scale{transform-origin:0 0}
+/* the printed sheet: A4 landscape, folded in half */
+.sheet{width:var(--pw,279.4mm);height:var(--ph,215.9mm);background:#fff;display:grid;grid-template-columns:1fr 1fr;position:relative;color:#3D2B48;font-family:Jost,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet::after{content:"";position:absolute;left:50%;top:6mm;bottom:6mm;border-left:.35mm dashed #E3C9D6}
+.half{position:relative;overflow:hidden;padding:14mm 13mm;display:flex;flex-direction:column}
+.back{background:#FFFDFE}
+.front{background:#FFF5F8;background-image:radial-gradient(circle at 3mm 3mm,#FBD9E7 .8mm,transparent .9mm);background-size:10mm 10mm;align-items:center;text-align:center;justify-content:center;gap:4mm}
+.pony{width:78mm;height:78mm;border-radius:50%;overflow:hidden;border:2.5mm solid #fff;box-shadow:0 2mm 6mm rgba(120,40,80,.18)}
+.pony svg{width:100%;height:100%;display:block}
+.fk{font-family:Fredoka;font-weight:600;font-size:11pt;letter-spacing:.16em;text-transform:uppercase;color:#D9558F}
+.for{font-family:Caveat;font-weight:600;font-size:26pt;color:#86708C;line-height:1;margin-top:2mm}
+.name{font-family:Fredoka;font-weight:600;font-size:40pt;line-height:1;color:#3D2B48;max-width:120mm;overflow-wrap:anywhere}
+.name.long{font-size:30pt}
+.from{font-family:Caveat;font-weight:600;font-size:20pt;color:#D9558F;line-height:1.1;max-width:115mm}
+.blank{display:inline-block;width:80mm;border-bottom:.5mm solid #C9A8B9;height:12mm}
+.bh{font-family:Fredoka;font-weight:600;font-size:18pt;margin:0 0 4mm;line-height:1.1}
+.bnote{font-size:9.5pt;color:#86708C;margin:0 0 4mm}
+.steps{display:grid;gap:3.5mm;font-size:10.5pt}
+.step{display:grid;grid-template-columns:7mm 1fr;gap:3mm;align-items:start}
+.num{width:7mm;height:7mm;border-radius:50%;background:#D9558F;color:#fff;font-family:Fredoka;font-weight:600;font-size:11pt;display:flex;align-items:center;justify-content:center}
+.qrrow{display:flex;gap:5mm;align-items:center;margin:1mm 0 0}
+.qr{width:30mm;height:30mm;flex:none;background:#fff;border:.3mm solid #EBC3D5;border-radius:2mm;padding:2mm}
+.url{font-family:"IBM Plex Mono",monospace;font-size:9.5pt;word-break:break-all}
+.code{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:17pt;letter-spacing:.06em;background:#FDE4EF;border:.4mm dashed #D9558F;border-radius:2mm;padding:1.5mm 3mm;display:inline-block}
+.spacer{flex:1}
+.small{font-size:8.5pt;color:#86708C;border-top:.3mm solid #F6DDE8;padding-top:2.5mm;margin:0}
+@media print{html,body{background:#fff}.wrap>*:not(.stage){display:none!important}.wrap{padding:0;max-width:none}.stage{box-shadow:none;border-radius:0;overflow:visible;height:auto!important}.scale{transform:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div><div class="k">Pony Pages · gift card</div><h1>Give the diary as a present</h1></div>
+  <p class="lede">Type the rider’s name, print the card on one sheet of paper, fold it in half along the dashed line, and it’s ready to wrap. The back shows the grown-ups how to open the diary.</p>
+  <div class="form">
+    <label>Rider’s name <small>on the front</small><input id="name" maxlength="20" placeholder="Säde" autocomplete="off"></label>
+    <label>From <small>if you like</small><input id="from" maxlength="40" placeholder="With love from Grandma" autocomplete="off"></label>
+    <label>Access code <small>from your purchase PDF</small><input id="code" maxlength="20" placeholder="PONY-…" autocapitalize="characters" spellcheck="false" autocomplete="off"></label>
+    <label>Paper<select id="paper"><option value="letter">US Letter</option><option value="a4">A4</option></select></label>
+    <div style="display:grid;gap:4px"><span style="font-family:Fredoka;font-weight:600;font-size:15px">Pony on the front</span><div class="coats" id="coats"></div></div>
+  </div>
+  <p id="cmsg" class="hint" role="status">The code is printed on the back so the new owner can open the diary. Leave the name empty to write it by hand.</p>
+  <div class="btns"><button class="btn primary" id="print" disabled>Print the card</button><span class="hint">Print landscape, at 100% size (“Actual size”). Then fold.</span></div>
+  <div class="stage" id="stage"><div class="scale" id="scale">
+    <div class="sheet">
+      <div class="half back">
+        <p class="bh">Your own riding diary</p>
+        <p class="bnote">For the grown-ups: it takes two minutes on a phone or tablet.</p>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><div><b>Open the diary.</b> Scan the code with the phone camera, or type the link.
+            <div class="qrrow"><div class="qr"><svg width="100%" height="100%" version="1.1" viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg"><path d="M0,0H1V1H0zM1,0H2V1H1zM2,0H3V1H2zM3,0H4V1H3zM4,0H5V1H4zM5,0H6V1H5zM6,0H7V1H6zM8,0H9V1H8zM9,0H10V1H9zM11,0H12V1H11zM13,0H14V1H13zM15,0H16V1H15zM16,0H17V1H16zM17,0H18V1H17zM18,0H19V1H18zM22,0H23V1H22zM23,0H24V1H23zM24,0H25V1H24zM25,0H26V1H25zM26,0H27V1H26zM27,0H28V1H27zM28,0H29V1H28zM0,1H1V2H0zM6,1H7V2H6zM9,1H10V2H9zM10,1H11V2H10zM11,1H12V2H11zM13,1H14V2H13zM14,1H15V2H14zM16,1H17V2H16zM18,1H19V2H18zM19,1H20V2H19zM22,1H23V2H22zM28,1H29V2H28zM0,2H1V3H0zM2,2H3V3H2zM3,2H4V3H3zM4,2H5V3H4zM6,2H7V3H6zM10,2H11V3H10zM15,2H16V3H15zM17,2H18V3H17zM18,2H19V3H18zM19,2H20V3H19zM20,2H21V3H20zM22,2H23V3H22zM24,2H25V3H24zM25,2H26V3H25zM26,2H27V3H26zM28,2H29V3H28zM0,3H1V4H0zM2,3H3V4H2zM3,3H4V4H3zM4,3H5V4H4zM6,3H7V4H6zM8,3H9V4H8zM9,3H10V4H9zM10,3H11V4H10zM11,3H12V4H11zM13,3H14V4H13zM14,3H15V4H14zM16,3H17V4H16zM18,3H19V4H18zM22,3H23V4H22zM24,3H25V4H24zM25,3H26V4H25zM26,3H27V4H26zM28,3H29V4H28zM0,4H1V5H0zM2,4H3V5H2zM3,4H4V5H3zM4,4H5V5H4zM6,4H7V5H6zM8,4H9V5H8zM12,4H13V5H12zM13,4H14V5H13zM14,4H15V5H14zM15,4H16V5H15zM22,4H23V5H22zM24,4H25V5H24zM25,4H26V5H25zM26,4H27V5H26zM28,4H29V5H28zM0,5H1V6H0zM6,5H7V6H6zM8,5H9V6H8zM9,5H10V6H9zM10,5H11V6H10zM12,5H13V6H12zM13,5H14V6H13zM14,5H15V6H14zM16,5H17V6H16zM19,5H20V6H19zM20,5H21V6H20zM22,5H23V6H22zM28,5H29V6H28zM0,6H1V7H0zM1,6H2V7H1zM2,6H3V7H2zM3,6H4V7H3zM4,6H5V7H4zM5,6H6V7H5zM6,6H7V7H6zM8,6H9V7H8zM10,6H11V7H10zM12,6H13V7H12zM14,6H15V7H14zM16,6H17V7H16zM18,6H19V7H18zM20,6H21V7H20zM22,6H23V7H22zM23,6H24V7H23zM24,6H25V7H24zM25,6H26V7H25zM26,6H27V7H26zM27,6H28V7H27zM28,6H29V7H28zM8,7H9V8H8zM10,7H11V8H10zM14,7H15V8H14zM15,7H16V8H15zM16,7H17V8H16zM17,7H18V8H17zM19,7H20V8H19zM20,7H21V8H20zM0,8H1V9H0zM4,8H5V9H4zM6,8H7V9H6zM7,8H8V9H7zM8,8H9V9H8zM15,8H16V9H15zM16,8H17V9H16zM17,8H18V9H17zM20,8H21V9H20zM21,8H22V9H21zM22,8H23V9H22zM23,8H24V9H23zM24,8H25V9H24zM25,8H26V9H25zM28,8H29V9H28zM0,9H1V10H0zM1,9H2V10H1zM3,9H4V10H3zM5,9H6V10H5zM7,9H8V10H7zM9,9H10V10H9zM10,9H11V10H10zM11,9H12V10H11zM13,9H14V10H13zM14,9H15V10H14zM15,9H16V10H15zM16,9H17V10H16zM17,9H18V10H17zM18,9H19V10H18zM20,9H21V10H20zM22,9H23V10H22zM23,9H24V10H23zM24,9H25V10H24zM25,9H26V10H25zM26,9H27V10H26zM27,9H28V10H27zM28,9H29V10H28zM0,10H1V11H0zM2,10H3V11H2zM3,10H4V11H3zM4,10H5V11H4zM6,10H7V11H6zM8,10H9V11H8zM11,10H12V11H11zM12,10H13V11H12zM13,10H14V11H13zM14,10H15V11H14zM15,10H16V11H15zM16,10H17V11H16zM17,10H18V11H17zM20,10H21V11H20zM28,10H29V11H28zM1,11H2V12H1zM5,11H6V12H5zM7,11H8V12H7zM8,11H9V12H8zM10,11H11V12H10zM14,11H15V12H14zM17,11H18V12H17zM19,11H20V12H19zM21,11H22V12H21zM25,11H26V12H25zM27,11H28V12H27zM28,11H29V12H28zM0,12H1V13H0zM2,12H3V13H2zM4,12H5V13H4zM6,12H7V13H6zM7,12H8V13H7zM12,12H13V13H12zM15,12H16V13H15zM17,12H18V13H17zM19,12H20V13H19zM21,12H22V13H21zM27,12H28V13H27zM3,13H4V14H3zM7,13H8V14H7zM9,13H10V14H9zM11,13H12V14H11zM13,13H14V14H13zM14,13H15V14H14zM15,13H16V14H15zM16,13H17V14H16zM21,13H22V14H21zM22,13H23V14H22zM23,13H24V14H23zM24,13H25V14H24zM25,13H26V14H25zM26,13H27V14H26zM27,13H28V14H27zM28,13H29V14H28zM1,14H2V15H1zM2,14H3V15H2zM6,14H7V15H6zM8,14H9V15H8zM10,14H11V15H10zM12,14H13V15H12zM14,14H15V15H14zM15,14H16V15H15zM17,14H18V15H17zM18,14H19V15H18zM22,14H23V15H22zM23,14H24V15H23zM25,14H26V15H25zM26,14H27V15H26zM28,14H29V15H28zM0,15H1V16H0zM2,15H3V16H2zM3,15H4V16H3zM4,15H5V16H4zM8,15H9V16H8zM11,15H12V16H11zM12,15H13V16H12zM14,15H15V16H14zM17,15H18V16H17zM18,15H19V16H18zM20,15H21V16H20zM21,15H22V16H21zM22,15H23V16H22zM24,15H25V16H24zM27,15H28V16H27zM28,15H29V16H28zM0,16H1V17H0zM1,16H2V17H1zM3,16H4V17H3zM5,16H6V17H5zM6,16H7V17H6zM8,16H9V17H8zM10,16H11V17H10zM11,16H12V17H11zM15,16H16V17H15zM17,16H18V17H17zM20,16H21V17H20zM27,16H28V17H27zM0,17H1V18H0zM1,17H2V18H1zM2,17H3V18H2zM4,17H5V18H4zM7,17H8V18H7zM9,17H10V18H9zM12,17H13V18H12zM13,17H14V18H13zM15,17H16V18H15zM16,17H17V18H16zM18,17H19V18H18zM22,17H23V18H22zM23,17H24V18H23zM24,17H25V18H24zM25,17H26V18H25zM27,17H28V18H27zM28,17H29V18H28zM3,18H4V19H3zM6,18H7V19H6zM7,18H8V19H7zM8,18H9V19H8zM10,18H11V19H10zM13,18H14V19H13zM15,18H16V19H15zM16,18H17V19H16zM20,18H21V19H20zM26,18H27V19H26zM28,18H29V19H28zM3,19H4V20H3zM4,19H5V20H4zM5,19H6V20H5zM7,19H8V20H7zM8,19H9V20H8zM9,19H10V20H9zM11,19H12V20H11zM12,19H13V20H12zM14,19H15V20H14zM15,19H16V20H15zM16,19H17V20H16zM17,19H18V20H17zM19,19H20V20H19zM20,19H21V20H20zM22,19H23V20H22zM23,19H24V20H23zM24,19H25V20H24zM27,19H28V20H27zM28,19H29V20H28zM0,20H1V21H0zM1,20H2V21H1zM2,20H3V21H2zM4,20H5V21H4zM6,20H7V21H6zM7,20H8V21H7zM8,20H9V21H8zM10,20H11V21H10zM14,20H15V21H14zM16,20H17V21H16zM17,20H18V21H17zM18,20H19V21H18zM20,20H21V21H20zM21,20H22V21H21zM22,20H23V21H22zM23,20H24V21H23zM24,20H25V21H24zM25,20H26V21H25zM28,20H29V21H28zM8,21H9V22H8zM9,21H10V22H9zM11,21H12V22H11zM12,21H13V22H12zM14,21H15V22H14zM15,21H16V22H15zM16,21H17V22H16zM17,21H18V22H17zM18,21H19V22H18zM19,21H20V22H19zM20,21H21V22H20zM24,21H25V22H24zM28,21H29V22H28zM0,22H1V23H0zM1,22H2V23H1zM2,22H3V23H2zM3,22H4V23H3zM4,22H5V23H4zM5,22H6V23H5zM6,22H7V23H6zM8,22H9V23H8zM9,22H10V23H9zM11,22H12V23H11zM12,22H13V23H12zM13,22H14V23H13zM14,22H15V23H14zM15,22H16V23H15zM18,22H19V23H18zM19,22H20V23H19zM20,22H21V23H20zM22,22H23V23H22zM24,22H25V23H24zM25,22H26V23H25zM26,22H27V23H26zM28,22H29V23H28zM0,23H1V24H0zM6,23H7V24H6zM10,23H11V24H10zM11,23H12V24H11zM12,23H13V24H12zM14,23H15V24H14zM17,23H18V24H17zM19,23H20V24H19zM20,23H21V24H20zM24,23H25V24H24zM27,23H28V24H27zM0,24H1V25H0zM2,24H3V25H2zM3,24H4V25H3zM4,24H5V25H4zM6,24H7V25H6zM8,24H9V25H8zM12,24H13V25H12zM13,24H14V25H13zM14,24H15V25H14zM15,24H16V25H15zM17,24H18V25H17zM19,24H20V25H19zM20,24H21V25H20zM21,24H22V25H21zM22,24H23V25H22zM23,24H24V25H23zM24,24H25V25H24zM25,24H26V25H25zM28,24H29V25H28zM0,25H1V26H0zM2,25H3V26H2zM3,25H4V26H3zM4,25H5V26H4zM6,25H7V26H6zM10,25H11V26H10zM11,25H12V26H11zM14,25H15V26H14zM15,25H16V26H15zM17,25H18V26H17zM18,25H19V26H18zM21,25H22V26H21zM28,25H29V26H28zM0,26H1V27H0zM2,26H3V27H2zM3,26H4V27H3zM4,26H5V27H4zM6,26H7V27H6zM9,26H10V27H9zM10,26H11V27H10zM11,26H12V27H11zM12,26H13V27H12zM13,26H14V27H13zM15,26H16V27H15zM17,26H18V27H17zM19,26H20V27H19zM20,26H21V27H20zM25,26H26V27H25zM26,26H27V27H26zM27,26H28V27H27zM28,26H29V27H28zM0,27H1V28H0zM6,27H7V28H6zM9,27H10V28H9zM10,27H11V28H10zM11,27H12V28H11zM13,27H14V28H13zM14,27H15V28H14zM17,27H18V28H17zM18,27H19V28H18zM20,27H21V28H20zM22,27H23V28H22zM24,27H25V28H24zM25,27H26V28H25zM27,27H28V28H27zM28,27H29V28H28zM0,28H1V29H0zM1,28H2V29H1zM2,28H3V29H2zM3,28H4V29H3zM4,28H5V29H4zM5,28H6V29H5zM6,28H7V29H6zM8,28H9V29H8zM11,28H12V29H11zM12,28H13V29H12zM13,28H14V29H13zM14,28H15V29H14zM15,28H16V29H15zM17,28H18V29H17zM20,28H21V29H20zM24,28H25V29H24zM27,28H28V29H27z" id="qr-path" fill="#000000" fill-opacity="1" fill-rule="nonzero" stroke="none"/></svg></div><div class="url">silent-tools.github.io/<wbr>pony-pages</div></div></div></div>
+          <div class="step"><div class="num">2</div><div><b>Enter the access code.</b><br><span class="code" id="c-code">PONY-····</span></div></div>
+          <div class="step"><div class="num">3</div><div><b>Add it to the Home Screen</b> before the first ride, so the diary is kept safe. Tap Share, then “Add to Home Screen”.</div></div>
+          <div class="step"><div class="num">4</div><div><b>Save a backup now and then:</b> Settings → Save a backup file. It brings the diary back if the phone is lost or replaced.</div></div>
+        </div>
+        <div class="spacer"></div>
+        <p class="small">No account, no ads. Everything the rider writes stays on your own device. Pony Pages by Silent Tools.</p>
+      </div>
+      <div class="half front">
+        <div class="fk">Pony Pages</div>
+        <div class="pony" id="c-pony"></div>
+        <div class="for">a riding diary for</div>
+        <div class="name" id="c-name"></div>
+        <div class="from" id="c-from"></div>
+      </div>
+    </div>
+  </div></div>
+  <p class="hint" style="text-align:center">Made by Silent Tools · <a href="../../terms.html" style="color:inherit">Terms and privacy</a></p>
+</div>
+<script>
+(function(){
+const COATS={
+  chestnut:{label:'Chestnut',body:'#C9773F',mane:'#8A4520',muzzle:'#E6A47C'},
+  bay:{label:'Bay',body:'#8C5A34',mane:'#2F2420',muzzle:'#B88B63'},
+  grey:{label:'Grey',body:'#D3D3DB',mane:'#8E8EA2',muzzle:'#ECECF1'},
+  black:{label:'Black',body:'#3B3238',mane:'#1C171B',muzzle:'#5F545B'},
+  palomino:{label:'Palomino',body:'#E9C47C',mane:'#FFF3D6',muzzle:'#F4DEB2'},
+  white:{label:'White',body:'#F6F2EE',mane:'#E3D8CE',muzzle:'#FFFFFF'},
+  dun:{label:'Dun',body:'#D2AF7E',mane:'#5A4532',muzzle:'#E7CEA7'},
+  pinto:{label:'Pinto',body:'#FFFFFF',mane:'#6E4128',muzzle:'#FFF6F0',patch:'#7B4A2C'}
+};
+const PONY_BG=['#FDE3EE','#E9E1FA','#DDF3EA','#FFF0CF','#DCEEFC'];
+let svgN=0;
+function ponySVG(coat,bg,blaze){
+  const c=COATS[coat]||COATS.chestnut,dark=coat==='black'||coat==='bay',id='pc'+(++svgN);
+  const mane=[[72,27,8],[76,37,8.5],[79,47,9],[81,57,9],[83,67,9],[85,77,9],[87,87,9],[89,97,9],[90,107,9]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c.mane}"/>`).join('');
+  const patches=c.patch?`<circle cx="58" cy="84" r="9" fill="${c.patch}"/><circle cx="45" cy="99" r="7" fill="${c.patch}"/>`:'';
+  const nose=dark?'#2A1F22':'#6B4A3A';
+  return `<svg viewBox="0 0 100 100" width="600" height="600" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="${id}"><rect width="100" height="100"/></clipPath></defs><g clip-path="url(#${id})"><rect width="100" height="100" fill="${bg||'#FDE3EE'}"/><g transform="translate(-3 9) scale(.93)"><path d="M30 112 C31 84 38 66 50 55 L74 48 C79 66 84 88 90 112 Z" fill="${c.body}"/>${patches}${mane}<g transform="rotate(40 50 42)"><path d="M55 19 L60 3 L67 20 Z" fill="${c.body}"/><path d="M58 17 L60.5 8 L64 18 Z" fill="#F5A3C0"/><rect x="36" y="14" width="30" height="50" rx="15" fill="${c.body}"/>${blaze?'<rect x="47.5" y="20" width="6" height="34" rx="3" fill="#FFFFFF" opacity=".95"/>':''}<ellipse cx="51" cy="57" rx="15.5" ry="10.5" fill="${c.muzzle}"/><ellipse cx="45" cy="58" rx="2" ry="2.8" fill="${nose}" opacity=".75"/><path d="M50 64 q4 3 8 0" stroke="${nose}" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".7"/><circle cx="59" cy="44" r="4" fill="#F58BB0" opacity=".45"/><circle cx="47" cy="31" r="4.6" fill="#2B1E26"/><circle cx="45.6" cy="29.4" r="1.6" fill="#fff"/><path d="M42.5 28 l-3 -2.5 M43.5 26 l-2 -3.2 M45.5 25.2 l-0.8 -3.6" stroke="#2B1E26" stroke-width="1.1" stroke-linecap="round"/><circle cx="46" cy="17" r="5.2" fill="${c.mane}"/><circle cx="41" cy="20.5" r="4.6" fill="${c.mane}"/><circle cx="51.5" cy="15.5" r="4.6" fill="${c.mane}"/></g></g></g></svg>`;
+}
+
+const HASH='4d4db6c5b0a3f89a24fe1c5ea5422c6c309e652754e6385ec7b4ce1c76cd26db';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let coat='chestnut',codeOk=false,codeTxt='';
+const PAPER={letter:[279.4,215.9],a4:[297,210]};
+const $=id=>document.getElementById(id);
+try{$('paper').value=/^en-US|^en-CA|^es-MX/.test(navigator.language)?'letter':'a4';}catch(e){}
+$('coats').innerHTML=Object.entries(COATS).map(([k,c])=>`<button type="button" data-coat="${k}" aria-pressed="${k===coat}" aria-label="${c.label}" title="${c.label}" style="background:${c.body}${k==='white'||k==='pinto'?';outline:1px solid #ccc':''}"></button>`).join('');
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+function draw(){
+  const n=$('name').value.trim(),f=$('from').value.trim();
+  $('c-name').innerHTML=n?esc(n):'<span class="blank"></span>';$('c-name').classList.toggle('long',n.length>11);
+  $('c-from').textContent=f;
+  $('c-pony').innerHTML=ponySVG(coat,'#FDE3EE');
+  $('c-code').textContent=codeOk?codeTxt:'PONY-····';
+  $('print').disabled=!codeOk;
+  const [pw,ph]=PAPER[$('paper').value]||PAPER.letter,sh=document.querySelector('.sheet');sh.style.setProperty('--pw',pw+'mm');sh.style.setProperty('--ph',ph+'mm');
+  let ps=document.getElementById('pagesize');if(!ps){ps=document.createElement('style');ps.id='pagesize';document.head.appendChild(ps);}ps.textContent=`@media print{@page{size:${pw}mm ${ph}mm;margin:0}}`;
+  fit();}
+async function checkCode(){const raw=$('code').value,c=raw.toUpperCase().replace(/[^A-Z0-9]/g,'');let ok=false;
+  try{ok=c.length>0&&(await sha(c))===HASH;}catch(e){}
+  codeOk=ok;codeTxt=ok?c.replace(/^(PONY)(\d+)$/,'$1-$2'):'';
+  const m=$('cmsg');
+  if(!c){m.className='hint';m.textContent='The code is printed on the back so the new owner can open the diary. Leave the name empty to write it by hand.';}
+  else if(ok){m.className='ok';m.textContent='Code checked. It’s on the back of the card.';}
+  else{m.className='msg';m.textContent='That code doesn’t match yet. Copy it from the PDF you received with your purchase.';}
+  draw();}
+function fit(){const st=$('stage'),sc=$('scale'),sh=sc.firstElementChild;const w=st.clientWidth,sw=sh.offsetWidth;const k=Math.min(1,w/sw);sc.style.transform=`scale(${k})`;st.style.height=(sh.offsetHeight*k)+'px';}
+document.addEventListener('input',e=>{if(e.target.id==='code')checkCode();else draw();});
+document.addEventListener('change',e=>{if(e.target.id==='paper')draw();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-coat]');if(b){coat=b.dataset.coat;document.querySelectorAll('[data-coat]').forEach(x=>x.setAttribute('aria-pressed',x===b));draw();}});
+$('print').addEventListener('click',()=>{if(codeOk)window.print();});
+window.addEventListener('resize',fit);
+draw();if(document.fonts)document.fonts.ready.then(fit);
+})();
+</script>
+</body>
+</html>
