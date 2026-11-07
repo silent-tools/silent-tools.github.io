@@ -1,40 +1,214 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Silent Tools</title>
-<meta name="description" content="Small, private tools that run in your browser. No account, no ads, your data stays with you.">
+<meta name="description" content="Small, private tools that run in your browser. For your home and for your business. No account, no ads, your data stays with you.">
 <link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="business/fonts.css">
 <style>
-:root{--bg:#F3EFE8;--ink:#2A2420;--muted:#75695D;--line:#DCCFBD;--accent:#8C6A3C}
-@media (prefers-color-scheme:dark){:root{--bg:#1A1714;--ink:#EFE7DA;--muted:#A99C8B;--line:#3A332C;--accent:#D5B47E}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Jost,system-ui,sans-serif;line-height:1.5}
-main{max-width:560px;margin:0 auto;padding:56px 20px}
-h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:44px;margin:0 0 6px;line-height:1}
-.lede{color:var(--muted);margin:0 0 36px}
-.tool{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 0}
-.tool b{font-family:"Cormorant Garamond",Georgia,serif;font-size:28px;display:block}
+/* Layout: one narrow column. Shared header with two tabs; each tab keeps its own look:
+   "For you" = warm paper + serif (consumer tools), "Business" = cool blue + Atkinson (business). */
+:root{color-scheme:light}
+body{
+  --bg:#F3EFE8;--ink:#2A2420;--muted:#75695D;--line:#DCCFBD;--accent:#8C6A3C;--accent-ink:#F3EFE8;--surface:#FBF8F3;
+  --f-body:Jost,system-ui,sans-serif;--f-head:"Cormorant Garamond",Georgia,serif;
+}
+body.biz{
+  --bg:#F3F4F1;--ink:#18212C;--muted:#56606C;--line:#D3D8D1;--accent:#1F3A5C;--accent-ink:#FFFFFF;--surface:#FFFFFF;
+  --accent-soft:#DCE6F1;--mark:#C98A00;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",Roboto,Arial,sans-serif;--f-num:"Atkinson Hyperlegible Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{color-scheme:dark}
+  body{--bg:#1A1714;--ink:#EFE7DA;--muted:#A99C8B;--line:#3A332C;--accent:#D5B47E;--accent-ink:#1A1714;--surface:#221E1A}
+  body.biz{--bg:#11161C;--surface:#1A2129;--ink:#E9EDF0;--muted:#9DA7B1;--line:#2E3742;--accent:#8DB8E8;--accent-ink:#0E1A27;--accent-soft:#22344A;--mark:#E8B13A}
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.5;transition:background-color .2s}
+.wrap{max-width:600px;margin:0 auto;padding:40px max(20px,env(safe-area-inset-right,0px)) 48px max(20px,env(safe-area-inset-left,0px))}
+a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* shared header + tabs */
+.brand{font-family:"Cormorant Garamond",Georgia,serif;font-weight:700;font-size:22px;line-height:1;color:var(--ink);margin:0 0 18px}
+.tabs{display:flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:999px;background:var(--surface);width:max-content;max-width:100%}
+.tabs button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-size:16px;font-weight:600;padding:9px 18px;border-radius:999px;cursor:pointer;min-height:42px;white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.panel[hidden]{display:none}
+.panel{padding-top:36px}
+
+/* ---------- For you (consumer) ---------- */
+.home h1{font-family:var(--f-head);font-size:44px;margin:0 0 6px;line-height:1}
+.home .lede{color:var(--muted);margin:0 0 36px;font-size:17px}
+.tool{border-top:1px solid var(--line);padding:20px 0}
+.tool:last-of-type{border-bottom:1px solid var(--line)}
+.tool b{font-family:var(--f-head);font-size:28px;display:block;line-height:1.15}
 .tool p{color:var(--muted);margin:2px 0 14px}
 .links{display:flex;flex-wrap:wrap;gap:10px}
 .links a{border:1px solid var(--accent);color:var(--accent);border-radius:999px;padding:8px 16px;text-decoration:none;font-weight:500}
-.links a.main{background:var(--accent);color:var(--bg)}
-.own{margin:14px 0 0;font-size:14px;color:var(--muted)}.own a{color:var(--accent)}
-footer{margin-top:36px;font-size:13px;color:var(--muted)}
-.tool+.tool{border-top:0}
-</style></head>
-<body><main>
-<h1>Silent Tools</h1>
-<p class="lede">Small, private tools that run in your browser. No account, no ads, and your data stays on your device.</p>
-<div class="tool"><b>Rain or Shine Almanac</b><p>A one-line-a-day weather and memory journal. Write a line, and the weather fills itself in.</p>
-<div class="links"><a class="main" href="rain-or-shine/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4591409116" target="_blank" rel="noopener">Get it on Etsy</a></div>
-<p class="own">Already bought it? <a href="rain-or-shine/">Open your diary</a></p></div>
-<div class="tool"><b>Happily Seated</b><p>A wedding seating planner. Paste or import your guest list, seat everyone, then print your chart and cards or share a view-only link.</p>
-<div class="links"><a class="main" href="happily-seated/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4594737132" target="_blank" rel="noopener">Get it on Etsy</a></div>
-<p class="own">Already bought it? <a href="happily-seated/">Open your planner</a></p></div>
-<div class="tool"><b>Pony Pages</b><p>A riding diary for young riders. Every ride, every horse and how it was feeling, with rosettes to win, horse cards to collect and a riding year to share.</p>
-<div class="links"><a class="main" href="pony-pages/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4595027222" target="_blank" rel="noopener">Get it on Etsy</a></div>
-<p class="own">Already bought it? <a href="pony-pages/">Open your diary</a></p></div>
-<div class="tool"><b>Bookcase Diary</b><p>A reading diary for kids, in English and Estonian. Every book goes on your own bookcase, a tick for every reading day, one line about the story, jars to fill and badges to collect.</p>
-<div class="links"><a class="main" href="bookcase-diary/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4596709057" target="_blank" rel="noopener">Get it on Etsy</a></div>
-<p class="own">Already bought it? <a href="bookcase-diary/">Open your diary</a></p></div>
-<footer>© 2026 Silent Tools · <a href="terms.html" style="color:var(--accent)">Terms and privacy</a></footer>
-</main></body></html>
+.links a.main{background:var(--accent);color:var(--accent-ink)}
+.own{margin:14px 0 0 !important;font-size:14px}.own a{color:var(--accent)}
+
+/* ---------- Ettevõtetele (business) ---------- */
+.biz-p{font-size:17px;line-height:1.55}
+.biz-p h1,.biz-p h2{margin:0;line-height:1.12;text-wrap:balance}
+.biz-p h1{font-size:40px;letter-spacing:-.015em;margin-top:8px}
+.biz-p h2{font-size:28px}
+.biz-p p{margin:0}
+.biz-p a{color:var(--accent);text-underline-offset:3px}
+.biz-p .lede{margin-top:12px;color:var(--muted);font-size:18px;max-width:58ch}
+.facts{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.facts li{border-top:3px solid var(--accent);padding-top:8px;font-size:14.5px;color:var(--muted)}
+.facts b{display:block;color:var(--ink);font-size:15.5px}
+.biz-p section{border-top:1px solid var(--line);padding:36px 0;display:flex;flex-direction:column;gap:12px}
+.biz-p section:first-of-type{margin-top:40px}
+.kind{font-family:var(--f-num);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mark);font-weight:700}
+.desc{color:var(--muted)}
+.feat{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:15.5px}
+.feat li{display:grid;grid-template-columns:18px 1fr;gap:8px}
+.feat li::before{content:"";width:8px;height:8px;margin-top:9px;border-radius:2px;background:var(--accent)}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.btn{display:inline-flex;align-items:center;min-height:46px;padding:0 20px;border-radius:8px;border:2px solid var(--accent);font-weight:700;text-decoration:none;color:var(--accent) !important;background:transparent}
+.btn.p{background:var(--accent);color:var(--accent-ink) !important}
+.btn:hover{background:var(--accent-soft)} .btn.p:hover{opacity:.9;background:var(--accent)}
+.sub{font-size:14.5px;color:var(--muted)}
+.client{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:8px;padding:16px 18px;border:2px solid var(--accent);border-radius:10px;background:var(--surface)}
+.client div{display:flex;flex-direction:column;min-width:0}
+.client b{font-size:17px}
+.client span{font-size:14.5px;color:var(--muted)}
+.contact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:14px}
+.crow{display:grid;grid-template-columns:90px 1fr auto;align-items:center;gap:12px}
+.crow .lbl{color:var(--muted);font-size:14.5px}
+.crow .val{font-family:var(--f-num);font-weight:700;font-size:18px;overflow-wrap:anywhere;user-select:all}
+.crow .val a{color:var(--ink);text-decoration:none}
+.copy{min-height:40px;padding:0 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+
+footer{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+footer a{color:var(--accent)}
+@media (max-width:560px){
+  .wrap{padding-top:28px}
+  .tabs button{padding:9px 14px;font-size:15px}
+  .biz-p h1{font-size:32px}
+  .facts{grid-template-columns:1fr}
+  .crow{grid-template-columns:1fr auto}
+  .crow .lbl{grid-column:1/-1;margin-bottom:-8px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="brand">Silent Tools</p>
+  <div class="tabs" role="tablist" aria-label="Silent Tools">
+    <button role="tab" id="t-home" aria-controls="p-home" aria-selected="true">For you</button>
+    <button role="tab" id="t-biz" aria-controls="p-biz" aria-selected="false">Business</button>
+  </div>
+
+  <!-- ===== For you ===== -->
+  <main class="panel home" id="p-home" role="tabpanel" aria-labelledby="t-home">
+    <h1>Small, private tools</h1>
+    <p class="lede">They run in your browser. No account, no ads, and your data stays on your device.</p>
+
+    <div class="tool"><b>Rain or Shine Almanac</b><p>A one-line-a-day weather and memory journal. Write a line, and the weather fills itself in.</p>
+      <div class="links"><a class="main" href="rain-or-shine/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4591409116" target="_blank" rel="noopener">Get it on Etsy</a></div>
+      <p class="own">Already bought it? <a href="rain-or-shine/">Open your diary</a></p></div>
+
+    <div class="tool"><b>Happily Seated</b><p>A wedding seating planner. Paste or import your guest list, seat everyone, then print your chart and cards or share a view-only link.</p>
+      <div class="links"><a class="main" href="happily-seated/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4594737132" target="_blank" rel="noopener">Get it on Etsy</a></div>
+      <p class="own">Already bought it? <a href="happily-seated/">Open your planner</a></p></div>
+
+    <div class="tool"><b>Pony Pages</b><p>A riding diary for young riders. Every ride, every horse and how it was feeling, with rosettes to win, horse cards to collect and a riding year to share.</p>
+      <div class="links"><a class="main" href="pony-pages/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4595027222" target="_blank" rel="noopener">Get it on Etsy</a></div>
+      <p class="own">Already bought it? <a href="pony-pages/">Open your diary</a></p></div>
+
+    <div class="tool"><b>Bookcase Diary</b><p>A reading diary for kids, in English and Estonian. Every book goes on your own bookcase, a tick for every reading day, one line about the story, jars to fill and badges to collect.</p>
+      <div class="links"><a class="main" href="bookcase-diary/demo/">Try the free demo</a><a href="https://www.etsy.com/listing/4596709057" target="_blank" rel="noopener">Get it on Etsy</a></div>
+      <p class="own">Already bought it? <a href="bookcase-diary/">Open your diary</a></p></div>
+
+    <footer>© 2026 Silent Tools · <a href="terms.html">Terms and privacy</a></footer>
+  </main>
+
+  <!-- ===== Ettevõtetele ===== -->
+  <main class="panel biz-p" id="p-biz" role="tabpanel" aria-labelledby="t-biz" lang="et" hidden>
+    <span class="kind">Silent Tools ettevõtetele</span>
+    <h1>Tööriistad, mis säästavad tööaega</h1>
+    <p class="lede">Väikesed veebitööriistad, mis teevad korduva töö kiiremaks ja vähendavad hooletusvigu. Töötavad igas telefonis ja arvutis. Kohe kasutusel, ilma paigalduse ja koolituseta, ning seadistatud teie protsessi järgi.</p>
+    <ul class="facts">
+      <li><b>Kohe kasutusel</b>Ei paigaldust, kasutajakontosid ega juurutusprojekti.</li>
+      <li><b>Teie järgi seadistatud</b>Teie mõõdikud, vormid ja Exceli kuju.</li>
+      <li><b>Andmed teie käes</b>Kõik jääb teie seadmetesse, kuni ise ekspordite.</li>
+    </ul>
+
+    <section>
+      <span class="kind">Mõõdikud · hooldus</span>
+      <h2>Näiduring</h2>
+      <p class="desc">Elektri-, vee-, soojus- ja gaasimõõdikute näidud telefoniga. Lugeja skannib mõõdiku QR-kleebise, sisestab näidu ja tööriist kontrollib selle kohe eelmise näidu vastu. Kuu lõpus saab kõigi lugejate näidud ühe Exceli failina.</p>
+      <ul class="feat">
+        <li>Kontrollnimekiri sageduse järgi: igapäevane, iganädalane, igakuine, kvartaalne</li>
+        <li>Hoiatus, kui näit on väiksem või tarbimine ebatavaline</li>
+        <li>Foto tõendiks, suur kiri, töötab ka levita keldris</li>
+        <li>Ühtne Exceli väljund raamatupidamisse või Power Querysse</li>
+      </ul>
+      <div class="btns">
+        <a class="btn p" href="naiduring/demo.html">Proovi demot</a>
+        <a class="btn" href="#kontakt" data-jump>Küsi pakkumist</a>
+      </div>
+      <div class="client">
+        <div><b>Juba klient?</b><span>Ava tööriist ja sisesta ettevõtte ligipääsukood.</span></div>
+        <a class="btn p" href="naiduring/">Ava Näiduring</a>
+      </div>
+      <p class="sub"><a href="naiduring/juhend.html">Kasutusjuhend</a></p>
+    </section>
+
+    <section>
+      <span class="kind">Tellimustöö</span>
+      <h2>Teie protsessi jaoks tehtud tööriist</h2>
+      <p class="desc">Kas teil on tabel või paberivorm, mida keegi iga nädal käsitsi täidab? Ülevaatused, ringkäigud, tellimuste kokkuvõtted, inventuur. Teen sellest telefonis töötava tööriista, mis annab väljundi täpselt sellisel kujul, nagu teie süsteem seda vajab.</p>
+      <div class="btns"><a class="btn p" href="#kontakt" data-jump>Räägime teie vajadusest</a></div>
+    </section>
+
+    <section id="kontakt">
+      <h2>Küsi pakkumist</h2>
+      <p class="desc">Kirjuta või helista. Näitan tööriista teie objektil ette ja seadistame selle koos teie mõõdikute või vormidega.</p>
+      <div class="contact">
+        <div class="crow"><span class="lbl">E-post</span><span class="val"><a href="mailto:tmskalda@gmail.com">tmskalda@gmail.com</a></span><button class="copy" type="button" data-copy="tmskalda@gmail.com">Kopeeri</button></div>
+        <div class="crow"><span class="lbl">Telefon</span><span class="val"><a href="tel:+3725217749">+372 521 7749</a></span><button class="copy" type="button" data-copy="+3725217749">Kopeeri</button></div>
+      </div>
+    </section>
+
+    <footer>© 2026 Silent Tools · <a href="terms.html">Tingimused ja privaatsus</a> (inglise keeles)</footer>
+  </main>
+</div>
+<script>
+(function(){
+  var tabs={home:document.getElementById('t-home'),biz:document.getElementById('t-biz')};
+  var panels={home:document.getElementById('p-home'),biz:document.getElementById('p-biz')};
+  var BIZ=['#business','#ettevottele','#kontakt'];
+  function show(k,push){
+    for(var x in tabs){var on=x===k;tabs[x].setAttribute('aria-selected',on);tabs[x].tabIndex=on?0:-1;panels[x].hidden=!on;}
+    document.body.classList.toggle('biz',k==='biz');
+    document.documentElement.lang=k==='biz'?'et':'en';
+    document.title=k==='biz'?'Silent Tools ettevõtetele':'Silent Tools';
+    if(push){try{history.replaceState(null,'',k==='biz'?'#business':location.pathname+location.search);}catch(e){}}
+  }
+  tabs.home.addEventListener('click',function(){show('home',true);});
+  tabs.biz.addEventListener('click',function(){show('biz',true);});
+  document.querySelector('.tabs').addEventListener('keydown',function(e){
+    if(e.key!=='ArrowLeft'&&e.key!=='ArrowRight')return;
+    var k=tabs.home.getAttribute('aria-selected')==='true'?'biz':'home';show(k,true);tabs[k].focus();
+  });
+  var h=(location.hash||'').toLowerCase();
+  show(BIZ.indexOf(h)>=0?'biz':'home',false);
+  if(h==='#kontakt'){var el=document.getElementById('kontakt');if(el)el.scrollIntoView();}
+  window.addEventListener('hashchange',function(){var h=(location.hash||'').toLowerCase();if(BIZ.indexOf(h)>=0)show('biz',false);});
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('[data-copy]');if(!b)return;
+    var done=function(t){b.textContent=t;setTimeout(function(){b.textContent='Kopeeri';},2000);};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(b.dataset.copy).then(function(){done('Kopeeritud');},sel);else sel();
+    function sel(){var r=document.createRange();r.selectNodeContents(b.previousElementSibling);var s=getSelection();s.removeAllRanges();s.addRange(r);done('Valitud');}
+  });
+})();
+</script>
+</body>
+</html>
